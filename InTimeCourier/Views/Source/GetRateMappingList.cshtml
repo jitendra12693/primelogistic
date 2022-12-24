@@ -1,0 +1,129 @@
+﻿@model InTimeCourier.Models.RateMappingDetails
+@{
+    //Layout = null;
+    ViewBag.Title = "Rate Mapping";
+}
+
+<h2>Rate Mapping List</h2>
+<hr />
+<p>
+    @Html.ActionLink("Add New Rate Mapping", "MapRateSourceAndParty")
+</p>
+<div style="background-color:#f5f5f5; padding:20px">
+    <table id="tblFilter">
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party,
+                   "Select Party", new { @class = "form-control" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode,
+                               "Select Courrier Mode", new { @class = "form-control" })
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<table id="tableRateList" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Party Name</th>
+            <th>Corier Mode</th>
+            <th>Network Mode</th>
+            <th>From Weight</th>
+            <th>To Weight</th>
+            <th>Rate <span>&#8377;</span></th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Getdetails();
+        });
+        function Getdetails() {
+            var partyid = $('#PartyId').val();
+            var modeid = $('#CourrierModeId').val();
+            $.ajax({
+                type: "GET",
+                url: "/Source/GetRateMappingData",
+                data: { modeId: modeid, partyId: partyid },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
+        };
+        function OnSuccess(response) {
+            var strResponse = [];
+            if (response.length > 0) {
+                $.each(response, function (key, value) {
+                    strResponse.push({
+                        Id: value.Id,
+                        PartyName: value.PartyName,
+                        CourrierModeName: value.CourrierModeName,
+                        NetworkModeName: value.NetworkModeName,
+                        FromWt: value.FromWt.toFixed(3)+' (<b>gm</b>)',
+                        ToWt: value.ToWt.toFixed(3) + ' (<b>gm</b>)',
+                        Rate: '<b><span>&#8377;</span> </b>'+value.Rate+'<b>/-</b>'
+                    });
+                   
+                });
+            }
+            $("#tableRateList").DataTable(
+                {
+                    //bLengthChange: true,
+                    //lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+                    //bFilter: true,
+                    //bSort: true,
+                    //bPaginate: true,
+                    "bDestroy": true,
+                    data: strResponse,
+                    "columns": [
+                        { 'data': 'PartyName' },
+                        { 'data': 'CourrierModeName' },
+                        { 'data': 'NetworkModeName' },
+                        { 'data': 'FromWt'},
+                        { 'data': 'ToWt' },
+                        { 'data': 'Rate' },
+                        {
+                            "data": "Action",
+                            "render": function (data, type, row, meta) {
+                                /* if (type === 'display') {*/
+                                data = '<a href="MapRateSourceAndParty/' + row.Id + '">Edit</a>';
+                                /* }*/
+
+                                return data;
+                            }
+                        }
+                    ]
+                });
+        };
+
+
+        $("#PartyId").change(function () {
+            $('#tableRateList').DataTable().clear().draw();
+            Getdetails();
+        });
+        $("#CourrierModeId").change(function () {
+            $('#tableRateList').DataTable().clear().draw();
+            Getdetails();
+        });
+
+    </script>
+}

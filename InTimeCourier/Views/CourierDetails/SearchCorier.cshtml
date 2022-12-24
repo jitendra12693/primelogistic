@@ -1,0 +1,58 @@
+﻿@model InTimeCourier.Models.CorrierDetails
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @if (ViewBag.Success != null)
+        {
+            <div class="alert alert-success">@ViewBag.Success</div>
+        }
+        <div class="form-group">
+            <div class="col-lg-2">
+                @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <div class="col-lg-2">
+                @Html.LabelFor(model => model.PartyName, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-4">
+                @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-2">
+                @Html.LabelFor(model => model.FromDate, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @id = "txtFromDate", @class = "form-control", @placeholder = "MM/DD/YYYY" } })
+            </div>
+
+            <div class="col-lg-2">
+                @Html.LabelFor(model => model.ToDate, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @id = "txtToDate", @class = "form-control", @placeholder = "MM/DD/YYYY" } })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
+                <button type="reset" id="btnClear" class="btn btn-danger">Clear Search</button>
+                <button type="reset" id="btnExportPdf" class="btn btn-primary"> Export Report</button>
+                <button type="button" id="btnReciept" class="btn btn-danger" >Generate Reciept</button>
+                @*<a href="@Url.Action("ExportToExcel")" class="btn btn-primary">Export Report</a> *@
+            </div>
+        </div>
+    </div>
+}

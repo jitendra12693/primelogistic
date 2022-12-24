@@ -1,0 +1,51 @@
+﻿@model IEnumerable<InTimeCourier.Models.BillDetails>
+@{
+    Layout = null;
+}
+<div id="divBillDetailsList" class="" >
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>Bill No</th>
+            <th>Party Name</th>
+            <th>GSTIN/UIN</th>
+            <th>Total</th>
+            <th>Fuel Charges</th>
+            <th>C.G.S.T. (9%)</th>
+            <th>S.G.S.T  (9%)</th>
+            <th>Amount</th>
+            <th>Paid Amt</th>
+            <th>Cheque No</th>
+            <th>Bill Date</th>
+            <th>Action</th>
+        </tr>
+        @if (Model != null)
+        {
+            foreach (var item in Model.ToList())
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink("" + item.BillNo, "SelectedPartyCourrierList", new { PartyId = item.PartyId, PeriodFrom = item.PeriodFrom,PeriodTo=item.PeriodTo })
+                    </td>
+                    <td>@item.PartyName</td>
+                    <td>@item.GSTINNumber</td>
+                    <td>@item.TotalAmount</td>
+                    <td>@item.FullCharges</td>
+                    <td>@item.CGST</td>
+                    <td>@item.SGST</td>
+                    <td>@item.GrandTotal</td>
+                    <td>@item.PaidAmount</td>
+                    <td>@item.ChequeNo</td>
+                    <td>@Convert.ToDateTime(item.BillDate).ToShortDateString()</td>
+                    <td style="width:7%;">
+                        <a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+

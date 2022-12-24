@@ -1,0 +1,79 @@
+﻿@model InTimeCourier.Models.CorrierDetails
+
+@{
+    ViewBag.Title = "Courrier Details";
+}
+
+<h3>CourrierDetails</h3>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TrackingNo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TrackingNo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PartyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PartyName)
+        </dd>
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.CNNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CNNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SourceName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SourceName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Destination)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Destination)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Weight)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartureDt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepartureDt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.CourrierId  }) |
+    @Html.ActionLink("Back To Corrier List", "CourrierList")
+</p>

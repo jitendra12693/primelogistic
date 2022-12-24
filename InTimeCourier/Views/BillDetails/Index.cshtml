@@ -1,0 +1,125 @@
+﻿
+@{
+    ViewBag.Title = "Bill Details";
+}
+
+<h4>Bill Details</h4>
+<hr />
+<style>
+    .ajaxLoader {
+        outline-style: none;
+        outline-color: invert;
+        outline-width: 0px;
+        width: 104px;
+        height: 104px;
+        position: absolute;
+        z-index: 10000;
+        background-image: url("../../Content/ajax-loader.gif");
+    }
+</style>
+
+@if(TempData["Message"] != null)
+{
+    <div class="alert alert-success">@Convert.ToString(TempData["Message"])</div>
+}
+@if (TempData["PaymentMessage"] != null)
+{
+    <div class="alert alert-success">@Convert.ToString(TempData["PaymentMessage"])</div>
+}
+<div class="col-lg-12">
+    @{Html.RenderAction("SearchBill","BillDetails");}
+</div>
+<div class="clearfix"></div>
+<br /><br />
+<div class="col-lg-12">
+    @{Html.RenderAction("BillList", "BillDetails");}
+</div>
+@section Scripts {
+<script>
+    $(function () {
+        $("#txtfromDate").datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+
+        $("#txtToDate").datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+        
+    });
+
+    function OpenBillDetails(billId) {
+        $.ajax({
+            url: 'AddBillDetails?id=' + billId,
+            dataType: 'html',
+            type: 'GET',
+            success: function (data) {
+                $('#divBillDetails').empty();
+                $('#divBillDetails').html(data);
+
+                $('#PeriodFrom').datepicker({
+                    changeMonth: true,
+                    changeYear: true
+                });
+                $('#BillDate').datepicker({
+                    changeMonth: true,
+                    changeYear: true
+                });
+                $('#PeriodTo').datepicker({
+                    changeMonth: true,
+                    changeYear: true
+                });
+            },
+            error: function (err) {
+                alert(err);
+            }
+        })
+    }
+
+    // Call on page load 
+    $(document).ready(function () {
+        $("#searchTerm").keyup(function () {
+            SearchComplaint();
+        });
+        SearchComplaint();
+    })
+
+    function SearchComplaint() {
+        var searchTerm = $('#searchTerm').val();
+        var fromDate = $('#txtfromDate').val();
+        var toDate = $('#txtToDate').val();
+        var complaintStatus = $('#ComplaintStatus').val();
+
+        $.ajax({
+            url: "/BillDetails/SearchBillDetails",
+            data: { SearchTerm: searchTerm, FromDate: fromDate, ToDate: toDate, ComplaintStatus: complaintStatus },
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                
+                $("#divBillDetailsList").html(data);
+            }
+        });
+    }
+
+    function OpenPaymentDetails(billId) {
+        $.ajax({
+            url: '/BillDetails/BillPayment',
+            type: 'GET',
+            datatype: 'HTML',
+            data: { id: billId },
+            success: function (data) {
+                $('#divBillDetails').empty();
+                $('#lblHeader').text("Bill Payment");
+                
+                $("#divBillDetails").html(data);
+                $('#ChequeDate').datepicker({
+                    changeMonth: true,
+                    changeYear: true
+                });
+            }
+        });
+    }
+</script>
+}

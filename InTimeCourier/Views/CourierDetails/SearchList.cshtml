@@ -1,0 +1,192 @@
+﻿@model dynamic
+@{
+    Layout = null;
+}
+
+<style tyle="text/css">
+    @@media screen {
+        p.bodyText {
+            font-family: verdana, arial, sans-serif;
+        }
+    }
+
+    @@media print {
+        p.bodyText {
+            font-family: georgia, times, serif;
+        }
+    }
+
+    @@media screen, print {
+        p.bodyText {
+            font-size: 10pt;
+        }
+    }
+</style>
+<div id="SearchCourierlist">
+    @if (Model != null)
+    {
+        <div style="width:49.5%;float:left;">
+            <table class="table table-bordered" style="border:1px solid #000000;font-size:12px;width:100%;" id="myTable">
+                <tr>
+                    <th>
+                        Book Date
+                    </th>
+                    <th>
+                        CNNo
+                    </th>
+                    <th>
+                        Destination Name
+                    </th>
+                    <th>
+                        Weight
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th id="tdAction">Action</th>
+                </tr>
+                @if (Model != null)
+                {
+                    //int count = 1;
+                    foreach (InTimeCourier.Models.CorrierDetails item in Model.CorrierDetails1)
+                    {
+                        <tr>
+                            @*<td>@count</td>*@
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DepartureDt)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CNNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Destination)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Weight)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td id="tdActionVal">
+                                <a href="#" id="projectImages" onclick="SelectedCourrier(@item.CourrierId)" data-toggle="modal" data-target="#divUpdateCourrier">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9">No Record found</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    @if (Model != null)
+    {
+        if (Model.CorrierDetails2 != null)
+        {
+            <div style="width:49.5%;float:right;margin-left:1%;">
+                <table class="table table-bordered pull-right" style="border:1px solid #000000;font-size:12px;width:100%;" id="myTable1">
+                    <tr>
+                        <th>
+                            Book Date
+                        </th>
+                        <th>
+                            CNNo
+                        </th>
+                        <th>
+                            Destination Name
+                        </th>
+                        <th>
+                            Weight
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                        <th id="tdAction">Action</th>
+                    </tr>
+                    @if (Model != null)
+                    {
+                        foreach (InTimeCourier.Models.CorrierDetails item in Model.CorrierDetails2)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DepartureDt)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CNNo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Destination)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Weight)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Amount)
+                                </td>
+                                <td id="tdActionVal">
+                                    <a href="#" id="projectImages" onclick="SelectedCourrier(@item.CourrierId)" data-toggle="modal" data-target="#divUpdateCourrier">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">No Record found</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+    }
+
+    <table class="table table-bordered" style="border:1px solid #000000;width:100%;">
+        <tfoot>
+            <tr>
+                <td width="25%"><b>Total</b></td>
+                <td width="75%" style="text-align:right;"><label id="lblTotal"></label></td>
+            </tr>
+            <tr>
+                <td>Fuel Charges (<label id="partyFuelCharge"></label>)</td>
+                <td style="text-align:right"><label id="lblFullCahrges"></label></td>
+            </tr>
+            @*<tr>
+                    <td>C.G.S.T. (9%)</td>
+                    <td style="text-align:right"><label id="lblCGST"></label></td>
+                </tr>
+                <tr>
+                    <td>S.G.S.T. (9%)</td>
+                    <td style="text-align:right"><label id="lblSGST"></label></td>
+                </tr>*@
+            <tr id="trCGST">
+                <td>C.G.S.T. (9%)</td>
+                <td style="text-align:right"><label id="lblBillCGST"></label></td>
+            </tr>
+            <tr id="trSGST">
+                <td>S.G.S.T. (9%)</td>
+                <td style="text-align:right"><label id="lblBillSGST"></label></td>
+            </tr>
+            <tr id="trIGST">
+                <td>I.G.S.T. (18%)</td>
+                <td style="text-align:right"><label id="lblBillIGST"></label></td>
+            </tr>
+            <tr>
+                <td><b>Grand Total</b></td>
+                <td style="text-align:right"><label id="lblGrandTotal"></label></td>
+            </tr>
+            <tr>
+                <td><b>In Word</b></td>
+                <td><label id="lblGrandTotalInWord"></label></td>
+            </tr>
+        </tfoot>
+    </table>
+    <input type="hidden" id="hdnPartyName" />
+    <input type="hidden" id="hdnAddress" />
+    <input type="hidden" id="hdnRecordCount" />
+    <input type="hidden" id="hdnPartyGSTNo" />
+</div>
+
+

@@ -1,0 +1,352 @@
+﻿@model IEnumerable<InTimeCourier.Models.CorrierDetails>
+
+@{
+    ViewBag.Title = "CourrierList";
+}
+<style>
+    .ajaxLoader {
+        outline-style: none;
+        outline-color: invert;
+        outline-width: 0px;
+        width: 104px;
+        height: 104px;
+        position: absolute;
+        z-index: 10000;
+        background-image: url("../../Content/ajax-loader.gif");
+    }
+</style>
+<h2>Courrier List</h2>
+
+<p>
+    @Html.ActionLink("Create New Courrier", "AddCourrier")
+</p>
+<div class="col col-lg-12">
+    @{Html.RenderAction("SearchCorier", "CourierDetails");}
+</div>
+<hr />
+@{Html.RenderAction("SearchList", "CourierDetails");}
+
+
+<div id="grid">
+    @*<div id="divAjaxLoader" class="ajaxLoader"></div>*@
+</div>
+<div>
+
+</div>
+<div id="recieptModal" style="display: none" align="center">
+    <div class="modal-body">
+        <div class="modal-body" id="divReciept">
+            <table class="table table-bordered" style="width:100%;">
+                <tr>
+                    <td colspan="2">
+                        <center>
+                            <h1>In Time  Logistics</h1>
+                            <h4>Kaman Road, Chinchoti Road, Vasai(East), Palghar-401208.</h4>
+                            <h4>Tel :+919320030626/+919028826303 </h4>
+                            <h4>Email Id: intimelogistic119@gmail.com</h4>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="70%;">
+                        <b>M/s: </b><label id="lblPartyName"></label><br />
+                        <label id="lblAddress"></label>
+                        <label id="lblContact"></label><br />
+                        <b>Party G.S.T. No. :</b><label id="partyGSTNumber"></label>
+                    </td>
+                    <td width="30%;">
+                        <b>Bill No: </b><label id="lblBillNo"></label><br />
+                        <b>Bill Date: </b>
+                        <label id="lblBillDate"></label>
+                    </td>
+                </tr>
+                <tr style="height:250px;">
+                    <td>
+                        Charges for courier service rendered during the period <br />from
+                        <label id="lblFromDate"></label> To <label id="lblToDate"></label>
+                        <p style="bottom: 0;left: 0;"><b>GSTIN/UIN :-</b> 27CCXPM4197H1ZQ</p>
+                    </td>
+                    <td style="text-align:right">
+                        <label id="lblBillAmount"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Total</b></td>
+                    <td style="text-align:right"><label id="lblBillTotal"></label></td>
+                </tr>
+                <tr>
+                    <td>Fuel Charges (<label id="lblPartyFuelCharges"></label>)</td>
+                    <td style="text-align:right"><label id="lblBillFullCahrges"></label></td>
+                </tr>
+                <tr id="trBillCGST">
+                    <td>C.G.S.T. (9%)</td>
+                    <td style="text-align:right">
+                        <label id="lblCGST"></label>
+                        <input type="hidden" id="hiddenCGST" />
+                    </td>
+                </tr>
+                <tr id="trBillSGST">
+                    <td>S.G.S.T. (9%)</td>
+                    <td style="text-align:right">
+                        <label id="lblSGST"></label>
+                        <input type="hidden" id="hiddenSGST" />
+                    </td>
+                </tr>
+                <tr id="trBillIGST">
+                    <td>I.G.S.T. (18%)</td>
+                    <td style="text-align:right"><label id="lblIGST"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Grand Total</b></td>
+                    <td style="text-align:right"><label id="lblBillGrandTotal"></label></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>In Word:- </b>   <label id="divDisplayWords"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <th colspan="2">Bank Details</th>
+                            </tr>
+                            <tr>
+                                <th>Company Name</th>
+                                <td>:- IN TIME LOGISTICS</td>
+                            </tr>
+                            <tr>
+                                <th>Bank Name</th>
+                                <td>:- Bharat Bank</td>
+                            </tr>
+                            <tr>
+                                <th>Account No</th>
+                                <td>:- 006212100002228</td>
+                            </tr>
+                            <tr>
+                                <th>IFSC Code</th>
+                                <td>:- BCBM0000063</td>
+                            </tr>
+                            <tr>
+                                <th>Branch</th>
+                                <td>:- Nallasopara(W)</td>
+                            </tr>
+                            <tr>
+                                <th>PAN</th>
+                                <td>:- CCXPM4197H</td>
+                            </tr>
+                        </table>
+                        @*<u><b>Bank Details</b></u><br />
+                            <b>Company Name</b> :- IN TIME LOGISTICS<br />
+                            <b>Bank Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    :- Bharat Bank<br />
+                            <b>Account No</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :- 006212100002228<br />
+                            <b>IFS Code</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;   :-BCBM0000063<br />
+                            <b>Branch</b>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     :-Nallasopara(W)<br />
+                            <b>PAN </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; :- CCXPM4197H*@
+                    </td>
+                    <td>
+                        <br /><br /><br /><br />
+                        <h4>For In Time Logistics</h4>
+                    </td>
+                </tr>
+            </table><br />
+            <h5><b>Note :-</b>Please pay your will within 10 days from your Bill date, Otherwise we charges 24% on grand total </h5>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btnPrintReciept" class="btn btn-primary">Print Reciept</button>
+        </div>
+    </div>
+</div>
+<div id="divUpdateCourrier" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" id="btnCross">&times;</button>
+                <h4 class="modal-title">Update Courrier Details</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formUpdate">
+                    <div class="form-group">
+                        <div class="col-lg-4">Party</div>
+                        <div class="col-lg-8">
+                            <select id="ddlParty" class="form-control">
+                                <option value="">Select Party</option>
+                            </select>
+                        </div>
+                    </div><div></div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Booking Date</div>
+                        <div class="col-lg-8"><input type="text" id="txtBookingDate" placeholder="MM/DD/YYYY" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">CN Number</div>
+                        <div class="col-lg-8"><input type="text" id="txtCNNumber" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Distance</div>
+                        <div class="col-lg-8"><input type="text" id="txtDistance" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Weight</div>
+                        <div class="col-lg-8"><input type="text" id="txtWeight" class="form-control" placeholder="Weight in KG Format(Ex :- 0.256 Kg)" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Rate</div>
+                        <div class="col-lg-8"><input type="text" id="txtRate" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Amount</div>
+                        <div class="col-lg-8"><input type="text" id="txtAmount" readonly="readonly" class="form-control" placeholder="Please enter your rate(Per / Kg)" /> </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>
+                <input type="hidden" id="hdnCourrierId" />
+                <input type="hidden" id="hdnCreatedBy" />
+                <input type="hidden" id="hdnCreatedDate" />
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/SearchCourier.js"></script>
+    <script src="~/Scripts/autocolumn.js"></script>
+    <script type="text/javascript">
+        $('#PrintReport').columnize({ columns: 2 })
+
+        $(function () {
+            $("#txtBookingDate").datepicker();
+        });
+
+        $('#btnCross').click(function () {
+            $('#formUpdate')[0].reset();
+        });
+
+        $('#btnClose').click(function () {
+            $('#formUpdate')[0].reset();
+        });
+
+        $('#btnSaveCourrier').click(function () {
+            var courrierDetail = {
+                CourrierId: $('#hdnCourrierId').val(),
+                PartyId: $("#ddlParty").val(),
+                Amount: $("#txtAmount").val(),
+                Rate: $("#txtRate").val(),
+                Weight: $("#txtWeight").val(),
+                CNNo: $("#txtCNNumber").val(),
+                Distance: $("#txtDistance").val(),
+                DepartureDt: $('#txtBookingDate').val(),
+                CreatedBy: $('#hdnCreatedBy').val(),
+                CreatedDt: $('#hdnCreatedDate').val()
+            }
+
+            $.ajax({
+                url: '/CourierDetails/UpdateEdit',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(courrierDetail),
+                success: function (data) {
+                    alert(data);
+                    $("#btnSearch").click();
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function ConvertJsonDateString(jsonDate) {
+            var shortDate = null;
+            if (jsonDate) {
+                var regex = /-?\d+/;
+                var matches = regex.exec(jsonDate);
+                var dt = new Date(parseInt(matches[0]));
+                var month = dt.getMonth() + 1;
+                var monthString = month > 9 ? month : '0' + month;
+                var day = dt.getDate();
+                var dayString = day > 9 ? day : '0' + day;
+                var year = dt.getFullYear();
+                shortDate = monthString + '/' + dayString + '/' + year;
+            }
+            return shortDate;
+        }
+
+        function SelectedCourrier(courrierId) {
+            debugger;
+            $.ajax({
+                url: '/CourierDetails/GetUpdatedetails?courrierId=' + courrierId,
+                type: 'GET',
+                contentType: 'json',
+                success: function (data) {
+                    $.each(data.PartyList, function (data, value) {
+                        $("#ddlParty").append($("<option></option>").val(value.PartyId).html(value.PartyName));
+                    })
+                    $('#hdnCreatedBy').val(data.Courrier.CreatedBy);
+                    $('#hdnCreatedDate').val(ConvertJsonDateString(data.Courrier.CreatedDt));
+                    $('#hdnCourrierId').val(courrierId);
+                    $("#ddlParty").val(data.Courrier.PartyId);
+                    $("#txtAmount").val(data.Courrier.Amount);
+                    $("#txtRate").val(data.Courrier.Rate);
+                    $("#txtWeight").val(data.Courrier.Weight);
+                    $("#txtCNNumber").val(data.Courrier.CNNo);
+                    $("#txtDistance").val(data.Courrier.Distance);
+                    $('#txtBookingDate').val(ConvertJsonDateString(data.Courrier.DepartureDt));
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            })
+        }
+
+        $("#txtWeight").change(function () {
+            debugger;
+            var arr = $("#txtWeight").val().split('.');
+            var txtWeigth = 0;
+            if (arr.length > 1) {
+                var element1 = arr[0];
+                var element2 = arr[1];
+                if (parseInt(element2) > 0) {
+                    element1 = parseInt(element1) + 1;
+                    txtWeigth = element1;
+                } else {
+                    txtWeigth = arr[0];
+                }
+            } else {
+                txtWeigth = arr[0];
+            }
+            var txtRate = $("#txtRate").val();
+            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+            $("#txtAmount").val(parseFloat(amount));
+        });
+
+        $("#txtRate").change(function () {
+            var arr = $("#txtWeight").val().split('.');
+            var txtWeigth = 0;
+            if (arr.length > 1) {
+                var element1 = arr[0];
+                var element2 = arr[1];
+                if (parseInt(element2) > 0) {
+                    element1 = parseInt(element1) + 1;
+                    txtWeigth = element1;
+                }
+                else {
+                    txtWeigth = arr[0];
+                }
+            } else {
+                txtWeigth = arr[0];
+            }
+
+            var txtRate = $("#txtRate").val();
+            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+            $("#txtAmount").val(amount);
+        });
+    </script>
+
+}
+
+

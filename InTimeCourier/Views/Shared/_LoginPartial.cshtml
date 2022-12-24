@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Session["UserId"] != null && Session["Name"] != null)
+{
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @Html.ActionLink("Hello " + @Session["Name"].ToString() + "!", "Index", "Home", routeValues: null, htmlAttributes: new { title = "Home" })
+            </li>
+            @*<li>@Html.ActionLink("Register", "Admin", "AddUser", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+            <li>@Html.ActionLink("Logout","LogOut","Admin")</li>
+        </ul>
+    }
+}
+
