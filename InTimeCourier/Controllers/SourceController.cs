@@ -203,6 +203,7 @@ namespace InTimeCourier.Controllers
                 cmd.Parameters.AddWithValue("@NetworkModeId", networkModeId);
                 SqlDataAdapter sda = new SqlDataAdapter(cmd);
                 sda.Fill(ds);
+                //Test
                 //List< RateMappingData> RateMappingDatalst=new List<RateMappingData>();
                 //foreach (DataTable table in ds.Tables)
                 //{
