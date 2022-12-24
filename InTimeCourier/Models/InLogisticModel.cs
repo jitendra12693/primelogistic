@@ -26,7 +26,7 @@ namespace InTimeCourier.Models
         public virtual DbSet<StatusMaster> StatusMasters { get; set; }
         public virtual DbSet<RateMapping> RateMapping { get; set; }
         public virtual DbSet<ApiMailClient> ApiMailClients { get; set; }
-
+        public virtual DbSet<NetworkMaster> NetworkMaster { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AdminUser>()
