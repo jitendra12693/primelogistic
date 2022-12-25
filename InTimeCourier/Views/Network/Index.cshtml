@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<InTimeCourier.Models.NetworkMaster>
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,3 +9,46 @@
     @Html.ActionLink("Add New Network", "AddNetwork")
 </p>
 
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Network Name")
+        </th>
+        <th>@Html.DisplayNameFor(model => model.Description)</th>
+        <th>
+            @Html.DisplayName("Address")
+        </th>
+        <th>Action</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        if (item.IsActive == true)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NetworkName)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>
+                    @Html.ActionLink("Edit", "AddNetwork", new { id = item.NetworkId }) |
+                    @Html.ActionLink("DeActive", "AcivateDeativate", new { id = item.NetworkId })
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="alert alert-danger">
+                <td>
+                    @Html.DisplayFor(modelItem => item.NetworkName)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>
+                    @Html.ActionLink("Edit", "AddNetwork", new { id = item.NetworkId }) |
+                    @Html.ActionLink("Active", "AcivateDeativate", new { id = item.NetworkId })
+                </td>
+            </tr>
+        }
+    }
+</table>
