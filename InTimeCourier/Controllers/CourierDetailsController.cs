@@ -90,7 +90,7 @@ namespace InTimeCourier.Controllers
             try
             {
                
-                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId",
+                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId,@Discount",
                 new SqlParameter("@PartyId", courier.PartyId),
                 new SqlParameter("@CourrierModeId", courier.CourrierModeId),
                  new SqlParameter("@NetworModeId", courier.NetworkModeId),
@@ -100,8 +100,7 @@ namespace InTimeCourier.Controllers
                 new SqlParameter("@TrackingNo", string.Empty),
                 new SqlParameter("@CNNo", courier.CNNo),
                 new SqlParameter("@Weight", courier.Weight),
-                
-               
+                new SqlParameter("@Discount", courier.Discount),
                 new SqlParameter("@DepartureDt", courier.DepartureDt),
                 new SqlParameter("@Location", courier.Location),
                 new SqlParameter("@Rate", courier.Rate)).ToList();

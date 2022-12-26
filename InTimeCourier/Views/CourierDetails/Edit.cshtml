@@ -11,116 +11,116 @@
 {
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <h4>CourrierMaster</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.CourrierId)
-<div class="row">
-    <div class="col-md-6 form-group" style="display:none;">
-        @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-9">
-            @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
-            @*@Html.DropDownListFor(model => model.SourceId, (IEnumerable<SelectListItem>)ViewBag.Location, "Select Source", new { @id = "ddlSource", @onchange = "onChangeDestination()", @class = "form-control" })*@
-            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
-            @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        <label class="control-label col-md-5">Courrier Mode</label>
-        <div class="col-md-7">
-            @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        <label class="control-label col-md-5">Network Mode</label>
-        <div class="col-md-7">
-            @Html.DropDownListFor(m => m.NetworkModeId, new List<SelectListItem>
-               { new SelectListItem{Text="Trackon", Value="1"},
-                 new SelectListItem{Text="DTDC", Value="2"},
-                new SelectListItem{Text="DHL", Value="3"},
-                new SelectListItem{Text="Blue Dart", Value="4"},
-                new SelectListItem{Text="Delhivery", Value="5"}
-       }, "Select Network Mode", new { @class = "form-control" })
-            @*@Html.DropDownListFor(model => model.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })*@
-            @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
-            @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your rate(Per / Kg)" } })
-            @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your ODA Charges" } })
-            @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your Discount" } })
-            @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-5" })
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
-            @Html.HiddenFor(model => model.CreatedDt, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.HiddenFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="col-md-6 form-group">
-        <div class="col-md-offset-10 col-md-12">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
+    <div class="form-horizontal">
+        <h4>CourrierMaster</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CourrierId)
+        <div class="row">
+            <div class="col-md-6 form-group" style="display:none;">
+                @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
+                    @*@Html.DropDownListFor(model => model.SourceId, (IEnumerable<SelectListItem>)ViewBag.Location, "Select Source", new { @id = "ddlSource", @onchange = "onChangeDestination()", @class = "form-control" })*@
+                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
+                    @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="control-label col-md-5">Courrier Mode</label>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="control-label col-md-5">Network Mode</label>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.NetworkModeId, new List<SelectListItem>
+                       { new SelectListItem{Text="Trackon", Value="1"},
+                         new SelectListItem{Text="DTDC", Value="2"},
+                        new SelectListItem{Text="DHL", Value="3"},
+                        new SelectListItem{Text="Blue Dart", Value="4"},
+                        new SelectListItem{Text="Delhivery", Value="5"}
+               }, "Select Network Mode", new { @class = "form-control" , @onchange = "fetchRateDetails()" })
+                    @*@Html.DropDownListFor(model => model.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })*@
+                    @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
+                    @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control" ,@onkeyup = "calculateAmount()" } })
+                    @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your rate(Per / Kg)" } })
+                    @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your ODA Charges" } })
+                    @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Please enter your Discount" } })
+                    @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                    @Html.HiddenFor(model => model.CreatedDt, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <div class="col-md-offset-10 col-md-12">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
 
-</div>
-</div>
+        </div>
+    </div>
 }
 
 <div>
@@ -129,21 +129,87 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#TrackingNo").attr("readonly", "true");
-            var d = $('#DepartureDt').val().split(' ')[0];
-            $('#DepartureDt').val(d.split("-").reverse().join("/"));
-        })
-        $(function () {
-            $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
-        });
-        var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
-        // Setter
-        $("#DepartureDt").datepicker("option", "changeYear", true);
-        function CheckSource() {
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                $("#TrackingNo").attr("readonly", "true");
+                var d = $('#DepartureDt').val().split(' ')[0];
+                $('#DepartureDt').val(d.split("-").reverse().join("/"));
+            })
+            $(function () {
+                $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
+            });
+            var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
+            // Setter
+            $("#DepartureDt").datepicker("option", "changeYear", true);
+            function CheckSource() {
 
-        }
+            }
+            function StringToInt(number) {
+                if (number == null || number == undefined || number == NaN || number == '') {
+                    return 0;
+                } else {
+                    return parseFloat(number);
+                }
+            }
+            $("#Amount").attr("readonly", "readonly");
+            $("#Weight").change(function () {
+                debugger;
+                var arr = $("#Weight").val().split('.');
+                var txtWeigth = 0;
+                if (arr.length > 1) {
+                    var element1 = arr[0];
+                    var element2 = arr[1];
+                    if (parseInt(element2) > 0) {
+                        element1 = parseInt(element1) + 1;
+                        txtWeigth = element1;
+                    } else {
+                        txtWeigth = arr[0];
+                    }
+                } else {
+                    txtWeigth = arr[0];
+                }
+                var txtRate = $("#Rate").val();
+                var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+                $("#Amount").val(parseFloat(amount));
+            });
+
+            $("#Rate").change(function () {
+                var arr = $("#Weight").val().split('.');
+                var txtWeigth = 0;
+                if (arr.length > 1) {
+                    var element1 = arr[0];
+                    var element2 = arr[1];
+                    if (parseInt(element2) > 0) {
+                        element1 = parseInt(element1) + 1;
+                        txtWeigth = element1;
+                    }
+                    else {
+                        txtWeigth = arr[0];
+                    }
+                } else {
+                    txtWeigth = arr[0];
+                }
+
+                var txtRate = $("#Rate").val();
+                var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+                $("#Amount").val(amount);
+            });
+
+
+            $("#ddlDestination").change(function () {
+                if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+                    alert("Source and destination can not be same.");
+                    $("#ddlDestination").val('');
+                }
+            });
+            $("#ddlSource").change(function () {
+                if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+                    alert("Source and destination can not be same.");
+                    $("#ddlSource").val('');
+                }
+            });
+        </script>*@
+    <script type="text/javascript">
         function StringToInt(number) {
             if (number == null || number == undefined || number == NaN || number == '') {
                 return 0;
@@ -151,62 +217,157 @@
                 return parseFloat(number);
             }
         }
+        $(document).ready(function () {
+            $("#TrackingNo").attr("readonly", "readonly");
+            var d = $('#DepartureDt').val().split(' ')[0];
+            $('#DepartureDt').val(d.split("-").reverse().join("/"));
+            fetchRateDetails();
+        })
+        $(function () {
+            $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
+        });
+        var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
+        // Setter
+        $("#txtDate").datepicker({
+            showOn: 'button',
+            buttonImageOnly: true,
+            buttonImage: 'images/calendar.gif',
+            dateFormat: 'dd/mm/yy'
+        });
+        $("#DepartureDt").datepicker("option", "changeYear", true);
         $("#Amount").attr("readonly", "readonly");
-        $("#Weight").change(function () {
-            debugger;
-            var arr = $("#Weight").val().split('.');
-            var txtWeigth = 0;
-            if (arr.length > 1) {
-                var element1 = arr[0];
-                var element2 = arr[1];
-                if (parseInt(element2) > 0) {
-                    element1 = parseInt(element1) + 1;
-                    txtWeigth = element1;
-                } else {
-                    txtWeigth = arr[0];
+        $("#DepartureDt").attr("readonly", "readonly");
+        //$("#Weight").change(function () {
+        //    debugger;
+        //    var arr = $("#Weight").val().split('.');
+        //    var txtWeigth = 0;
+        //    if (arr.length > 1) {
+        //        var element1 = arr[0];
+        //        var element2 = arr[1];
+        //        if (parseInt(element2) > 0) {
+        //            element1 = parseInt(element1) + 1;
+        //            txtWeigth = element1;
+        //        } else {
+        //            txtWeigth = arr[0];
+        //        }
+        //    } else {
+        //        txtWeigth = arr[0];
+        //    }
+        //    var txtRate = $("#Rate").val();
+        //    var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+        //    $("#Amount").val(parseFloat(amount));
+        //});
+        //$("#Rate").change(function () {
+        //    var arr = $("#Weight").val().split('.');
+        //    var txtWeigth = 0;
+        //    if (arr.length > 1) {
+        //        var element1 = arr[0];
+        //        var element2 = arr[1];
+        //        if (parseInt(element2) > 0) {
+        //            element1 = parseInt(element1) + 1;
+        //            txtWeigth = element1;
+        //        }
+        //        else {
+        //            txtWeigth = arr[0];
+        //        }
+        //    } else {
+        //        txtWeigth = arr[0];
+        //    }
+
+        //    var txtRate = $("#Rate").val();
+        //    var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+        //    $("#Amount").val(amount);
+        //});
+
+        //$("#ddlDestination").change(function () {
+        //    if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+        //        alert("Source and destination can not be same.");
+        //        $("#ddlDestination").val('');
+        //    }
+        //});
+        //$("#ddlSource").onchange(function () {
+        //    if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+        //        alert("Source and destination can not be same.");
+        //        $("#ddlSource").val('');
+        //        console.log("ddlSource=>", $("#ddlSource").val());
+        //        $("#txtDistance").val($("#ddlSource").val())
+        //    }
+        //});
+
+        //function onChangeDestination() {
+        //    fetchRateDetails()
+        //    console.log("ddlSource=>", $("#ddlSource option:selected").text());
+        //    $("#txtDistance").val($("#ddlSource option:selected").text())
+        //}
+
+        //var ratedetails = {
+        //    FromWt: [],
+        //    ToWt: [],
+        //    rate:[]
+        //};
+        var resp = [];
+        //resp.filter(n => n.FromWt <= 0.2 && n.ToWt >= 0.2)
+        function fetchRateDetails() {
+            $.ajax({
+                url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyId').val(),
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify(courrierDetail),
+                success: function (data) {
+                    var strResponse = JSON.parse(data);
+                    resp = [];
+                    if (strResponse.Table.length > 0) {
+                        for (var i = 0; i < strResponse.Table.length; i++) {
+                            resp.push(strResponse.Table[i]);
+                        }
+                        //// alert(JSON.parse(data))
+                        // //$.each(strResponse.Table, function (i, item) {
+                        // //    ratedetails.FromWt.push(item.FromWt);
+                        // //    ratedetails.ToWt.push(item.ToWt);
+                        // //    ratedetails.rate.push(item.Rate);
+                        // //});
+                        // $("#Rate").val(data.rate);
+                        
+                    }
+                    else {
+                        resp = [];
+                        alert("rate not available");
+                    }
+                  // calculateAmount();
+
                 }
-            } else {
-                txtWeigth = arr[0];
-            }
-            var txtRate = $("#Rate").val();
-            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
-            $("#Amount").val(parseFloat(amount));
-        });
+            })
+        }
 
-        $("#Rate").change(function () {
-            var arr = $("#Weight").val().split('.');
-            var txtWeigth = 0;
-            if (arr.length > 1) {
-                var element1 = arr[0];
-                var element2 = arr[1];
-                if (parseInt(element2) > 0) {
-                    element1 = parseInt(element1) + 1;
-                    txtWeigth = element1;
-                }
-                else {
-                    txtWeigth = arr[0];
-                }
-            } else {
-                txtWeigth = arr[0];
+        function calculateAmount() {
+           
+            var weight = $("#Weight").val();
+            var rateresp = resp.filter(n => n.FromWt <= parseFloat(weight) && n.ToWt >= parseFloat(weight));
+            if (rateresp.length > 0) {
+                $("#Rate").val(rateresp[0].Rate);
+                //var amountcalc = rateresp[0].Rate * parseFloat(weight)
+                $("#Amount").val(rateresp[0].Rate);
             }
 
-            var txtRate = $("#Rate").val();
-            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
-            $("#Amount").val(amount);
-        });
 
-
-        $("#ddlDestination").change(function () {
-            if ($("#ddlSource").val() == $("#ddlDestination").val()) {
-                alert("Source and destination can not be same.");
-                $("#ddlDestination").val('');
-            }
-        });
-        $("#ddlSource").change(function () {
-            if ($("#ddlSource").val() == $("#ddlDestination").val()) {
-                alert("Source and destination can not be same.");
-                $("#ddlSource").val('');
-            }
-        });
+            //var arr = $("#Weight").val().split('.');
+            //var txtWeigth = 0;
+            //if (arr.length > 1) {
+            //    var element1 = arr[0];
+            //    var element2 = arr[1];
+            //    if (parseInt(element2) > 0) {
+            //        element1 = parseInt(element1) + 1;
+            //        txtWeigth = element1;
+            //    } else {
+            //        txtWeigth = arr[0];
+            //    }
+            //} else {
+            //    txtWeigth = arr[0];
+            //}
+            //var txtRate = $("#Rate").val();
+            //var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+            //$("#Amount").val(parseFloat(amount));
+            //alert('PRESS');
+        }
     </script>
 }

@@ -194,8 +194,8 @@ namespace InTimeCourier.Controllers
                 string rate = string.Empty;
                 DataSet ds = new DataSet();
                 SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
-                if (connString.State == ConnectionState.Closed)
-                    connString.Open();
+                //if (connString.State == ConnectionState.Closed)
+                //    connString.Open();
                 SqlCommand cmd = new SqlCommand("uspGetRateDetails", connString);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@PartyId", partyId);
