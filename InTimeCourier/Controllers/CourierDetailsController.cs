@@ -90,11 +90,12 @@ namespace InTimeCourier.Controllers
             try
             {
                
-                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId,@Discount",
+                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
                 new SqlParameter("@PartyId", courier.PartyId),
                 new SqlParameter("@CourrierModeId", courier.CourrierModeId),
                  new SqlParameter("@NetworModeId", courier.NetworkModeId),
                 new SqlParameter("@ODACharges", courier.ODACharges),
+                new SqlParameter("@Qty", courier.Qty),
                 new SqlParameter("@Amount", courier.Amount),
                 new SqlParameter("@CreatedBy", CourierHelper.UserId),
                 new SqlParameter("@TrackingNo", string.Empty),

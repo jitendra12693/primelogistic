@@ -12,6 +12,7 @@ namespace InTimeCourier.Models
         [Key]
         public long CourrierId { get; set; }
 
+        [Required]
         public long PartyId { get; set; }
 
         public long? SourceId { get; set; }
@@ -21,21 +22,26 @@ namespace InTimeCourier.Models
 
         public long? DestinationId { get; set; }
 
+        [Required]
         public decimal? Amount { get; set; }
 
+        [Required]
         public int? CourrierModeId { get; set; }
 
         [Required]
         [StringLength(15)]
         public string CNNo { get; set; }
 
+        [Required]
         public DateTime DepartureDt { get; set; }
 
+        [Required]
         public decimal Weight { get; set; }
 
         [StringLength(15)]
         public string TrackingNo { get; set; }
 
+        [Required]
         public decimal? Rate { get; set; }
 
         public int? StatusId { get; set; }
@@ -50,9 +56,13 @@ namespace InTimeCourier.Models
 
         public bool? IsActive { get; set; }
 
+        [Required]
         public string Location { get; set; }
         public decimal? ODACharges { get; set; }
+
+        [Required]
         public int NetworkModeId { get; set; }
         public decimal? Discount { get; set; }
+        public int Qty { get; set; }
     }
 }

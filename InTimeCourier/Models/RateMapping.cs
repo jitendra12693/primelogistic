@@ -12,14 +12,21 @@ namespace InTimeCourier.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public int? PartyId { get; set; }
 
+        [Required]
         public int? ModeId { get; set; }
 
+        [Required]
+        [RegularExpression(@"\d+(\.\d{1,3})?", ErrorMessage = "Please enter only 3 decimal point")]
         public decimal? FromWt { get; set; }
 
+        [Required]
+        [RegularExpression(@"\d+(\.\d{1,3})?", ErrorMessage = "Please enter only 3 decimal point")]
         public decimal? ToWt { get; set; }
 
+        [Required]
         public decimal? Rate { get; set; }
 
         public DateTime? Date { get; set; }
@@ -33,6 +40,7 @@ namespace InTimeCourier.Models
         public int? UpdatedBy { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+        [Required]
         public int NetworkModeId { get; set; }
     }
 }

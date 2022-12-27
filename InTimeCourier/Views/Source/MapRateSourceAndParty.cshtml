@@ -48,7 +48,7 @@
                     new SelectListItem{Text="Delhivery", Value="5"}
            }, "Select Network Mode", new { @class = "form-control" })
                 @*@Html.DropDownListFor(model => model.ModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @class = "form-control" })*@
-                @Html.ValidationMessageFor(model => model.ModeId, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
             </div>
             <label class="control-label col-md-2">From Weight</label>
             <div class="col-md-4 form-group">

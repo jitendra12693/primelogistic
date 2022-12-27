@@ -33,14 +33,14 @@
         <div class="col-md-6 form-group">
             @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
-                @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter AWB No." } })
                 @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="col-md-6 form-group">
             @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
-                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })
                 @*@Html.DropDownListFor(model => model.SourceId, (IEnumerable<SelectListItem>)ViewBag.Location, "Select Source", new { @id = "ddlSource", @onchange = "onChangeDestination()", @class = "form-control" })*@
                 @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
             </div>
@@ -89,8 +89,8 @@
             </div>
             <label class="control-label col-md-2">Qty</label>
             <div class="col-md-3">
-                @Html.Editor("Qty", new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty" } })
-                @*@Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })*@
+                @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty" } })
+                @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="col-md-6 form-group">
@@ -312,7 +312,8 @@
                             // $("#Rate").val(data.rate);
                             if (strResponse.Table[0].PartyType = 'Logistic') {
                                 $("#Qty").attr("readonly", false);
-                            }
+                                $("#Qty").val("1");
+}
                             else {
                                 $("#Qty").attr("readonly", true);
                             }
