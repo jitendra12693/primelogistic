@@ -1,4 +1,5 @@
-﻿namespace InTimeCourier.Models
+﻿using System;
+namespace InTimeCourier.Models
 {
     public class DailyCourierManifesto
     {

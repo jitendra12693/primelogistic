@@ -35,7 +35,13 @@
                         CNNo
                     </th>
                     <th>
-                        Destination Name
+                        Network
+                    </th>
+                    <th>
+                        Mode
+                    </th>
+                    <th>
+                        Location
                     </th>
                     <th>
                         Weight
@@ -53,13 +59,19 @@
                         <tr>
                             @*<td>@count</td>*@
                             <td>
-                                @Html.DisplayFor(modelItem => item.DepartureDt)
+                                @Html.DisplayFor(modelItem => item.BookingDate)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.CNNo)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.Destination)
+                                @Html.DisplayFor(modelItem => item.NetworkName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CourierMode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Weight)
@@ -96,7 +108,13 @@
                             CNNo
                         </th>
                         <th>
-                            Destination Name
+                            Network
+                        </th>
+                        <th>
+                            Mode
+                        </th>
+                        <th>
+                            Location
                         </th>
                         <th>
                             Weight
@@ -112,13 +130,19 @@
                         {
                             <tr>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.DepartureDt)
+                                    @Html.DisplayFor(modelItem => item.BookingDate)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.CNNo)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.Destination)
+                                    @Html.DisplayFor(modelItem => item.NetworkName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CourierMode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Location)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Weight)

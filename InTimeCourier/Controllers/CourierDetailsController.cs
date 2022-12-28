@@ -10,7 +10,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Globalization;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
 
 namespace InTimeCourier.Controllers
@@ -171,8 +170,8 @@ namespace InTimeCourier.Controllers
         {
             var list = (from CM in db.CourrierMasters
                         join P in db.PartyMasters on CM.PartyId equals P.PartyId
-                        join S in db.SourceMasters on CM.SourceId equals S.SourceId
-                        join D in db.SourceMasters on CM.DestinationId equals D.SourceId
+                        join N in db.NetworkMaster on CM.NetworkModeId equals N.NetworkId
+                        join C in db.CourrierModes on CM.CourrierModeId equals C.CourrierModeId
                         select new CorrierDetails
                         {
                             Amount = CM.Amount,
@@ -183,17 +182,17 @@ namespace InTimeCourier.Controllers
                             CourrierId = CM.CourrierId,
                             CreatedBy = CM.CreatedBy,
                             CreatedDt = CM.CreatedDt,
-                            DepartureDt = "" + CM.DepartureDt,
-                            Destination = D.SourceName,
-                            SourceName = S.SourceName,
-                            DestinationId = CM.DestinationId,
+                            BookingDate = "" + CM.DepartureDt,
+                            Location = CM.Location,
                             IsActive = CM.IsActive,
                             ModifyBy = CM.ModifyBy,
                             ModifyDate = CM.ModifyDate,
                             PartyId = CM.PartyId,
                             PartyName = P.PartyName,
-                            SourceId = CM.SourceId
-
+                            NetworkName = N.NetworkName,
+                            CourierMode =C.CourrierModeName,
+                            ODACharges = CM.ODACharges,
+                            DiscountAmount = CM.Discount
                         }).ToList();
             return View(list[0]);
         }
@@ -282,16 +281,20 @@ namespace InTimeCourier.Controllers
                     courier.CourrierId = int.Parse("0" + dr["CourrierId"]);
                     courier.CreatedBy = int.Parse("0" + dr["CreatedBy"]);
                     courier.CreatedDt = DateTime.Parse("" + dr["CreatedDt"]);
-                    courier.DepartureDt = Convert.ToString(dr["DepartureDt"]);
-                    courier.Destination = Convert.ToString(dr["Destination"]);
-                    courier.SourceName = Convert.ToString(dr["SourceName"]);
-                    courier.DestinationId = int.Parse("0" + dr["DestinationId"]);
+                    courier.BookingDate = Convert.ToString(dr["BookingDate"]);
+                    courier.Location = Convert.ToString(dr["Location"]);
+                    courier.NetworkName = Convert.ToString(dr["NetworkName"]);
                     courier.IsActive = bool.Parse("" + dr["IsActive"]);
                     courier.ModifyBy = int.Parse("0" + dr["ModifyBy"]);
                     courier.Rate = decimal.Parse("0" + dr["Rate"]);
                     courier.PartyId = int.Parse("0" + dr["PartyId"]);
+                    courier.CourrierModeId = int.Parse("0" + dr["CourrierModeId"]);
+                    courier.NetworkModeId = int.Parse("0" + dr["NetworkModeId"]);
                     courier.PartyName = Convert.ToString(dr["PartyName"]);
-                    courier.SourceId = int.Parse("0" + dr["SourceId"]);
+                    courier.CourierMode = Convert.ToString(dr["CourierMode"]);
+                    courier.CalculatedAmount = decimal.Parse("0" + dr["CalculatedAmount"]);
+                    courier.ODACharges = decimal.Parse("0" + dr["ODACharges"]);
+                    courier.DiscountAmount = decimal.Parse("0" + dr["DiscountAmount"]);
                     list.Add(courier);
                 }
                 if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
@@ -367,42 +370,6 @@ namespace InTimeCourier.Controllers
         //    List<CorrierDetails> list = GetCourierList(ref count, partyId, trackingNo, fromDate.Replace("/", ""), toDate.Replace("/", ""));
         //    return Json(list, JsonRequestBehavior.AllowGet);
         //}
-
-        public Action ResultExportToExcel()
-        {
-            var response = db.Database.SqlQuery<DailyCourierManifesto>("exec uspNetworkInsertUpdate").ToList();
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
-            Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
-            var dataTable = ConvertToDataTable(response);
-            DataSet dataSet = new DataSet();
-            dataSet.Tables.Add(dataTable);
-            foreach (DataTable table in dataSet.Tables)
-            {
-                //Add a new worksheet to workbook with the Datatable name  
-                Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
-                excelWorkSheet.Name = table.TableName;
-
-                // add all the columns  
-                for (int i = 1; i < table.Columns.Count + 1; i++)
-                {
-                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
-                }
-
-                // add all the rows  
-                for (int j = 0; j < table.Rows.Count; j++)
-                {
-                    for (int k = 0; k < table.Columns.Count; k++)
-                    {
-                        excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
-                    }
-                }
-            }
-            excelWorkBook.SaveAs(); // -> this will do the custom  
-            excelWorkBook.Close();
-            excelApp.Quit();
-        }
 
         static DataTable ConvertToDataTable<T>(List<T> models)
         {
