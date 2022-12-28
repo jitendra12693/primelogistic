@@ -10,6 +10,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Globalization;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Reflection;
 
 namespace InTimeCourier.Controllers
 {
@@ -41,9 +43,9 @@ namespace InTimeCourier.Controllers
             CorrierDetails objCorrierDetails = new CorrierDetails();
             objCorrierDetails.CorrierDetails1 = new List<Models.CorrierDetails>();
             objCorrierDetails.CorrierDetails2 = new List<Models.CorrierDetails>();
-            for (int i=1;i<=list.Count;i++)
+            for (int i = 1; i <= list.Count; i++)
             {
-                if(i%2==0)
+                if (i % 2 == 0)
                 {
                     objCorrierDetails.CorrierDetails2.Add(list[i - 1]);
                 }
@@ -52,7 +54,7 @@ namespace InTimeCourier.Controllers
                     objCorrierDetails.CorrierDetails1.Add(list[i - 1]);
                 }
             }
-            
+
             var html = RenderPartialViewToString("SearchList", objCorrierDetails);
             string totalInWord = ConvertInWord.ConvertToWords(dtTotal.GrandTotal.ToString());
             var v = new { html = html, TotalRecord = dtTotal, PartyDetails = dtPartyDetails, InWord = totalInWord };
@@ -80,7 +82,7 @@ namespace InTimeCourier.Controllers
                 Response.Write(ex);
                 return null;
             }
-        } 
+        }
         [HttpPost]
         public ActionResult AddCourrier(CourrierMaster courier)
         {
@@ -89,7 +91,7 @@ namespace InTimeCourier.Controllers
             ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             try
             {
-               
+
                 var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
                 new SqlParameter("@PartyId", courier.PartyId),
                 new SqlParameter("@CourrierModeId", courier.CourrierModeId),
@@ -115,7 +117,7 @@ namespace InTimeCourier.Controllers
             }
             catch (Exception ex)
             {
-                 throw;
+                throw;
             }
             return View();
         }
@@ -163,7 +165,7 @@ namespace InTimeCourier.Controllers
                 db.Entry(courrier).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
-            return Json("Success",JsonRequestBehavior.AllowGet);
+            return Json("Success", JsonRequestBehavior.AllowGet);
         }
         public ActionResult CourrierDetails(long? id)
         {
@@ -365,6 +367,73 @@ namespace InTimeCourier.Controllers
         //    List<CorrierDetails> list = GetCourierList(ref count, partyId, trackingNo, fromDate.Replace("/", ""), toDate.Replace("/", ""));
         //    return Json(list, JsonRequestBehavior.AllowGet);
         //}
+
+        public Action ResultExportToExcel()
+        {
+            var response = db.Database.SqlQuery<DailyCourierManifesto>("exec uspNetworkInsertUpdate").ToList();
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook excelWorkBook = excelApp.Workbooks.Add();
+            Excel._Worksheet xlWorksheet = excelWorkBook.Sheets[1];
+            Excel.Range xlRange = xlWorksheet.UsedRange;
+            var dataTable = ConvertToDataTable(response);
+            DataSet dataSet = new DataSet();
+            dataSet.Tables.Add(dataTable);
+            foreach (DataTable table in dataSet.Tables)
+            {
+                //Add a new worksheet to workbook with the Datatable name  
+                Excel.Worksheet excelWorkSheet = excelWorkBook.Sheets.Add();
+                excelWorkSheet.Name = table.TableName;
+
+                // add all the columns  
+                for (int i = 1; i < table.Columns.Count + 1; i++)
+                {
+                    excelWorkSheet.Cells[1, i] = table.Columns[i - 1].ColumnName;
+                }
+
+                // add all the rows  
+                for (int j = 0; j < table.Rows.Count; j++)
+                {
+                    for (int k = 0; k < table.Columns.Count; k++)
+                    {
+                        excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
+                    }
+                }
+            }
+            excelWorkBook.SaveAs(); // -> this will do the custom  
+            excelWorkBook.Close();
+            excelApp.Quit();
+        }
+
+        static DataTable ConvertToDataTable<T>(List<T> models)
+        {
+            // creating a data table instance and typed it as our incoming model   
+            // as I make it generic, if you want, you can make it the model typed you want.  
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            //Get all the properties of that model  
+            PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            // Loop through all the properties              
+            // Adding Column name to our datatable  
+            foreach (PropertyInfo prop in Props)
+            {
+                //Setting column names as Property names    
+                dataTable.Columns.Add(prop.Name);
+            }
+            // Adding Row and its value to our dataTable  
+            foreach (T item in models)
+            {
+                var values = new object[Props.Length];
+                for (int i = 0; i < Props.Length; i++)
+                {
+                    //inserting property values to datatable rows    
+                    values[i] = Props[i].GetValue(item, null);
+                }
+                // Finally add value to datatable    
+                dataTable.Rows.Add(values);
+            }
+            return dataTable;
+        }
 
     }
 
