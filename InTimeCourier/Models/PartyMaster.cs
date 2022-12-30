@@ -72,5 +72,7 @@ namespace InTimeCourier.Models
         public int? ModifyBy { get; set; }
 
         public DateTime? ModifyDate { get; set; }
+
+        public int? PartyNature { get; set; }
     }
 }

@@ -103,14 +103,14 @@
         <div class="col-md-6 form-group">
             @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
-                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Enter ODA Charges" } })
+                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Enter ODA Charges" } })
                 @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
-                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @placeholder = "Enter Discount Amt." } })
+                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Enter Discount Amt." } })
                 @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -333,6 +333,8 @@
         function calculateAmount() {
             if (resp.length > 0) {
                 var weight = $("#Weight").val();
+                var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+                var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
                 var qty = $("#Qty").val();
                 var rateresp = resp.filter(n => n.FromWt <= parseFloat(weight) && n.ToWt >= parseFloat(weight));
                 if (rateresp.length > 0) {
@@ -341,15 +343,15 @@
                     if (resp[0].PartyType == 'Logistic') {
                         if ($("#Qty").val() != "") {
                             var amt = rateresp[0].Rate * parseInt(qty)
-                            $("#Amount").val(amt);
+                            $("#Amount").val(amt+ODACharges-discount);
                         }
                         else {
-                            $("#Amount").val(rateresp[0].Rate);
+                            $("#Amount").val(rateresp[0].Rate+ODACharges-discount);
                         }
 
                     }
                     else {
-                        $("#Amount").val(rateresp[0].Rate);
+                        $("#Amount").val(rateresp[0].Rate+ODACharges-discount);
                     }
 
                 }
