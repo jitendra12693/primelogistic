@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "CourrierList";
+    var loggedInUser = (InTimeCourier.Models.AdminUser)Session["LoggedInUser"];
 }
 <style>
     .ajaxLoader {
@@ -40,10 +41,10 @@
                 <tr>
                     <td colspan="2">
                         <center>
-                            <h1>In Time  Logistics</h1>
-                            <h4>Kaman Road, Chinchoti Road, Vasai(East), Palghar-401208.</h4>
-                            <h4>Tel :+919320030626/+919028826303 </h4>
-                            <h4>Email Id: intimelogistic119@gmail.com</h4>
+                            <h1>@loggedInUser.Name</h1>
+                            <h4>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</h4>
+                            <h4>Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null) {<span>/ +91 @loggedInUser.AlternateContact</span>} </h4>
+                            <h4>Email Id: @loggedInUser.EmailId</h4>
                         </center>
                     </td>
                 </tr>
@@ -64,7 +65,7 @@
                     <td>
                         Charges for courier service rendered during the period <br />from
                         <label id="lblFromDate"></label> To <label id="lblToDate"></label>
-                        <p style="bottom: 0;left: 0;"><b>GSTIN/UIN :-</b> 27CCXPM4197H1ZQ</p>
+                        <p style="bottom: 0;left: 0;"><b>GSTIN/UIN :-</b> @loggedInUser.GSTNumber</p>
                     </td>
                     <td style="text-align:right">
                         <label id="lblBillAmount"></label>
@@ -113,27 +114,27 @@
                             </tr>
                             <tr>
                                 <th>Company Name</th>
-                                <td>:- IN TIME LOGISTICS</td>
+                                <td>:- @loggedInUser.Name</td>
                             </tr>
                             <tr>
                                 <th>Bank Name</th>
-                                <td>:- Bharat Bank</td>
+                                <td>:- @loggedInUser.BankName</td>
                             </tr>
                             <tr>
                                 <th>Account No</th>
-                                <td>:- 006212100002228</td>
+                                <td>:- @loggedInUser.AccountNumber</td>
                             </tr>
                             <tr>
                                 <th>IFSC Code</th>
-                                <td>:- BCBM0000063</td>
+                                <td>:- @loggedInUser.IFSCCode</td>
                             </tr>
                             <tr>
                                 <th>Branch</th>
-                                <td>:- Nallasopara(W)</td>
+                                <td>:- @loggedInUser.BranchName</td>
                             </tr>
                             <tr>
                                 <th>PAN</th>
-                                <td>:- CCXPM4197H</td>
+                                <td>:- @loggedInUser.PANNumber</td>
                             </tr>
                         </table>
                         @*<u><b>Bank Details</b></u><br />
@@ -146,7 +147,7 @@
                     </td>
                     <td>
                         <br /><br /><br /><br />
-                        <h4>For In Time Logistics</h4>
+                        <h4>For @loggedInUser.Name</h4>
                     </td>
                 </tr>
             </table><br />
@@ -218,6 +219,7 @@
     <script src="~/Scripts/SearchCourier.js"></script>
     <script src="~/Scripts/autocolumn.js"></script>
     <script type="text/javascript">
+        
         $('#PrintReport').columnize({ columns: 2 })
 
         $(function () {

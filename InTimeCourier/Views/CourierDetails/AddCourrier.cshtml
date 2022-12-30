@@ -62,14 +62,7 @@
         <div class="col-md-6 form-group">
             <label class="control-label col-md-4">Network Mode</label>
             <div class="col-md-8">
-                @Html.DropDownListFor(m => m.NetworkModeId, new List<SelectListItem>
-                   { new SelectListItem{Text="Trackon", Value="1"},
-                     new SelectListItem{Text="DTDC", Value="2"},
-                    new SelectListItem{Text="DHL", Value="3"},
-                    new SelectListItem{Text="Blue Dart", Value="4"},
-                    new SelectListItem{Text="Delhivery", Value="5"}
-           }, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
-                @*@Html.DropDownListFor(model => model.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })*@
+                @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
                 @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
             </div>
         </div>

@@ -58,7 +58,7 @@ namespace InTimeCourier.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<AdminUser>()
-                .Property(e => e.ReTypePassword)
+                .Property(e => e.AlternateContact)
                 .IsUnicode(false);
 
             modelBuilder.Entity<AreaMaster>()

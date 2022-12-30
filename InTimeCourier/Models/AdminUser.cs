@@ -39,11 +39,26 @@ namespace InTimeCourier.Models
         public string Password { get; set; }
 
         [StringLength(30)]
-        public string ReTypePassword { get; set; }
+        public string AlternateContact { get; set; }
 
         public bool? IsActive { get; set; }
 
         public int? RoleId { get; set; }
+
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City  { get; set; }
+        public string State { get; set; }
+        public string Pincode { get; set; }
+        public string OwnerName { get; set; }
+        public string BankName { get; set; }
+        public string BranchName { get; set; }
+        public string IFSCCode { get; set; }
+        public string AccountNumber { get; set; }
+        public string PANNumber { get; set; }
+        public string AadharNo { get; set; }
+
+        public string GSTNumber { get; set; }
 
         public int? CreatedBy { get; set; }
 

@@ -72,6 +72,7 @@ namespace InTimeCourier.Controllers
                 ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 var data = db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId);
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
                 ViewBag.Courrier = list.Take(12).ToList();
                 return View();
@@ -88,6 +89,7 @@ namespace InTimeCourier.Controllers
             ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
             ViewBag.Location = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
             ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+            ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
             try
             {
 
@@ -128,6 +130,7 @@ namespace InTimeCourier.Controllers
                 //ViewBag.Location = new SelectList(db.SourceMasters.OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item=>new { NetworkModeId = item.NetworkId,NetworkName=item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
@@ -381,7 +384,13 @@ namespace InTimeCourier.Controllers
             byte[] bindData=System.Text.Encoding.ASCII.GetBytes(sw.ToString());
             return File(bindData, "application/ms-excel","DailyManifesto"+DateTime.Now+".xls");
         }
-        
+        [HttpGet]
+        public JsonResult GetLoggedInUser()
+        {
+            long userId = (long)Session["UserId"];
+            var loggedInUser = db.AdminUsers.Where(admin => admin.UserId == userId).FirstOrDefault();
+            return Json(new { loggedInUser = loggedInUser }, JsonRequestBehavior.AllowGet);
+        }
     }
 
     public class UpdateCourrier

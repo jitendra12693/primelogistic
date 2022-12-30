@@ -33,6 +33,7 @@ namespace InTimeCourier.Controllers
                 Session["Name"] = log[0].Name;
                 Session["Email"] = log[0].EmailId;
                 Session["UserId"] = log[0].UserId;
+                Session["LoggedInUser"] = log.FirstOrDefault();
                 CourierHelper.UserId = int.Parse("0"+log[0].UserId);
                 CourierHelper.Name = log[0].Name;
                 CourierHelper.EmailId= log[0].EmailId;

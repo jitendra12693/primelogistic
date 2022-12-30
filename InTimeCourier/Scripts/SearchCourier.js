@@ -97,66 +97,78 @@ $("#btnClear").click(function () {
     + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
 });
 
+
 $("#btnExportPdf").click(function () {
-    var header = '<center>'
-        + '<h3>In Time Logistics</h3>'
-        + '<h5>Kaman Road, Chinchoti Road, Vasai(East), Palghar-401208.</h5>'
-        + '<h5>Tel :+919320030626/+919028826303 </h4><h4>Email Address: intimelogistic119@gmail.com</h5 ><hr />'
-       // + '<h3>Monthly Statement</h3>'
-        + '<table style="width:100%;">'
-            + '<tr>'
-                + '<td>M/s</td>'
-                + '<td>' + $("#hdnPartyName").val() + '</td>'
-                + '<td>G.S.T. No.</td>'
-                + '<td>' + $('#hdnPartyGSTNo').val() + '</td>'
-            + '</tr>'
-            + '<tr>'
-                + '<td>Address</td>'
-    + '<td colspan="3">' + $('#hdnAddress').val() + '</td>'
-+ '</tr>'
-+ '<tr>'
-    + '<td>From</td>'
-    + '<td>' + $('#txtFromDate').val() + '</td>'
-    + '<td>To</td>'
-    + '<td>' + $('#txtToDate').val() + '</td>'
-+ '</tr>'
-+ ' </table>'
-+ '</center>';
-    var footer = `<table style='width:100%;'>
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: '/CourierDetails/GetLoggedInUser',
+        success: function (data) {
+            var header = `<center>
+                <h3>${data?.loggedInUser?.Name}</h3>
+                <h5>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h5>
+                <h5>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91'+data?.loggedInUser?.AlternateContact:''} </h4><h4>Email Address: ${ data?.loggedInUser?.EmailId}</h5 ><hr />
+                <table style="width:100%;">
+                <tr>
+                <td>M/s</td>
+                <td> ${ $("#hdnPartyName").val() }</td>
+                <td>G.S.T. No.</td>
+                <td>${$('#hdnPartyGSTNo').val() }</td>
+                </tr>
+                <tr>
+                <td>Address</td>
+                <td colspan="3">${ $('#hdnAddress').val() }</td>
+                </tr>
+                <tr>
+                <td>From</td>
+                <td>${ $('#txtFromDate').val() }</td>
+                <td>To</td>'
+                <td>${ $('#txtToDate').val() }</td>
+                </tr>
+                 </table>
+                </center>`;
+            var footer = `<table style='width:100%;'>
         <tr>
             <td><strong>Bank Name</strong></td>
-            <td>Bharat Bank Nallasopara West</td>
+            <td>${data?.loggedInUser?.BankName}</td>
             <td><strong>A/C</strong></td>
-            <td>006212100002228</td>
+            <td>${data?.loggedInUser?.AccountNumber}</td>
         </tr>
         <tr>
             <td><strong>IFSC Code</strong></td>
-            <td>BCBM0000063</td>
+            <td>${data?.loggedInUser?.IFSCCode}</td>
             <td><strong>PAN NO</strong></td>
-            <td>CCXPM4197H</td>
+            <td>${data?.loggedInUser?.PANNumber}</td>
         </tr>
         <tr>
             <td><strong>GST Number</strong></td>
-            <td colspan="3">27ANIPS2340GIZZ</td>
+            <td colspan="3">${data?.loggedInUser?.GSTNumber}</td>
         </tr>
     </table>`;
 
-    $('.table-bordered tr').each(function () {
-        $(this).children('th').eq(5).remove();
-        $(this).children('td').eq(5).remove();
-        $(this).children('th').eq(4).attr("colspan", "2");
-        $(this).children('td').eq(4).attr("colspan", "2");
-        //$('#myTable').attr("class","tableClass");
-    });
+            $('.table-bordered tr').each(function () {
+                $(this).children('th').eq(7).remove();
+                $(this).children('td').eq(7).remove();
+                $(this).children('th').eq(4).attr("colspan", "2");
+                $(this).children('td').eq(4).attr("colspan", "2");
+                //$('#myTable').attr("class","tableClass");
+            });
 
-    var divContents = document.getElementById("SearchCourierlist").innerHTML;
-    var printWindow = window.open('', '', 'height=200,width=400');
-    printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
-    printWindow.document.write('</head><body >' + header);
-    printWindow.document.write(divContents);
-    printWindow.document.write(footer + '</body></html>');
-    printWindow.document.close();
-    printWindow.print();
+            var divContents = document.getElementById("SearchCourierlist").innerHTML;
+            var printWindow = window.open('', '', 'height=200,width=400');
+            printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
+            printWindow.document.write('</head><body >' + header);
+            printWindow.document.write(divContents);
+            printWindow.document.write(footer + '</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        },
+        error: function (err) {
+            console.log("error=", err);
+        }
+    });
+    console.log("data=", loggedInUser);
+    
 });
 
 function StringToInt(number) {
@@ -166,8 +178,6 @@ function StringToInt(number) {
         return parseInt(number);
     }
 }
-
-
 
 $("#recieptModal").dialog({
     modal: true,
@@ -273,14 +283,25 @@ $("#btnReciept").click(function () {
 });
 
 $('#btnPrintReciept').click(function () {
-    var divContents = document.getElementById("divReciept").innerHTML;
-    var printWindow = window.open('', '', 'height=200,width=400');
-    printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
-    printWindow.document.write('</head><body >');
-    printWindow.document.write(divContents);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: '/CourierDetails/GetLoggedInUser',
+        success: function (data) {
+            var divContents = document.getElementById("divReciept").innerHTML;
+            var printWindow = window.open('', '', 'height=200,width=400');
+            printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        },
+        error: function (err) {
+            console.log("error=", err);
+        }
+    });
+    
 })
 //}
 
