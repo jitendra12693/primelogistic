@@ -322,6 +322,10 @@ namespace InTimeCourier.Controllers
                         dtPartydetails.Address = Convert.ToString(dr["Address"]);
                         dtPartydetails.GSTNumber = Convert.ToString(dr["GSTNumber"]);
                         dtTotal.FuelChargesLabel = Convert.ToString(dr["FuelCharges"]);
+                        dtPartydetails.BillId = Convert.ToInt32(dr["BillId"]);
+                        dtPartydetails.FuelCharges = Convert.ToString(dr["FuelCharges"]);
+                        dtPartydetails.PartyType = Convert.ToString(dr["PartyType"]);
+                        dtPartydetails.IsIGST = Convert.ToBoolean(dr["IsIGST"]);
                     }
                 }
             }
@@ -378,6 +382,7 @@ namespace InTimeCourier.Controllers
             var grdReport = new System.Web.UI.WebControls.GridView();
             grdReport.DataSource = db.Database.SqlQuery<DailyCourierManifesto>("exec uspDailyCourierManiFesto").ToList();
             grdReport.DataBind();
+
             System.IO.StringWriter sw = new System.IO.StringWriter();
             System.Web.UI.HtmlTextWriter htw = new System.Web.UI.HtmlTextWriter(sw);
             grdReport.RenderControl(htw);
@@ -404,6 +409,10 @@ namespace InTimeCourier.Controllers
         public string PartyName { get; set; }
         public string Address { get; set; }
         public string GSTNumber { get; set; }
+        public int? BillId { get; set; }
+        public string FuelCharges { get; set; }
+        public string PartyType { get; set; }
+        public bool IsIGST { get; set; }
     }
     public class CorierResponse
     {

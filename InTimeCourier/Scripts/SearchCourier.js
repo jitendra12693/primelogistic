@@ -40,7 +40,6 @@ $("#btnSearch").click(function () {
             url: '/CourierDetails/Search',
             data: { partyId: partyId, trackingNo: trackingNo, fromDate: $("#txtFromDate").val(), toDate: $("#txtToDate").val() },
             success: function (data) {
-                
                 if (data.TotalRecord.RecordCount == 0) {
                     $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
                      + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
@@ -50,11 +49,12 @@ $("#btnSearch").click(function () {
                     $("#SearchCourierlist").html(data.html);
                     $("#lblTotal").html(data.TotalRecord.TotalAmount);
                     $("#lblFullCahrges").html(data.TotalRecord.FullCharges);
+                    $("#hdnIsIGSTParty").val(data?.PartyDetails?.IsIGST);
                     //$("#lblCGST").html(data.TotalRecord.CGST);
                     //$("#lblSGST").html(data.TotalRecord.SGST);
                     var CGST = data.TotalRecord.CGST;
                     var SGST = data.TotalRecord.SGST;
-                    if (partyId == 12 || partyId == '12' || partyId == 64 || partyId == '64') {
+                    if (data?.PartyDetails?.IsIGST) {
                         var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
                         $('#lblBillIGST').text(totalIgst);
                         $('#trCGST').hide();
@@ -238,7 +238,7 @@ $("#btnReciept").click(function () {
             $('#lblBillTotal').text(TotalAmount);
             $('#lblBillFullCahrges').text(fullCharges);
             if (get_Url == '1') {
-                if (partyId == 12 || partyId == '12' || partyId == 64 || partyId == '64') {
+                if ($('#hdnIsIGSTParty').val()=="true") {
                     var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
                     $('#lblBillIGST_N').text(totalIgst);
                     $('#trBillCGST_N').hide();
@@ -253,7 +253,7 @@ $("#btnReciept").click(function () {
                 }
             }
             else {
-                if (partyId == 12 || partyId == '12' || partyId == 64 || partyId == '64') {
+                if ($('#hdnIsIGSTParty').val() == "true") {
                     var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
                     $('#lblIGST').text(totalIgst);
                     $('#trBillCGST').hide();
