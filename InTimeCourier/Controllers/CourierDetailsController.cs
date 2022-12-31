@@ -122,7 +122,7 @@ namespace InTimeCourier.Controllers
             }
             return View();
         }
-        public ActionResult Edit(long? id)
+        public ActionResult Edit(long? id,bool? popup)
         {
             List<CourrierMaster> courrierList = new List<CourrierMaster>();
             try
@@ -138,7 +138,10 @@ namespace InTimeCourier.Controllers
             {
 
             }
-            return View(courrierList[0]);
+            if (popup==true) 
+                return View("Edit", "_BlankLayout", courrierList[0]);
+            else
+                return View("Edit", "_Layout", courrierList[0]);
         }
         [HttpPost]
         public ActionResult Edit(CourrierMaster courrier)

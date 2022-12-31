@@ -15,6 +15,18 @@
         z-index: 10000;
         background-image: url("../../Content/ajax-loader.gif");
     }
+
+    @@media screen and (min-width: 768px) {
+        .modal-dialog1 {
+            right: auto;
+            left: auto;
+            width: 60%;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
 </style>
 <h2>Courrier List</h2>
 
@@ -160,7 +172,7 @@
     </div>
 </div>
 <div id="divUpdateCourrier" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog1 modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
@@ -168,50 +180,17 @@
                 <button type="button" class="close" data-dismiss="modal" id="btnCross">&times;</button>
                 <h4 class="modal-title">Update Courrier Details</h4>
             </div>
-            <div class="modal-body">
-                <form id="formUpdate">
-                    <div class="form-group">
-                        <div class="col-lg-4">Party</div>
-                        <div class="col-lg-8">
-                            <select id="ddlParty" class="form-control">
-                                <option value="">Select Party</option>
-                            </select>
-                        </div>
-                    </div><div></div>
-                    <div class="form-group">
-                        <div class="col-lg-4">Booking Date</div>
-                        <div class="col-lg-8"><input type="text" id="txtBookingDate" placeholder="MM/DD/YYYY" class="form-control" /> </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-4">CN Number</div>
-                        <div class="col-lg-8"><input type="text" id="txtCNNumber" class="form-control" /> </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-4">Distance</div>
-                        <div class="col-lg-8"><input type="text" id="txtDistance" class="form-control" /> </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-4">Weight</div>
-                        <div class="col-lg-8"><input type="text" id="txtWeight" class="form-control" placeholder="Weight in KG Format(Ex :- 0.256 Kg)" /> </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-4">Rate</div>
-                        <div class="col-lg-8"><input type="text" id="txtRate" class="form-control" /> </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-4">Amount</div>
-                        <div class="col-lg-8"><input type="text" id="txtAmount" readonly="readonly" class="form-control" placeholder="Please enter your rate(Per / Kg)" /> </div>
-                    </div>
-                </form>
+            <div class="modal-body" id="modalBody">
+                
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>
-                <button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>
-                <input type="hidden" id="hdnCourrierId" />
+            <!--<div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>-->
+                @*<button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>*@
+                <!--<input type="hidden" id="hdnCourrierId" />
                 <input type="hidden" id="hdnCreatedBy" />
                 <input type="hidden" id="hdnCreatedDate" />
                 <input type="hidden" id="hdnIsIGSTParty"/>
-            </div>
+            </div>-->
         </div>
 
     </div>
@@ -227,9 +206,9 @@
             $("#txtBookingDate").datepicker();
         });
 
-        $('#btnCross').click(function () {
-            $('#formUpdate')[0].reset();
-        });
+        //$('#btnCross').click(function () {
+        //    $('#formUpdate')[0].reset();
+        //});
 
         $('#btnClose').click(function () {
             $('#formUpdate')[0].reset();
@@ -280,28 +259,31 @@
         }
 
         function SelectedCourrier(courrierId) {
-            debugger;
+            showAjaxLoader();
             $.ajax({
-                url: '/CourierDetails/GetUpdatedetails?courrierId=' + courrierId,
+                url: `/CourierDetails/Edit?id=${courrierId}&popup=true`,
                 type: 'GET',
-                contentType: 'json',
+                contentType: 'html',
                 success: function (data) {
-                    $.each(data.PartyList, function (data, value) {
-                        $("#ddlParty").append($("<option></option>").val(value.PartyId).html(value.PartyName));
-                    })
-                    $('#hdnCreatedBy').val(data.Courrier.CreatedBy);
-                    $('#hdnCreatedDate').val(ConvertJsonDateString(data.Courrier.CreatedDt));
-                    $('#hdnCourrierId').val(courrierId);
-                    $("#ddlParty").val(data.Courrier.PartyId);
-                    $("#txtAmount").val(data.Courrier.Amount);
-                    $("#txtRate").val(data.Courrier.Rate);
-                    $("#txtWeight").val(data.Courrier.Weight);
-                    $("#txtCNNumber").val(data.Courrier.CNNo);
-                    $("#txtDistance").val(data.Courrier.Location);
-                    $('#txtBookingDate').val(ConvertJsonDateString(data.Courrier.DepartureDt));
+                    $('#modalBody').html(data);
+                    hideAjaxLoader();
+                    //$.each(data.PartyList, function (data, value) {
+                    //    $("#ddlParty").append($("<option></option>").val(value.PartyId).html(value.PartyName));
+                    //})
+                    //$('#hdnCreatedBy').val(data.Courrier.CreatedBy);
+                    //$('#hdnCreatedDate').val(ConvertJsonDateString(data.Courrier.CreatedDt));
+                    //$('#hdnCourrierId').val(courrierId);
+                    //$("#ddlParty").val(data.Courrier.PartyId);
+                    //$("#txtAmount").val(data.Courrier.Amount);
+                    //$("#txtRate").val(data.Courrier.Rate);
+                    //$("#txtWeight").val(data.Courrier.Weight);
+                    //$("#txtCNNumber").val(data.Courrier.CNNo);
+                    //$("#txtDistance").val(data.Courrier.Location);
+                    //$('#txtBookingDate').val(ConvertJsonDateString(data.Courrier.DepartureDt));
                 },
                 error: function (error) {
                     alert(error);
+                    hideAjaxLoader();
                 }
             })
         }
