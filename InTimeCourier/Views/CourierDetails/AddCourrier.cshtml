@@ -89,21 +89,21 @@
                 <div class="col-md-6 form-group">
                     @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
-                        @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Enter Rate" } })
+                        @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Rate" } })
                         @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6 form-group">
                     @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
-                        @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Enter ODA Charges" } })
+                        @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter ODA Charges" } })
                         @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6 form-group">
                     @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
-                        @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Enter Discount Amt." } })
+                        @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Discount Amt." } })
                         @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -325,20 +325,25 @@
         }
 
         function calculateAmount() {
-            var weight = $("#Weight").val();
+            var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
             var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
             var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
-            var qty = $("#Qty").val();
+            var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
             var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
-            if (resp.length > 0) {
-                var rateresp = resp.filter(n => n.FromWt <= parseFloat(weight) && n.ToWt >= parseFloat(weight));
-                if (rateresp.length > 0) {
-                    $("#Rate").val(rateresp[0].Rate);
-                    //var amountcalc = rateresp[0].Rate * parseFloat(weight)
-                    if (resp[0].PartyType == 'Logistic') {
-                        if ($("#Qty").val() != "") {
-                            var amt = rateresp[0].Rate * parseInt(qty)
-                            $("#Amount").val(amt + ODACharges - discount);
+            if (weight > 0) {
+                if (resp.length > 0) {
+                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                    if (rateresp.length > 0) {
+                        $("#Rate").val(rateresp[0].Rate);
+                        if (resp[0].PartyType == 'Logistic') {
+                            if ($("#Qty").val() != "") {
+                                var amt = rateresp[0].Rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                            }
+                            else {
+                                $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                            }
+
                         }
                         else {
                             $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
@@ -346,16 +351,105 @@
 
                     }
                     else {
-                        $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                        if (rate > 0) {
+                            $("#Amount").val((rate * qty) + ODACharges - discount);
+                        }
+                        else {
+                            $("#Amount").val('');
+                        }
+                       
                     }
-
-                }
-                else {
+                } else {
                     $("#Amount").val((rate * qty) + ODACharges - discount);
                 }
-            } else {
-                $("#Amount").val((rate * qty) + ODACharges - discount);
             }
+            else {
+                $("#Qty").val('');
+                $("#Rate").val('');
+                $("#Amount").val('');
+            }
+           
+        }
+
+        function ratechangedcalculateAmount() {
+            var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+            var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+            var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+            var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+            var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+            if (weight > 0) {
+                if (resp.length > 0) {
+                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                    if (rateresp.length > 0) {
+                        if (resp[0].PartyType == 'Logistic') {
+                            if ($("#Qty").val() != "") {
+                                var amt = rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                                if (parseFloat($("#Amount").val()) <= 0) {
+                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    $("#Amount").val('');
+                                    $("#ODACharges").val('');
+                                    $("#Discount").val('');
+                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                }
+                            }
+                            else {
+                                $("#Amount").val(rate + ODACharges - discount);
+                                if (parseFloat($("#Amount").val()) <= 0) {
+                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    $("#Amount").val('');
+                                    $("#ODACharges").val('');
+                                    $("#Discount").val('');
+                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                }
+                            }
+
+                        }
+                        else {
+                            $("#Amount").val(rate + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(ODA Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+
+                    }
+                    else {
+                        if (rate > 0) {
+                            $("#Amount").val((rate * qty) + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(ODA Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+                        else {
+                            $("#Amount").val('');
+                        }
+
+                    }
+                } else {
+                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                    if (parseFloat($("#Amount").val()) <= 0) {
+                        alert('please enter valid data(ODA Charges or Discount)')
+                        $("#Amount").val('');
+                        $("#ODACharges").val('');
+                        $("#Discount").val('');
+                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                    }
+                }
+            }
+            else {
+                $("#Qty").val('');
+                $("#Rate").val('');
+                $("#Amount").val('');
+            }
+
         }
     </script>
 }

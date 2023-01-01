@@ -1,7 +1,7 @@
 ﻿@model InTimeCourier.Models.CourrierMaster
 
 @{
-    ViewBag.Title = "Edit Courier Details";
+    Layout = null;
 }
 
 <h2>Edit Courier Details</h2>
@@ -41,7 +41,7 @@
         <div class="col-md-6 form-group">
             @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
             <div class="col-md-7">
-                @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
+                @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true",@id="PartyIdNew" })
                 @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -83,21 +83,21 @@
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
             <div class="col-md-7">
-                @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "calculateAmount()", @placeholder = "Please enter your rate(Per / Kg)" } })
+                @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your rate(Per / Kg)" } })
                 @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="col-md-6 form-group">
             @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-5" })
             <div class="col-md-7">
-                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "calculateAmount()", @placeholder = "Please enter your ODA Charges" } })
+                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your ODA Charges" } })
                 @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="col-md-6 form-group">
             @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
             <div class="col-md-7">
-                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "calculateAmount()", @placeholder = "Please enter your Discount" } })
+                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Discount" } })
                 @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -309,7 +309,7 @@
         function fetchRateDetails() {
             debugger;
             $.ajax({
-                url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyId').val(),
+                url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyIdNew').val(),
                 type: 'GET',
                 contentType: 'application/json; charset=utf-8',
                 //data: JSON.stringify(courrierDetail),

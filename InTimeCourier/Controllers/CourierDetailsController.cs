@@ -139,7 +139,7 @@ namespace InTimeCourier.Controllers
 
             }
             if (popup==true) 
-                return View("Edit", "_BlankLayout", courrierList[0]);
+                return View("EditDetails", "_BlankLayout", courrierList[0]);
             else
                 return View("Edit", "_Layout", courrierList[0]);
         }
