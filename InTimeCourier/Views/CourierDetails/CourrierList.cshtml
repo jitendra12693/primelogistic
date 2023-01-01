@@ -55,7 +55,8 @@
                         <center>
                             <h1>@loggedInUser.Name</h1>
                             <h4>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</h4>
-                            <h4>Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null) {<span>/ +91 @loggedInUser.AlternateContact</span>} </h4>
+                            <h4>Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null)
+                            {<span>/ +91 @loggedInUser.AlternateContact</span>} </h4>
                             <h4>Email Id: @loggedInUser.EmailId</h4>
                         </center>
                     </td>
@@ -181,12 +182,12 @@
                 <h4 class="modal-title">Update Courrier Details</h4>
             </div>
             <div class="modal-body" id="modalBody">
-                
+
             </div>
             <!--<div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>-->
-                @*<button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>*@
-                <!--<input type="hidden" id="hdnCourrierId" />
+            @*<button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>*@
+            <!--<input type="hidden" id="hdnCourrierId" />
                 <input type="hidden" id="hdnCreatedBy" />
                 <input type="hidden" id="hdnCreatedDate" />
                 <input type="hidden" id="hdnIsIGSTParty"/>
@@ -196,10 +197,11 @@
     </div>
 </div>
 @section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
     <script src="~/Scripts/SearchCourier.js"></script>
     <script src="~/Scripts/autocolumn.js"></script>
     <script type="text/javascript">
-        
+
         $('#PrintReport').columnize({ columns: 2 })
 
         $(function () {
@@ -261,7 +263,7 @@
         function SelectedCourrier(courrierId) {
             showAjaxLoader();
             $.ajax({
-                url: `/CourierDetails/Edit?id=${courrierId}&popup=true`,
+                url: `/CourierDetails/EditPopup?id=${courrierId}`,
                 type: 'GET',
                 contentType: 'html',
                 success: function (data) {

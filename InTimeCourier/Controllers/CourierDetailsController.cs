@@ -104,7 +104,7 @@ namespace InTimeCourier.Controllers
                 new SqlParameter("@TrackingNo", string.Empty),
                 new SqlParameter("@CNNo", courier.CNNo),
                 new SqlParameter("@Weight", courier.Weight),
-                new SqlParameter("@Discount", courier.Discount??(object)DBNull.Value),
+                new SqlParameter("@Discount", courier.Discount ?? (object)DBNull.Value),
                 new SqlParameter("@DepartureDt", courier.DepartureDt),
                 new SqlParameter("@Location", courier.Location),
                 new SqlParameter("@Rate", courier.Rate)).ToList();
@@ -122,7 +122,7 @@ namespace InTimeCourier.Controllers
             }
             return View();
         }
-        public ActionResult Edit(long? id,bool? popup)
+        public ActionResult Edit(long? id)
         {
             List<CourrierMaster> courrierList = new List<CourrierMaster>();
             try
@@ -130,7 +130,7 @@ namespace InTimeCourier.Controllers
                 //ViewBag.Location = new SelectList(db.SourceMasters.OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
-                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item=>new { NetworkModeId = item.NetworkId,NetworkName=item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
@@ -138,13 +138,47 @@ namespace InTimeCourier.Controllers
             {
 
             }
-            if (popup==true) 
-                return View("EditDetails", "_BlankLayout", courrierList[0]);
-            else
-                return View("Edit", "_Layout", courrierList[0]);
+
+            return View(courrierList[0]);
         }
+
+        public ActionResult EditPopup(long? id)
+        {
+            List<CourrierMaster> courrierList = new List<CourrierMaster>();
+            try
+            {
+                //ViewBag.Location = new SelectList(db.SourceMasters.OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
+                ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
+                ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
+                courrierList = list;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return View(courrierList[0]);
+        }
+
         [HttpPost]
         public ActionResult Edit(CourrierMaster courrier)
+        {
+            //if (ModelState.IsValid)
+            //{
+            if (courrier != null)
+            {
+                courrier.ModifyBy = 1;
+                courrier.ModifyDate = DateTime.Now;
+                db.Entry(courrier).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+            //}
+            return View("CourrierList");
+        }
+        [HttpPost]
+        public ActionResult EditPopup(CourrierMaster courrier)
         {
             //if (ModelState.IsValid)
             //{
@@ -196,7 +230,7 @@ namespace InTimeCourier.Controllers
                             PartyId = CM.PartyId,
                             PartyName = P.PartyName,
                             NetworkName = N.NetworkName,
-                            CourierMode =C.CourrierModeName,
+                            CourierMode = C.CourrierModeName,
                             ODACharges = CM.ODACharges,
                             DiscountAmount = CM.Discount
                         }).ToList();
@@ -389,8 +423,8 @@ namespace InTimeCourier.Controllers
             System.IO.StringWriter sw = new System.IO.StringWriter();
             System.Web.UI.HtmlTextWriter htw = new System.Web.UI.HtmlTextWriter(sw);
             grdReport.RenderControl(htw);
-            byte[] bindData=System.Text.Encoding.ASCII.GetBytes(sw.ToString());
-            return File(bindData, "application/ms-excel","DailyManifesto"+DateTime.Now+".xls");
+            byte[] bindData = System.Text.Encoding.ASCII.GetBytes(sw.ToString());
+            return File(bindData, "application/ms-excel", "DailyManifesto" + DateTime.Now + ".xls");
         }
         [HttpGet]
         public JsonResult GetLoggedInUser()

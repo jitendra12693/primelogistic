@@ -4,8 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - In Time Logistic</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
 
 </head>
 <body>
@@ -15,42 +13,6 @@
         <hr />
     </div>
    
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryval")
-    @RenderSection("scripts", required: false)
-
-    <div class="modal fade" id="modalBillDetailsForm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h4 class="modal-title"><label id="lblHeader"> Bill Details</label></h4>
-                </div>
-                <div class="panel-body" id="divBillDetails">
-
-                </div>
-                <div class="modal-footer">
-
-                    <button type="button" class="btn btn-deep-orange" data-dismiss="modal" aria-label="Close">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        $(function () {
-            $("#addtxtPeriodFrom").datepicker({
-                changeMonth: true,
-                changeYear: true
-            });
-
-            $("#addtxtPeriodFrom").datepicker({
-                changeMonth: true,
-                changeYear: true
-            });
-        });
-    </script>
 </body>
 </html>
 

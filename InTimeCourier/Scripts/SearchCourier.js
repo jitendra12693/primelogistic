@@ -2,6 +2,7 @@
 $(function () {
     $("#txtFromDate").datepicker();
     $("#txtToDate").datepicker();
+    $("#Amount").attr("readonly", "readonly");
 });
 
 var changeFromYear = $("#FromDate").datepicker("option", "changeYear");
@@ -473,98 +474,164 @@ function NumToWord(inputNumber,id) {
      
     $("#lblGrandTotalInWord").text(finalOutput);
 }
-//$(document).ready(function () {
-//$("#recieptModal").dialog({
-//    modal: true,
-//    autoOpen: false,
-//    title: "Reciept Details",
-//    width: 1000,
-//    height: 500
-//});
-//});
-//Print();
-/*
-$("#btnExport").click(function () {
-    var trackNo = $("#TrackingNo").val();
-    var partyId = $("#PartyId").val();
-    var fromDate = $("#txtFromDate").val();
-    var toDate = $("#txtToDate").val();
-    //if (frmdate == '' && todate == '') {
-    //    alert("Please select dates")
-    //}
-    $("#grid").empty();
-    if (fromDate == toDate || fromDate < toDate) {
-        $.ajax({
-            type: 'GET',
-            dataType: 'json',
-            url: '/CourierDetails/SearchJsonData',
-            data: { partyId: partyId, trackingNo: trackNo, fromDate: fromDate, toDate: toDate },
-            success: function (gridData) {
 
-                $("#grid").shieldGrid({
-                    dataSource: {
-                        data: gridData
-                    },
-                    paging: {
-                        pageSize: 20,
-                        pageLinksCount: 10
-                    },
-                    
-                    columns: [
-                        { field: "TrackingNo", title: "ID" },
-                        { field: "PartyName", title: "Person Name" },
-                        { field: "CNNo", title: "Company Name" },
-                        { field: "SourceName", title: "Source Name", width: "270px" },
-                        { field: "Amount", title: "Amount", width: "270px" }
-                    ],
- 
-                    toolbar: [
-                        {
-                            buttons: [
-                                {
-                                    commandName: "pdf",
-                                    caption: '<span class="sui-sprite sui-grid-icon-export-pdf"></span> <span class="sui-grid-button-text">Export to PDF</span>'
-                                }
-                            ],
-                            caption:"In Time Logistics"
-                        }
-                    ],
-                    exportOptions: {
-                        proxy: "/filesaver/save",
-                        pdf: {
-                            fileName: "InTimeLogistic-export",
-                            author: "Jitendra Dubey",
-                            header: "In Time Logistics",
-                            dataSource: {
-                                data: gridData
-                            },
-
-                            readDataSource: true,
-                            header: {
-                                cells: [
-                                    { field: "TrackingNo", title: "ID", width: 50 },
-                                    { field: "PartyName", title: "Person Name", width: 100 },
-                                    { field: "CNNo", title: "Company Name", width: 100 },
-                                    { field: "SourceName", title: "Email Address" }
-                                ]
-                            }
-                        }
+function calculateAmount() {
+    var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+    var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+    var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+    var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+    var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+    if (weight > 0) {
+        if (resp.length > 0) {
+            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+            if (rateresp.length > 0) {
+                $("#Rate").val(rateresp[0].Rate);
+                if (resp[0].PartyType == 'Logistic') {
+                    if ($("#Qty").val() != "") {
+                        var amt = rateresp[0].Rate * parseInt(qty)
+                        $("#Amount").val(amt + ODACharges - discount);
                     }
-                });
-            },
-            error: function (error) {
-                alert('Some error occured ');
+                    else {
+                        $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                    }
+
+                }
+                else {
+                    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                }
+
             }
-        })
+            else {
+                if (rate > 0) {
+                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                }
+                else {
+                    $("#Amount").val('');
+                }
+
+            }
+        } else {
+            $("#Amount").val((rate * qty) + ODACharges - discount);
+        }
     }
     else {
-
-        alert("Selected from date is greater than to date")
+        $("#Qty").val('');
+        $("#Rate").val('');
+        $("#Amount").val('');
     }
 
-    function templateFunc(item) {
-        $("<div />").shieldRating({ value: 3 })
-            .appendTo(item);
+}
+
+
+function ratechangedcalculateAmount() {
+    var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+    var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+    var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+    var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+    var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+    if (weight > 0) {
+        if (resp.length > 0) {
+            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+            if (rateresp.length > 0) {
+                if (resp[0].PartyType == 'Logistic') {
+                    if ($("#Qty").val() != "") {
+                        var amt = rate * parseInt(qty)
+                        $("#Amount").val(amt + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(ODA Charges or Discount)')
+                            $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        }
+                    }
+                    else {
+                        $("#Amount").val(rate + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(ODA Charges or Discount)')
+                            $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        }
+                    }
+
+                }
+                else {
+                    $("#Amount").val(rate + ODACharges - discount);
+                    if (parseFloat($("#Amount").val()) <= 0) {
+                        alert('please enter valid data(ODA Charges or Discount)')
+                        $("#Amount").val('');
+                        $("#ODACharges").val('');
+                        $("#Discount").val('');
+                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                    }
+                }
+
+            }
+            else {
+                if (rate > 0) {
+                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                    if (parseFloat($("#Amount").val()) <= 0) {
+                        alert('please enter valid data(ODA Charges or Discount)')
+                        $("#Amount").val('');
+                        $("#ODACharges").val('');
+                        $("#Discount").val('');
+                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                    }
+                }
+                else {
+                    $("#Amount").val('');
+                }
+
+            }
+        } else {
+            $("#Amount").val((rate * qty) + ODACharges - discount);
+            if (parseFloat($("#Amount").val()) <= 0) {
+                alert('please enter valid data(ODA Charges or Discount)')
+                $("#Amount").val('');
+                $("#ODACharges").val('');
+                $("#Discount").val('');
+                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+            }
+        }
     }
-});
-*/
+    else {
+        $("#Qty").val('');
+        $("#Rate").val('');
+        $("#Amount").val('');
+    }
+
+}
+
+var resp = [];
+function fetchRateDetails() {
+    debugger;
+    $.ajax({
+        url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyId').val(),
+        type: 'GET',
+        contentType: 'application/json; charset=utf-8',
+        //data: JSON.stringify(courrierDetail),
+        success: function (data) {
+            var strResponse = JSON.parse(data);
+            resp = [];
+            if (strResponse.Table.length > 0) {
+                for (var i = 0; i < strResponse.Table.length; i++) {
+                    resp.push(strResponse.Table[i]);
+                }
+                if (strResponse.Table[0].PartyType = 'Logistic') {
+                    $("#Qty").attr("readonly", false);
+                }
+                else {
+                    $("#Qty").attr("readonly", true);
+                }
+            }
+            else {
+                $("#Qty").attr("readonly", true);
+                resp = [];
+                alert("rate not available");
+            }
+
+        }
+    })
+}
