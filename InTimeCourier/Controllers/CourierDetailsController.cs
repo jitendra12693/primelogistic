@@ -346,6 +346,8 @@ namespace InTimeCourier.Controllers
                         dtTotal.CGST = decimal.Parse("0" + dr["CGST"]);
                         dtTotal.SGST = decimal.Parse("0" + dr["SGST"]);
                         dtTotal.FullCharges = decimal.Parse("0" + dr["Full Charges"]);
+                        dtTotal.NetAmount = decimal.Parse("0" + dr["NetAmount"]);
+                        dtTotal.Discount = decimal.Parse("0" + dr["Discount"]);
 
                         dtTotal.GrandTotal = dtTotal.TotalAmount + dtTotal.CGST + dtTotal.SGST + dtTotal.FullCharges;
                     }
@@ -467,5 +469,7 @@ namespace InTimeCourier.Controllers
         public decimal FullCharges { get; set; }
         public decimal GrandTotal { get; set; }
         public string FuelChargesLabel { get; set; }
+        public decimal Discount { get; set; }
+        public decimal NetAmount { get; set; }
     }
 }

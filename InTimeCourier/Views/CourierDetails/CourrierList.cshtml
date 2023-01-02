@@ -55,8 +55,10 @@
                         <center>
                             <h1>@loggedInUser.Name</h1>
                             <h4>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</h4>
-                            <h4>Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null)
-                            {<span>/ +91 @loggedInUser.AlternateContact</span>} </h4>
+                            <h4>
+                                Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null)
+                                {<span>/ +91 @loggedInUser.AlternateContact</span>}
+                            </h4>
                             <h4>Email Id: @loggedInUser.EmailId</h4>
                         </center>
                     </td>
@@ -83,6 +85,14 @@
                     <td style="text-align:right">
                         <label id="lblBillAmount"></label>
                     </td>
+                </tr>
+                <tr>
+                    <td><b>Net Total</b></td>
+                    <td style="text-align:right"><label id="lblBillNetTotal"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Discount</b></td>
+                    <td style="text-align:right"><label id="lblBillDiscount"></label></td>
                 </tr>
                 <tr>
                     <td><b>Total</b></td>
@@ -150,13 +160,6 @@
                                 <td>:- @loggedInUser.PANNumber</td>
                             </tr>
                         </table>
-                        @*<u><b>Bank Details</b></u><br />
-                            <b>Company Name</b> :- IN TIME LOGISTICS<br />
-                            <b>Bank Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    :- Bharat Bank<br />
-                            <b>Account No</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :- 006212100002228<br />
-                            <b>IFS Code</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;   :-BCBM0000063<br />
-                            <b>Branch</b>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     :-Nallasopara(W)<br />
-                            <b>PAN </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; :- CCXPM4197H*@
                     </td>
                     <td>
                         <br /><br /><br /><br />

@@ -51,8 +51,8 @@ $("#btnSearch").click(function () {
                     $("#lblTotal").html(data.TotalRecord.TotalAmount);
                     $("#lblFullCahrges").html(data.TotalRecord.FullCharges);
                     $("#hdnIsIGSTParty").val(data?.PartyDetails?.IsIGST);
-                    //$("#lblCGST").html(data.TotalRecord.CGST);
-                    //$("#lblSGST").html(data.TotalRecord.SGST);
+                    $("#lblNetTotal").html(data.TotalRecord.NetAmount);
+                    $("#lblDiscount").html(data.TotalRecord.Discount);
                     var CGST = data.TotalRecord.CGST;
                     var SGST = data.TotalRecord.SGST;
                     if (data?.PartyDetails?.IsIGST) {
@@ -209,6 +209,8 @@ $("#btnReciept").click(function () {
     var grandTotal = $('#lblGrandTotal').text();
     var fullCharges = $('#lblFullCahrges').text();
     var TotalAmount = $('#lblTotal').text();
+    var netAmount = $('#lblNetTotal').text();
+    var discount = $('#lblDiscount').text();
     var CGST = $('#lblBillCGST').text() ? $('#lblBillCGST').text() : parseFloat($('#lblBillIGST').text())/2;
     var SGST = $('#lblBillSGST').text() ? $('#lblBillSGST').text() : parseFloat($('#lblBillIGST').text())/2;
     var billId = 0;//StringToInt($('#lblBillNo').text());
@@ -235,8 +237,10 @@ $("#btnReciept").click(function () {
             $('#lblAddress').text($('#hdnAddress').val());
             $('#lblFromDate').text(fromDate);
             $('#lblToDate').text(toDate);
-            $('#lblBillAmount').text(TotalAmount);
+            $('#lblBillAmount').text(netAmount);
             $('#lblBillTotal').text(TotalAmount);
+            $('#lblBillNetTotal').text(netAmount);
+            $('#lblBillDiscount').text(discount);
             $('#lblBillFullCahrges').text(fullCharges);
             if (get_Url == '1') {
                 if ($('#hdnIsIGSTParty').val()=="true") {
@@ -606,7 +610,6 @@ function ratechangedcalculateAmount() {
 
 var resp = [];
 function fetchRateDetails() {
-    debugger;
     $.ajax({
         url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyId').val(),
         type: 'GET',

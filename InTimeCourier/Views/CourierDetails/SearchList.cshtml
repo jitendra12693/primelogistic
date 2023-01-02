@@ -170,21 +170,21 @@
     <table class="table table-bordered" style="border:1px solid #000000;width:100%;">
         <tfoot>
             <tr>
-                <td width="25%"><b>Total</b></td>
+                <td width="25%"><b>Net Total</b></td>
+                <td width="75%" style="text-align:right;"><label id="lblNetTotal"></label></td>
+            </tr>
+            <tr>
+                <td width="25%">Discount</td>
+                <td width="75%" style="text-align:right;"><label id="lblDiscount"></label></td>
+            </tr>
+            <tr>
+                <td width="25%">Total</td>
                 <td width="75%" style="text-align:right;"><label id="lblTotal"></label></td>
             </tr>
             <tr>
                 <td>Fuel Charges (<label id="partyFuelCharge"></label>)</td>
                 <td style="text-align:right"><label id="lblFullCahrges"></label></td>
             </tr>
-            @*<tr>
-                    <td>C.G.S.T. (9%)</td>
-                    <td style="text-align:right"><label id="lblCGST"></label></td>
-                </tr>
-                <tr>
-                    <td>S.G.S.T. (9%)</td>
-                    <td style="text-align:right"><label id="lblSGST"></label></td>
-                </tr>*@
             <tr id="trCGST">
                 <td>C.G.S.T. (9%)</td>
                 <td style="text-align:right"><label id="lblBillCGST"></label></td>
