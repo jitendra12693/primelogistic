@@ -111,7 +111,8 @@ namespace InTimeCourier.Controllers
                 //ViewBag.Source = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceName), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName), "PartyId", "PartyName");
-                if(Id > 0)
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                if (Id > 0)
                 {
                     RateMapping objratemapping = new RateMapping();
                     objratemapping = db.RateMapping.Where(x => x.Id == Id).FirstOrDefault();
@@ -136,6 +137,7 @@ namespace InTimeCourier.Controllers
                 //ViewBag.Source = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceName), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName), "PartyId", "PartyName");
+                ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 var checkexists = db.RateMapping.Where(x => x.PartyId == mapping.PartyId && x.ModeId==mapping.ModeId).FirstOrDefault();
                 if(checkexists != null && mapping.Id==0 && (checkexists.FromWt==mapping.FromWt || checkexists.ToWt==mapping.ToWt))
                 {

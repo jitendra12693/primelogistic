@@ -515,7 +515,7 @@ function calculateAmount() {
         }
     }
     else {
-        $("#Qty").val('');
+        //$("#Qty").val('');
         $("#Rate").val('');
         $("#Amount").val('');
     }
@@ -597,7 +597,7 @@ function ratechangedcalculateAmount() {
         }
     }
     else {
-        $("#Qty").val('');
+        //$("#Qty").val('');
         $("#Rate").val('');
         $("#Amount").val('');
     }
