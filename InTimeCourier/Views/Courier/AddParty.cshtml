@@ -44,7 +44,7 @@
 
     </div>
     <div class="col-md-4 form-group">
-        @Html.Label("Party Nature", htmlAttributes: new { @class = "control-label col-md-5" })
+        @Html.Label("Payment Mode", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
             @Html.DropDownList("PartyNature", new List<SelectListItem>
                 {
@@ -88,13 +88,13 @@
             @Html.ValidationMessageFor(model => model.FuelCharges, "", new { @class = "text-danger" })
         </div>
     </div>
-    <div class="col-md-4 form-group">
+    @*<div class="col-md-4 form-group">
         @Html.Label("Discount", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
             @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
     <div class="col-md-4 form-group">
         @Html.Label("Mobile No", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
@@ -111,13 +111,13 @@
         </div>
     </div>
 
-    <div class="col-md-4 form-group">
+    @*<div class="col-md-4 form-group">
         @Html.Label("Ladline", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
             @Html.EditorFor(model => model.Ladline, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.Ladline, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
     <div class="col-md-4 form-group">
         @Html.Label("Address 1", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
@@ -158,13 +158,13 @@
         </div>
     </div>
 
-    <div class="col-md-4 form-group">
+    @*<div class="col-md-4 form-group">
         @Html.Label("Country", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
             @Html.DropDownListFor(model => model.CountryId, (IEnumerable<SelectListItem>)ViewBag.Country, "Select Country", new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
         </div>
-    </div>
+    </div>*@
     <div class="col-md-4 form-group">
         @Html.Label("Pincode", htmlAttributes: new { @class = "control-label col-md-5" })
         <div class="col-md-7">
