@@ -35,8 +35,8 @@
             <div class="col-md-6 form-group">
                 @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
                 <div class="col-md-7">
-                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
-                    @*@Html.DropDownListFor(model => model.SourceId, (IEnumerable<SelectListItem>)ViewBag.Location, "Select Source", new { @id = "ddlSource", @onchange = "onChangeDestination()", @class = "form-control" })*@
+                    @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -48,14 +48,14 @@
                 </div>
             </div>
             <div class="col-md-6 form-group">
-                <label class="control-label col-md-5">Courrier Mode</label>
+                <label class="control-label col-md-5">Mode</label>
                 <div class="col-md-7">
-                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
+                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6 form-group">
-                <label class="control-label col-md-5">Network Mode</label>
+                <label class="control-label col-md-5">Network</label>
                 <div class="col-md-7">
                     @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
                     @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })

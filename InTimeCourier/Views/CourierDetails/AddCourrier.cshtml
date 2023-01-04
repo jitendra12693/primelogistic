@@ -40,9 +40,9 @@
                 <div class="col-md-6 form-group">
                     @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
-                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })
-                        @*@Html.DropDownListFor(model => model.SourceId, (IEnumerable<SelectListItem>)ViewBag.Location, "Select Source", new { @id = "ddlSource", @onchange = "onChangeDestination()", @class = "form-control" })*@
-                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                        @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })*@
+                        @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new {@class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DestinationId, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <div class="col-md-6 form-group">
@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 form-group">
-                    <label class="control-label col-md-4">Network Mode</label>
+                    <label class="control-label col-md-4">Network</label>
                     <div class="col-md-8">
                         @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
                         @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
@@ -210,7 +210,7 @@
         });
         $("#DepartureDt").datepicker("option", "changeYear", true);
         $("#Amount").attr("readonly", "readonly");
-        $("#Qty").attr("readonly", true);
+       // $("#Qty").attr("readonly", true);
         $("#DepartureDt").attr("readonly", "readonly");
         //$("#Weight").change(function () {
         //    debugger;
@@ -305,16 +305,16 @@
                             // //});
                             // $("#Rate").val(data.rate);
                             
-                            if (strResponse.Table[0].PartyType = 'Logistic') {
-                                $("#Qty").attr("readonly", false);
-                            }
-                            else {
-                                $("#Qty").attr("readonly", true);
-                            }
+                            //if (strResponse.Table[0].PartyType = 'Logistic') {
+                            //    $("#Qty").attr("readonly", false);
+                            //}
+                            //else {
+                            //    $("#Qty").attr("readonly", true);
+                            //}
                         }
                         else {
 
-                            $("#Qty").attr("readonly", true);
+                            //$("#Qty").attr("readonly", true);
                             resp = [];
                             //alert("rate not available");
                         }

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<InTimeCourier.Models.DestinationMaster>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Destination List</h2>
+<p>
+    @Html.ActionLink("Add New Destination", "AddDestination")
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Destination Name")
+        </th>
+        <th>@Html.DisplayNameFor(model => model.Description)</th>
+        <th>Action</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        if (item.IsActive == true)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>
+                    @Html.ActionLink("Edit", "AddDestination", new { id = item.Id }) |
+                    @Html.ActionLink("DeActive", "AcivateDeativate", new { id = item.Id })
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="alert alert-danger">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>
+                    @Html.ActionLink("Edit", "AddDestination", new { id = item.Id }) |
+                    @Html.ActionLink("Active", "AcivateDeativate", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    }
+</table>

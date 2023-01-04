@@ -33,9 +33,9 @@
                 @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
             </div>
 
-            <label class="control-label col-md-2">Courrier Mode</label>
+            <label class="control-label col-md-2">Mode</label>
             <div class="col-md-4 form-group">
-                @Html.DropDownListFor(model => model.ModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Courrier Mode", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Mode", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ModeId, "", new { @class = "text-danger" })
             </div>
             <label class="control-label col-md-2">Network Mode</label>

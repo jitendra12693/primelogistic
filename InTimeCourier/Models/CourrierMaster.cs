@@ -20,6 +20,7 @@ namespace InTimeCourier.Models
         [StringLength(50)]
         public string Distance { get; set; }
 
+        [Required]
         public long? DestinationId { get; set; }
 
         [Required]
@@ -56,7 +57,7 @@ namespace InTimeCourier.Models
 
         public bool? IsActive { get; set; }
 
-        [Required]
+        //[Required]
         public string Location { get; set; }
         public decimal? ODACharges { get; set; }
 

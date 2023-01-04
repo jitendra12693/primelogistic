@@ -73,7 +73,19 @@ namespace InTimeCourier.Controllers
                 var data = db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId);
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
                 var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
+               var listnew=list.Take(12).ToList();
+                int cnt = 0;
+                foreach (var item in listnew)
+                {
+                    var Location= db.DestinationMaster.Where(x => x.IsActive == true && x.Id==item.DestinationId).FirstOrDefault();
+                    if(Location!=null)
+                    {
+                        list[cnt].Location = Location.Name;
+                    }
+                    cnt++;
+                }
                 ViewBag.Courrier = list.Take(12).ToList();
                 return View();
             }
@@ -90,10 +102,11 @@ namespace InTimeCourier.Controllers
             ViewBag.Location = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
             ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+            ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
             try
             {
 
-                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@Location,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
+                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@DestinationId,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
                 new SqlParameter("@PartyId", courier.PartyId),
                 new SqlParameter("@CourrierModeId", courier.CourrierModeId),
                  new SqlParameter("@NetworModeId", courier.NetworkModeId),
@@ -106,7 +119,7 @@ namespace InTimeCourier.Controllers
                 new SqlParameter("@Weight", courier.Weight),
                 new SqlParameter("@Discount", courier.Discount ?? (object)DBNull.Value),
                 new SqlParameter("@DepartureDt", courier.DepartureDt),
-                new SqlParameter("@Location", courier.Location),
+                new SqlParameter("@DestinationId", courier.DestinationId),
                 new SqlParameter("@Rate", courier.Rate)).ToList();
                 ViewBag.Message = response[0].Message; //"Your courier registered successfully with courier tracking no: " + response[0].TrackingNo;
                 ViewBag.Status = response[0].Status;
@@ -131,6 +144,7 @@ namespace InTimeCourier.Controllers
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
                 var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
@@ -151,6 +165,7 @@ namespace InTimeCourier.Controllers
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
+                ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
                 var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
