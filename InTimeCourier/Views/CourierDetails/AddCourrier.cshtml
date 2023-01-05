@@ -33,7 +33,7 @@
                 <div class="col-md-6 form-group">
                     @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
-                        @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter AWB No." } })
+                        @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @onblur = "filldataifexist()", @placeholder = "Enter AWB No." } })
                         @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 </div>
                 <div class="col-md-6 form-group">
                     <div class="col-md-offset-6 col-md-12">
-                        <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" />
+                        <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit"/>
                         <button type="reset" class="btn btn-danger">Reset</button>
                     </div>
                 </div>
@@ -336,7 +336,7 @@
                     var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
                     if (rateresp.length > 0) {
                         $("#Rate").val(rateresp[0].Rate);
-                        if (resp[0].PartyType == 'Logistic') {
+                        //if (resp[0].PartyType == 'Logistic') {
                             if ($("#Qty").val() != "") {
                                 var amt = rateresp[0].Rate * parseInt(qty)
                                 $("#Amount").val(amt + ODACharges - discount);
@@ -345,10 +345,10 @@
                                 $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
                             }
 
-                        }
-                        else {
-                            $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                        }
+                        //}
+                        //else {
+                        //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                        //}
 
                     }
                     else {
@@ -452,5 +452,43 @@
             }
 
         }
+
+        function filldataifexist() {
+            var awbno = $('#CNNo').val();
+            $.ajax({
+                type: "GET",
+                url: "/CourierDetails/FillCourierDetails",
+                data: { awbno: awbno},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
+        };
+        function OnSuccess(response) {
+            var strResponse = JSON.parse(response);
+            if (strResponse.Table.length > 0) {
+                $("#DestinationId").val(strResponse.Table[0].DestinationId)
+                $("#PartyId").val(strResponse.Table[0].PartyId)
+                $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
+                $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
+                var d = strResponse.Table[0].DepartureDt.split('T')[0];
+                $('#DepartureDt').val(d.split("-").reverse().join("/"));
+                $("#Weight").val(strResponse.Table[0].Weight)
+                $("#Qty").val(strResponse.Table[0].Qty)
+                $("#Rate").val(strResponse.Table[0].Rate)
+                $("#ODACharges").val(strResponse.Table[0].ODACharges)
+                $("#Discount").val(strResponse.Table[0].Discount)
+                $("#Amount").val(strResponse.Table[0].Amount)
+                $("#btnSubmit").attr('value', 'Edit');
+            }
+           
+        };
+
     </script>
 }

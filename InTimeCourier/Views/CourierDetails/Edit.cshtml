@@ -348,7 +348,7 @@
                     var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
                     if (rateresp.length > 0) {
                         $("#Rate").val(rateresp[0].Rate);
-                        if (resp[0].PartyType == 'Logistic') {
+                        //if (resp[0].PartyType == 'Logistic') {
                             if ($("#Qty").val() != "") {
                                 var amt = rateresp[0].Rate * parseInt(qty)
                                 $("#Amount").val(amt + ODACharges - discount);
@@ -357,10 +357,10 @@
                                 $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
                             }
 
-                        }
-                        else {
-                            $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                        }
+                        //}
+                        //else {
+                        //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                        //}
 
                     }
                     else {
