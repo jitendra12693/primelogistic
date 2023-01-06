@@ -6,12 +6,18 @@
 
 <h4>Add New Courrier</h4>
 <hr />
+<div id="grid">
+    @*<div id="divAjaxLoader" class="ajaxLoader"></div>*@
+</div>
+<div>
+
+</div>
 <div class="col-lg-7">
-    @using (Html.BeginForm())
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "courierId" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
-
+            @Html.HiddenFor(model => model.CourrierId)
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @if (ViewBag.Status == 1)
             {
@@ -41,7 +47,7 @@
                     @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
                         @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })*@
-                        @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new {@class = "form-control" })
+                        @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.DestinationId, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -116,8 +122,8 @@
                 </div>
                 <div class="col-md-6 form-group">
                     <div class="col-md-offset-6 col-md-12">
-                        <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit"/>
-                        <button type="reset" class="btn btn-danger">Reset</button>
+                        <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit" />
+                        <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
                     </div>
                 </div>
             </div>
@@ -210,7 +216,7 @@
         });
         $("#DepartureDt").datepicker("option", "changeYear", true);
         $("#Amount").attr("readonly", "readonly");
-       // $("#Qty").attr("readonly", true);
+        // $("#Qty").attr("readonly", true);
         $("#DepartureDt").attr("readonly", "readonly");
         //$("#Weight").change(function () {
         //    debugger;
@@ -304,7 +310,7 @@
                             // //    ratedetails.rate.push(item.Rate);
                             // //});
                             // $("#Rate").val(data.rate);
-                            
+
                             //if (strResponse.Table[0].PartyType = 'Logistic') {
                             //    $("#Qty").attr("readonly", false);
                             //}
@@ -337,13 +343,13 @@
                     if (rateresp.length > 0) {
                         $("#Rate").val(rateresp[0].Rate);
                         //if (resp[0].PartyType == 'Logistic') {
-                            if ($("#Qty").val() != "") {
-                                var amt = rateresp[0].Rate * parseInt(qty)
-                                $("#Amount").val(amt + ODACharges - discount);
-                            }
-                            else {
-                                $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                            }
+                        if ($("#Qty").val() != "") {
+                            var amt = rateresp[0].Rate * parseInt(qty)
+                            $("#Amount").val(amt + ODACharges - discount);
+                        }
+                        else {
+                            $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                        }
 
                         //}
                         //else {
@@ -358,7 +364,7 @@
                         else {
                             $("#Amount").val('');
                         }
-                       
+
                     }
                 } else {
                     $("#Amount").val((rate * qty) + ODACharges - discount);
@@ -369,7 +375,7 @@
                 $("#Rate").val('');
                 $("#Amount").val('');
             }
-           
+
         }
 
         function ratechangedcalculateAmount() {
@@ -454,41 +460,111 @@
         }
 
         function filldataifexist() {
+            showAjaxLoader();
             var awbno = $('#CNNo').val();
             $.ajax({
                 type: "GET",
                 url: "/CourierDetails/FillCourierDetails",
-                data: { awbno: awbno},
+                data: { awbno: awbno },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: OnSuccess,
                 failure: function (response) {
+                    hideAjaxLoader();
                     alert(response.d);
                 },
                 error: function (response) {
+                    hideAjaxLoader();
                     alert(response.d);
                 }
             });
         };
         function OnSuccess(response) {
+            hideAjaxLoader();
+            $("#btnSubmit").attr("disabled", false)
+            $("#btnSubmit").text("Save")
             var strResponse = JSON.parse(response);
             if (strResponse.Table.length > 0) {
-                $("#DestinationId").val(strResponse.Table[0].DestinationId)
-                $("#PartyId").val(strResponse.Table[0].PartyId)
-                $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
-                $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
-                var d = strResponse.Table[0].DepartureDt.split('T')[0];
-                $('#DepartureDt').val(d.split("-").reverse().join("/"));
-                $("#Weight").val(strResponse.Table[0].Weight)
-                $("#Qty").val(strResponse.Table[0].Qty)
-                $("#Rate").val(strResponse.Table[0].Rate)
-                $("#ODACharges").val(strResponse.Table[0].ODACharges)
-                $("#Discount").val(strResponse.Table[0].Discount)
-                $("#Amount").val(strResponse.Table[0].Amount)
-                $("#btnSubmit").attr('value', 'Edit');
+                if (strResponse.Table[0].isInvoiceDone == false) {
+                    $("#DestinationId").val(strResponse.Table[0].DestinationId)
+                    $("#PartyId").val(strResponse.Table[0].PartyId)
+                    $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
+                    $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
+                    var d = strResponse.Table[0].DepartureDt.split('T')[0];
+                    $('#DepartureDt').val(d.split("-").reverse().join("/"));
+                    $("#Weight").val(strResponse.Table[0].Weight)
+                    $("#Qty").val(strResponse.Table[0].Qty)
+                    $("#Rate").val(strResponse.Table[0].Rate)
+                    $("#ODACharges").val(strResponse.Table[0].ODACharges)
+                    $("#Discount").val(strResponse.Table[0].Discount)
+                    $("#Amount").val(strResponse.Table[0].Amount)
+                    $("#CourrierId").val(strResponse.Table[0].CourrierId)
+                    $("#btnSubmit").attr('value', 'Update');
+                }
+                else {
+                    alert('Bill Generated for this Entry')
+                    $("#DestinationId").val(strResponse.Table[0].DestinationId)
+                    $("#PartyId").val(strResponse.Table[0].PartyId)
+                    $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
+                    $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
+                    var d = strResponse.Table[0].DepartureDt.split('T')[0];
+                    $('#DepartureDt').val(d.split("-").reverse().join("/"));
+                    $("#Weight").val(strResponse.Table[0].Weight)
+                    $("#Qty").val(strResponse.Table[0].Qty)
+                    $("#Rate").val(strResponse.Table[0].Rate)
+                    $("#ODACharges").val(strResponse.Table[0].ODACharges)
+                    $("#Discount").val(strResponse.Table[0].Discount)
+                    $("#Amount").val(strResponse.Table[0].Amount)
+                    $("#CourrierId").val(strResponse.Table[0].CourrierId)
+                    $("#btnSubmit").attr("disabled", true)
+                }
+
             }
-           
+            else {
+                var CNNo = $('#CNNo').val();
+                $('#courierId').trigger("reset");
+                $('#CNNo').val(CNNo);
+                $('#CourrierId').val('')
+                $("#btnSubmit").attr("disabled", false)
+                $("#btnSubmit").attr('value', 'Save');
+            }
+
         };
+
+        $("#btnReset").click(function () {
+            $('#courierId').trigger("reset");
+            $("#btnSubmit").attr("disabled", false)
+            $("#btnSubmit").attr('value', 'Save');
+        });
+        function showAjaxLoader() {
+            //find ajax loader div tag
+            var loaderDiv = $("#divAjaxLoader");
+            if (loaderDiv.length === 0) {
+                //create ajax loader div tag, if not present
+                loaderDiv = $("<div />;")
+                    .attr("id", "divAjaxLoader")
+                    .css("position", "absolute")
+                    .css("display", "block")
+                    .css("z-index", "10000")
+                    .addClass("ajaxLoader");
+                loaderDiv.appendTo("body");
+            }
+
+            //center ajax loader div tag in the browser window
+            var doc = $(document);
+            loaderDiv.css('top', (doc.height() - loaderDiv.height()) / 2);
+            loaderDiv.css('left', (doc.width() - loaderDiv.width()) / 2);
+
+            //show it
+            loaderDiv.show();
+
+        }
+
+        function hideAjaxLoader() {
+            //hide ajax loader div tag, if present
+            $("#divAjaxLoader").hide();
+            $("#divAjaxLoader").css("display", "none");
+        }
 
     </script>
 }
