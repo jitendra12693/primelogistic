@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using System.Configuration;
 using System.Globalization;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace InTimeCourier.Controllers
 {
@@ -75,7 +76,7 @@ namespace InTimeCourier.Controllers
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
                 var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
-               var listnew=list.Take(12).ToList();
+                var listnew=list.Take(12).ToList();
                 int cnt = 0;
                 foreach (var item in listnew)
                 {
@@ -105,28 +106,49 @@ namespace InTimeCourier.Controllers
             ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
             try
             {
+                if(courier != null && courier.CourrierId>0)
+                {
+                        courier.ModifyBy = 1;
+                        courier.ModifyDate = DateTime.Now;
+                        db.Entry(courier).State = System.Data.Entity.EntityState.Modified;
+                        db.SaveChanges();
+                }
+                else
+                {
+                    var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@DestinationId,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
+                                    new SqlParameter("@PartyId", courier.PartyId),
+                                    new SqlParameter("@CourrierModeId", courier.CourrierModeId),
+                                    new SqlParameter("@NetworModeId", courier.NetworkModeId),
+                                    new SqlParameter("@ODACharges", courier.ODACharges ?? (object)DBNull.Value),
+                                    new SqlParameter("@Qty", courier.Qty),
+                                    new SqlParameter("@Amount", courier.Amount),
+                                    new SqlParameter("@CreatedBy", CourierHelper.UserId),
+                                    new SqlParameter("@TrackingNo", string.Empty),
+                                    new SqlParameter("@CNNo", courier.CNNo),
+                                    new SqlParameter("@Weight", courier.Weight),
+                                    new SqlParameter("@Discount", courier.Discount ?? (object)DBNull.Value),
+                                    new SqlParameter("@DepartureDt", courier.DepartureDt),
+                                    new SqlParameter("@DestinationId", courier.DestinationId),
+                                    new SqlParameter("@Rate", courier.Rate)).ToList();
+                    ViewBag.Message = response[0].Message; //"Your courier registered successfully with courier tracking no: " + response[0].TrackingNo;
+                    ViewBag.Status = response[0].Status;
+                    courier.TrackingNo = response[0].TrackingNo;
+                    ViewBag.TrackingNo = response[0].TrackingNo;
 
-                var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@DestinationId,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
-                new SqlParameter("@PartyId", courier.PartyId),
-                new SqlParameter("@CourrierModeId", courier.CourrierModeId),
-                 new SqlParameter("@NetworModeId", courier.NetworkModeId),
-                new SqlParameter("@ODACharges", courier.ODACharges ?? (object)DBNull.Value),
-                new SqlParameter("@Qty", courier.Qty),
-                new SqlParameter("@Amount", courier.Amount),
-                new SqlParameter("@CreatedBy", CourierHelper.UserId),
-                new SqlParameter("@TrackingNo", string.Empty),
-                new SqlParameter("@CNNo", courier.CNNo),
-                new SqlParameter("@Weight", courier.Weight),
-                new SqlParameter("@Discount", courier.Discount ?? (object)DBNull.Value),
-                new SqlParameter("@DepartureDt", courier.DepartureDt),
-                new SqlParameter("@DestinationId", courier.DestinationId),
-                new SqlParameter("@Rate", courier.Rate)).ToList();
-                ViewBag.Message = response[0].Message; //"Your courier registered successfully with courier tracking no: " + response[0].TrackingNo;
-                ViewBag.Status = response[0].Status;
-                courier.TrackingNo = response[0].TrackingNo;
-                ViewBag.TrackingNo = response[0].TrackingNo;
+                }
 
                 var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
+                var listnew = list.Take(12).ToList();
+                int cnt = 0;
+                foreach (var item in listnew)
+                {
+                    var Location = db.DestinationMaster.Where(x => x.IsActive == true && x.Id == item.DestinationId).FirstOrDefault();
+                    if (Location != null)
+                    {
+                        list[cnt].Location = Location.Name;
+                    }
+                    cnt++;
+                }
                 ViewBag.Courrier = list.Take(10).ToList();
             }
             catch (Exception ex)
@@ -449,6 +471,62 @@ namespace InTimeCourier.Controllers
             long userId = (long)Session["UserId"];
             var loggedInUser = db.AdminUsers.Where(admin => admin.UserId == userId).FirstOrDefault();
             return Json(new { loggedInUser = loggedInUser }, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public JsonResult FillCourierDetails(string awbno)
+        {
+            //List<RateMappingDetails> rateMappingList = new List<RateMappingDetails>();
+            try
+            {
+                DataSet ds = new DataSet();
+                SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+                SqlCommand cmd = new SqlCommand("usp_GetCourierDetailsbyAWBNo", connString);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Awbno", awbno);
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                sda.Fill(ds);
+                //if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                //{
+                //    foreach (DataRow dr in ds.Tables[0].Rows)
+                //    {
+                //        RateMappingDetails ratedetails = new RateMappingDetails();
+                //        ratedetails.Rate = Convert.ToDecimal(dr["Rate"]);
+                //        ratedetails.FromWt = Convert.ToDecimal(dr["FromWt"]);
+                //        ratedetails.ToWt = Convert.ToDecimal(dr["ToWt"]);
+                //        ratedetails.PartyName = Convert.ToString(dr["PartyName"]);
+                //        //ratedetails.PartyId = Convert.ToInt32(dr["PartyId"]);
+                //        ratedetails.CourrierModeName = Convert.ToString(dr["CourrierModeName"]);
+                //        //ratedetails.CourrierModeId = Convert.ToInt32(dr["CourrierModeId"]);
+                //        ratedetails.NetworkModeName = Convert.ToString(dr["NetworkModeName"]);
+                //        ratedetails.Id = Convert.ToInt32(dr["Id"]);
+                //        rateMappingList.Add(ratedetails);
+                //    }
+                //}
+                return Json(JsonConvert.SerializeObject(ds), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult Delete(int id)
+        {
+            if (id > 0)
+            {
+               //var dataexist= db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
+               // if (dataexist != null)
+               // {
+                    CourrierMaster courrierMaster = new CourrierMaster();
+                    courrierMaster.CourrierId = id;
+                    db.Entry(courrierMaster).State = System.Data.Entity.EntityState.Deleted;
+                    db.SaveChanges();
+                //}
+            }
+            return Json(new { response = "Deleted"}, JsonRequestBehavior.AllowGet);
         }
     }
 
