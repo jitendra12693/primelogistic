@@ -55,10 +55,12 @@
         <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
         <script>
             $(document).ready(function () {
+                var globalData;
                 var buttonCommon = {
                     exportOptions: {
                         format: {
                             body: function (data, row, column, node) {
+                                globalData = data;
                                 // Strip $ from salary column to make it numeric
                                 return column === 5 ?
                                     data.replace(/[$,]/g, '') :
@@ -106,32 +108,41 @@
                             title: ' ',
                             extend: 'print',
                             customize: function (win) {
-                                $(win.document.body)
-                                    .css('font-size', '10pt')
-                                    .prepend(
-                                        `<table class="table table-bordered" style="width:100%;">
+                                $.ajax({
+                                    type: 'GET',
+                                    datatype: 'json',
+                                    url: '/CourierDetails/GetLoggedInUser',
+                                    success: function (data) {
+                                        $(win.document.body)
+                                            .css('font-size', '10pt')
+                                            .prepend(
+                                                `<table class="table table-bordered" style="width:100%;">
                                                 <tr>
                                                     <td colspan="2">
                                                         <center>
-                                                            <h1>In Time  Logistics</h1>
-                                                            <h4>Kaman Road, Chinchoti Road, Vasai(East), Palghar-401208.</h4>
-                                                            <h4>Tel :+919320030626/+919028826303 </h4>
-                                                            <h4>Email Id: intimelogistic119@gmail.com</h4>
+                                                            <h1>${data?.loggedInUser?.Name}</h1>
+                                                            <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
+                                                            <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
+                                                            <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
                                                         </center>
                                                     </td>
                                                 </tr>
                                             </table>
                                         `
-                                    );
+                                            );
 
-                                $(win.document.body).find('table')
-                                    .addClass('compact')
-                                    .css('font-size', 'inherit');
-                            }
+                                        $(win.document.body).find('table')
+                                            .addClass('compact')
+                                            .css('font-size', 'inherit');
+                                    },
+                                    error: function (err) {
+                                        console.log("error=", err);
+                                    }
+                                })
+                            },
                         },
                     ]
                 });
-
                 oTable = $('#statementTable').DataTable();
                 $('#btnFilter').click(function () {
                     oTable.columns(4).search($('#PartyId').val().trim());
