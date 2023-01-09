@@ -39,4 +39,18 @@ namespace InTimeCourier.Models
         public decimal PaidAmount { get; set; }
         public string ChequeNo { get; set; }
     }
+
+    public class BillAmountSummary
+    {
+        public decimal GrandTotal { get; set; }
+        public decimal PaidAmount { get; set; }
+        public decimal BalanceAmount { get; set; }
+        public int TotalBillCount { get; set; }
+    }
+
+    public class BillSummary
+    {
+        public BillAmountSummary BillAmountSummary { get; set; }
+        public List<BillDetails> BillDetails { get; set; }
+    }
 }

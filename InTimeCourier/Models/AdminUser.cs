@@ -59,6 +59,7 @@ namespace InTimeCourier.Models
         public string AadharNo { get; set; }
 
         public string GSTNumber { get; set; }
+        public string CompanyLogo { get; set; }
 
         public int? CreatedBy { get; set; }
 
