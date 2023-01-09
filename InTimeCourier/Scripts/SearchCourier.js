@@ -43,7 +43,7 @@ $("#btnSearch").click(function () {
             success: function (data) {
                 if (data.TotalRecord.RecordCount == 0) {
                     $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
-                     + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
+                        + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
                     $("#lblTotal").text();
                     hideAjaxLoader();
                 } else {
@@ -77,7 +77,7 @@ $("#btnSearch").click(function () {
                     $('#lblGrandTotalInWord').text(data.InWord);
                     $('#partyFuelCharge').text(data.TotalRecord.FuelChargesLabel);
                     hideAjaxLoader();
-                    
+
                 }
             },
             error: function (error) {
@@ -95,7 +95,7 @@ $("#btnSearch").click(function () {
 $("#btnClear").click(function () {
     hideAjaxLoader();
     $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
-    + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
+        + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
 });
 
 
@@ -106,25 +106,27 @@ $("#btnExportPdf").click(function () {
         url: '/CourierDetails/GetLoggedInUser',
         success: function (data) {
             var header = `<center>
-                <h3>${data?.loggedInUser?.Name}</h3>
+                <div style="margin-top:-3%;margin-bottom:-3%">
+                    <img src="${data?.loggedInUser?.CompanyLogo}" style="height:150px;" />
+                </div>
                 <h5>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h5>
-                <h5>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91'+data?.loggedInUser?.AlternateContact:''} </h4><h4>Email Address: ${ data?.loggedInUser?.EmailId}</h5 ><hr />
+                <h5>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4><h4>Email Address: ${data?.loggedInUser?.EmailId}</h5 ><hr />
                 <table style="width:100%;">
                 <tr>
                 <td>M/s</td>
-                <td> ${ $("#hdnPartyName").val() }</td>
+                <td> ${$("#hdnPartyName").val()}</td>
                 <td>G.S.T. No.</td>
-                <td>${$('#hdnPartyGSTNo').val() }</td>
+                <td>${$('#hdnPartyGSTNo').val()}</td>
                 </tr>
                 <tr>
                 <td>Address</td>
-                <td colspan="3">${ $('#hdnAddress').val() }</td>
+                <td colspan="3">${$('#hdnAddress').val()}</td>
                 </tr>
                 <tr>
                 <td>From</td>
-                <td>${ $('#txtFromDate').val() }</td>
+                <td>${$('#txtFromDate').val()}</td>
                 <td>To</td>'
-                <td>${ $('#txtToDate').val() }</td>
+                <td>${$('#txtToDate').val()}</td>
                 </tr>
                  </table>
                 </center>`;
@@ -168,8 +170,6 @@ $("#btnExportPdf").click(function () {
             console.log("error=", err);
         }
     });
-    console.log("data=", loggedInUser);
-    
 });
 
 function StringToInt(number) {
@@ -190,7 +190,7 @@ $("#recieptModal").dialog({
 var theDialog = $("#recieptModal");
 
 $("#btnReciept").click(function () {
-    
+
     var partyId = $("#PartyId").val();
     var fromDate = $("#txtFromDate").val();
     var toDate = $("#txtToDate").val();
@@ -211,8 +211,8 @@ $("#btnReciept").click(function () {
     var TotalAmount = $('#lblTotal').text();
     var netAmount = $('#lblNetTotal').text();
     var discount = $('#lblDiscount').text();
-    var CGST = $('#lblBillCGST').text() ? $('#lblBillCGST').text() : parseFloat($('#lblBillIGST').text())/2;
-    var SGST = $('#lblBillSGST').text() ? $('#lblBillSGST').text() : parseFloat($('#lblBillIGST').text())/2;
+    var CGST = $('#lblBillCGST').text() ? $('#lblBillCGST').text() : parseFloat($('#lblBillIGST').text()) / 2;
+    var SGST = $('#lblBillSGST').text() ? $('#lblBillSGST').text() : parseFloat($('#lblBillIGST').text()) / 2;
     var billId = 0;//StringToInt($('#lblBillNo').text());
 
     if (count == '') {
@@ -243,7 +243,7 @@ $("#btnReciept").click(function () {
             $('#lblBillDiscount').text(discount);
             $('#lblBillFullCahrges').text(fullCharges);
             if (get_Url == '1') {
-                if ($('#hdnIsIGSTParty').val()=="true") {
+                if ($('#hdnIsIGSTParty').val() == "true") {
                     var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
                     $('#lblBillIGST_N').text(totalIgst);
                     $('#trBillCGST_N').hide();
@@ -272,8 +272,8 @@ $("#btnReciept").click(function () {
                     $('#trBillSGST').show();
                 }
             }
-           
-            
+
+
             $('#lblBillGrandTotal').text(grandTotal);
             $('#partyGSTNumber').text()
             $('#divDisplayWords').text($('#lblGrandTotalInWord').text());
@@ -306,7 +306,7 @@ $('#btnPrintReciept').click(function () {
             console.log("error=", err);
         }
     });
-    
+
 })
 //}
 
@@ -316,11 +316,11 @@ function showAjaxLoader() {
     if (loaderDiv.length === 0) {
         //create ajax loader div tag, if not present
         loaderDiv = $("<div />;")
-        .attr("id", "divAjaxLoader")
-        .css("position", "absolute")
-        .css("display", "block")
-        .css("z-index", "10000")
-        .addClass("ajaxLoader");
+            .attr("id", "divAjaxLoader")
+            .css("position", "absolute")
+            .css("display", "block")
+            .css("z-index", "10000")
+            .addClass("ajaxLoader");
         loaderDiv.appendTo("body");
     }
 
@@ -349,7 +349,7 @@ function onlyNumbers(evt) {
     return true;
 }
 
-function NumToWord(inputNumber,id) {
+function NumToWord(inputNumber, id) {
     var str = new String(inputNumber)
     var splt = str.split("");
     var rev = splt.reverse();
@@ -359,7 +359,7 @@ function NumToWord(inputNumber,id) {
 
     numLength = rev.length;
     var word = new Array();
-    
+
     var j = 0;
 
     for (i = 0; i < numLength; i++) {
@@ -403,7 +403,7 @@ function NumToWord(inputNumber,id) {
                 }
                 break;
 
-                
+
             case 4:
                 aboveTens();
                 break;
@@ -418,7 +418,7 @@ function NumToWord(inputNumber,id) {
                 if (rev[i + 1] !== '0' || rev[i] > '0') {
                     word[j] = word[j] + " Lakh";
                 }
-                 
+
                 break;
 
             case 6:
@@ -434,30 +434,30 @@ function NumToWord(inputNumber,id) {
                 }
                 if (rev[i + 1] !== '0' || rev[i] > '0') {
                     word[j] = word[j] + " Crore";
-                }                
+                }
                 break;
 
             case 8:
                 aboveTens();
                 break;
 
-                //            This is optional. 
+            //            This is optional. 
 
-                //            case 9:
-                //                if ((rev[i] == 0) || (rev[i + 1] == 1)) {
-                //                    word[j] = '';
-                //                }
-                //                else {
-                //                    word[j] = once[rev[i]];
-                //                }
-                //                if (rev[i + 1] !== '0' || rev[i] > '0') {
-                //                    word[j] = word[j] + " Arab";
-                //                }
-                //                break;
+            //            case 9:
+            //                if ((rev[i] == 0) || (rev[i + 1] == 1)) {
+            //                    word[j] = '';
+            //                }
+            //                else {
+            //                    word[j] = once[rev[i]];
+            //                }
+            //                if (rev[i + 1] !== '0' || rev[i] > '0') {
+            //                    word[j] = word[j] + " Arab";
+            //                }
+            //                break;
 
-                //            case 10:
-                //                aboveTens();
-                //                break;
+            //            case 10:
+            //                aboveTens();
+            //                break;
 
             default: break;
         }
@@ -475,7 +475,7 @@ function NumToWord(inputNumber,id) {
     for (i = 0; i < numLength; i++) {
         finalOutput = finalOutput + word[i];
     }
-     
+
     $("#lblGrandTotalInWord").text(finalOutput);
 }
 

@@ -71,8 +71,13 @@ namespace InTimeCourier.Controllers
                     v = v.OrderBy(a=> sortColumn + " " + sortColumnDir);
                 }
                 recordsTotal = v.Count();
+                BillAmountSummary objBillSummary = new BillAmountSummary();
+                objBillSummary.GrandTotal = v.Sum(x => x.GrandTotal);
+                objBillSummary.PaidAmount = v.Sum(x => x.PaidAmount);
+                objBillSummary.BalanceAmount = v.Sum(x => x.GrandTotal)- v.Sum(x => x.PaidAmount);
+                objBillSummary.TotalBillCount = recordsTotal;
                 var data = v.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data },
+                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data, billSummary= objBillSummary },
                     JsonRequestBehavior.AllowGet);
 
             }
