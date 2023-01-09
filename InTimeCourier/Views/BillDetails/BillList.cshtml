@@ -18,7 +18,7 @@
             <th>Bill Date</th>
             <th>Action</th>
         </tr>
-        @if (Model != null)
+        @if (Model != null && Model.ToList().Count()>0)
         {
             foreach (var item in Model.ToList())
             {

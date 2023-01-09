@@ -44,6 +44,25 @@
                 <th style="white-space:nowrap">Cheque No</th>
             </tr>
         </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+            <tr class="alert alert-warning">
+                <th style="white-space:nowrap">Bill No</th>
+                <th style="white-space:nowrap">Party Name</th>
+                <th style="white-space:nowrap">GSTIN Number</th>
+                <th style="white-space:nowrap">Bill Date</th>
+                <th style="white-space:nowrap">From</th>
+                <th style="white-space:nowrap">To</th>
+                <th style="white-space:nowrap">Amount</th>
+                <th style="white-space:nowrap">Fuel Charges</th>
+                <th style="white-space:nowrap">CGST(9%)</th>
+                <th style="white-space:nowrap">SGST(9%)</th>
+                <th style="white-space:nowrap">Grand Total</th>
+                <th style="white-space:nowrap">Paid</th>
+                <th style="white-space:nowrap">Cheque No</th>
+            </tr>
+        </tfoot>
     </table>
     @*</div>*@
     @section Scripts {
@@ -53,6 +72,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
         <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
         <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.10.19/api/sum().js"></script>
         <script>
             $(document).ready(function () {
                 var globalData;
@@ -71,6 +91,17 @@
                 };
                 //jQuery DataTables initialization
                 $('#statementTable').DataTable({
+                    //"footerCallback": function (row, data, start, end, display) {
+                    //    //Get data here
+                    //    console.log(data);
+                    //    //Do whatever you want. Example:
+                    //    var totalAmount = 0;
+                    //    for (var i = 0; i < data.length; i++) {
+                    //        totalAmount += parseFloat(data[i][4]);
+                    //    }
+                    //    console.log(totalAmount);
+                    //},
+                   
                     "language":
                     {
                         "processing": "<div class='overlay custom-loader-background'>" +
@@ -102,6 +133,28 @@
                         { "data": "PaidAmount", "name": "PaidAmount", "autoWidth": true },
                         { "data": "ChequeNo", "name": "ChequeNo", "autoWidth": true }
                     ],
+                    drawCallback: function () {
+                        var api = this.api();
+                        var sum = 0;
+                        var formated = 0;
+                        //to show first th
+                        $(api.column(0).footer()).html('Total');
+                        $(api.column(1).footer()).html('');
+                        $(api.column(2).footer()).html('');
+                        $(api.column(3).footer()).html('');
+                        $(api.column(4).footer()).html('');
+                        $(api.column(5).footer()).html('');
+                        $(api.column(12).footer()).html('');
+
+                        for (var i = 6; i <= 11; i++) {
+                            sum = api.column(i, { page: 'current' }).data().sum();
+
+                            //to format this sum
+                            formated = parseFloat(sum).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                            $(api.column(i).footer()).html('<b> <span>&#8377;</span></b>' + formated);
+                        }
+
+                    },
                     dom: 'Bfrtip',
                     buttons: [
                         {
@@ -117,18 +170,18 @@
                                             .css('font-size', '10pt')
                                             .prepend(
                                                 `<table class="table table-bordered" style="width:100%;">
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <center>
-                                                            <h1>${data?.loggedInUser?.Name}</h1>
-                                                            <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
-                                                            <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
-                                                            <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
-                                                        </center>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        `
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <center>
+                                                                    <h1>${data?.loggedInUser?.Name}</h1>
+                                                                    <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
+                                                                    <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
+                                                                    <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
+                                                                </center>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                `
                                             );
 
                                         $(win.document.body).find('table')
@@ -152,18 +205,88 @@
                 });
             });
 
-            $(function () {
-                $("#txtFromDate").datepicker({
-                    changeMonth: true,
-                    changeYear: true
-                });
+                    //$(function () {
+                    //    $("#txtFromDate").datepicker({
+                    //        changeMonth: true,
+                    //        changeYear: true
+                    //    });
 
-                $("#txtToDate").datepicker({
-                    changeMonth: true,
-                    changeYear: true
-                });
+                    //    $("#txtToDate").datepicker({
+                    //        changeMonth: true,
+                    //        changeYear: true
+                    //    });
 
-            });
+                    //});
+                    //$(document).ready(function () {
+                    //    FillDetails();
+                    //});
+                    //function FillDetails() {
+                    //    $.ajax({
+                    //        type: "POST",
+                    //        url: "/BillStatement/SearchStatement",
+                    //        contentType: "application/json; charset=utf-8",
+                    //        dataType: "json",
+                    //        success: OnSuccess,
+                    //        failure: function (response) {
+                    //            alert(response.d);
+                    //        },
+                    //        error: function (response) {
+                    //            alert(response.d);
+                    //        }
+                    //    });
+                    //};
+                    //function OnSuccess(response) {
+                    //    var strResponse = [];
+                    //    if (response.length > 0) {
+                    //        //$.each(response, function (key, value) {
+                    //        //    strResponse.push({
+                    //        //        Id: value.Id,
+                    //        //        PartyName: value.PartyName,
+                    //        //        CourrierModeName: value.CourrierModeName,
+                    //        //        NetworkModeName: value.NetworkModeName,
+                    //        //        FromWt: value.FromWt.toFixed(3) + ' (<b>gm</b>)',
+                    //        //        ToWt: value.ToWt.toFixed(3) + ' (<b>gm</b>)',
+                    //        //        Rate: '<b><span>&#8377;</span> </b>' + value.Rate + '<b>/-</b>'
+                    //        //    });
+
+                    //        //});
+                    //    }
+                    //    $("#statementTable").DataTable(
+                    //        {
+                    //            //bLengthChange: true,
+                    //            //lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+                    //            //bFilter: true,
+                    //            //bSort: true,
+                    //            //bPaginate: true,
+                    //            "bDestroy": true,
+                    //            data: response,
+                    //            "columns": [
+                    //                { "data": "BillNo"},
+                    //                { "data": "PartyName"},
+                    //                { "data": "GSTINNumber"},
+                    //                { "data": "BillDate"},
+                    //                { "data": "PeriodFrom"},
+                    //                { "data": "PeriodTo"},
+                    //                { "data": "TotalAmount"},
+                    //                { "data": "FullCharges"},
+                    //                { "data": "CGST"},
+                    //                { "data": "SGST"},
+                    //                { "data": "GrandTotal"},
+                    //                { "data": "PaidAmount"},
+                    //                { "data": "ChequeNo"}
+                    //            ]
+                    //        });
+                    //};
+
+
+                    ////$("#PartyId").change(function () {
+                    ////    $('#tableRateList').DataTable().clear().draw();
+                    ////    Getdetails();
+                    ////});
+                    ////$("#CourrierModeId").change(function () {
+                    ////    $('#tableRateList').DataTable().clear().draw();
+                    ////    Getdetails();
+                    ////});
         </script>
     }
 

@@ -65,5 +65,6 @@ namespace InTimeCourier.Models
         public int NetworkModeId { get; set; }
         public decimal? Discount { get; set; }
         public int Qty { get; set; }
+        public bool isInvoiceDone { get; set; }
     }
 }

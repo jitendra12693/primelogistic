@@ -11,10 +11,11 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.CourrierId)
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.CourrierId)
+    @Html.HiddenFor(model => model.isInvoiceDone)
     <div class="row">
         <div class="col-md-6 form-group" style="display:none;">
             @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -110,19 +111,19 @@
                 @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-               
+
             </div>
         </div>
         <div class="col-md-6 form-group">
-                <div class="col-md-offset-10 col-md-12">
-                    <input type="submit" value="Update" class="btn btn-primary" />
-                    @*@Html.ActionLink("Delete", "Delete", new { id = Model.CourrierId })*@
-                    <input type = "button" value = "Delete" class="btn btn-danger" id="btnDelete"/>
-                </div>
+            <div class="col-md-offset-10 col-md-12">
+                <input type="submit" value="Update" class="btn btn-primary" />
+                @*@Html.ActionLink("Delete", "Delete", new { id = Model.CourrierId })*@
+                <input type="button" value="Delete" class="btn btn-danger" id="btnDelete" />
+            </div>
         </div>
 
     </div>
-    </div>
+</div>
 }
 
 <div>
@@ -470,32 +471,34 @@
 
                     }
                     $("#btnDelete").click(function () {
-                        var id=$('#CourrierId').val()
-                        if (confirm("Are you sure to delete this item")) {
-                            $.ajax({
-                                type: "GET",
-                                url: "/CourierDetails/Delete",
-                                data: { id: id},
-                                contentType: "application/json; charset=utf-8",
-                                dataType: "json",
-                                success: function (response) {
-                                    if (response.response == 'Deleted') {
-                                       alert ("Entry Deleted Succussfully !")
-                                        window.location.href = "/CourierDetails/CourrierList";
-                                    }
-                                },
-                                failure: function (response) {
-                                    alert(response.d);
-                                },
-                                error: function (response) {
-                                    alert(response.d);
-                                }
-                            });
+                        var id = $('#CourrierId').val()
+                        if ($('#isInvoiceDone').val() == 'True') {
+                            alert('Bill Generated');
                         }
                         else {
-                            alert('No')
+                            if (confirm("Are you sure to delete this item")) {
+                                $.ajax({
+                                    type: "GET",
+                                    url: "/CourierDetails/Delete",
+                                    data: { id: id },
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (response) {
+                                        if (response.response == 'Deleted') {
+                                            alert("Entry Deleted Succussfully !")
+                                            window.location.href = "/CourierDetails/CourrierList";
+                                        }
+                                    },
+                                    failure: function (response) {
+                                        alert(response.d);
+                                    },
+                                    error: function (response) {
+                                        alert(response.d);
+                                    }
+                                });
+                            }
                         }
-                        btnDelete
+                       
                     });
 
                 </script>
