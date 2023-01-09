@@ -155,7 +155,9 @@ namespace InTimeCourier.Controllers
             {
                 throw;
             }
-            return View();
+           // return new EmptyResult(ViewBag);
+           // return View(ViewBag);
+            return RedirectToAction("AddCourrier");
         }
         public ActionResult Edit(long? id)
         {

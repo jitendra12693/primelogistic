@@ -91,16 +91,16 @@
                 };
                 //jQuery DataTables initialization
                 $('#statementTable').DataTable({
-                    //"footerCallback": function (row, data, start, end, display) {
-                    //    //Get data here
-                    //    console.log(data);
-                    //    //Do whatever you want. Example:
-                    //    var totalAmount = 0;
-                    //    for (var i = 0; i < data.length; i++) {
-                    //        totalAmount += parseFloat(data[i][4]);
-                    //    }
-                    //    console.log(totalAmount);
-                    //},
+                    "footerCallback": function (row, data, start, end, display) {
+                        //Get data here
+                        console.log(data);
+                        //Do whatever you want. Example:
+                        var totalAmount = 0;
+                        for (var i = 0; i < data.length; i++) {
+                            totalAmount += parseFloat(data[i][4]);
+                        }
+                        console.log(totalAmount);
+                    },
                    
                     "language":
                     {
@@ -169,6 +169,23 @@
                                         $(win.document.body)
                                             .css('font-size', '10pt')
                                             .prepend(
+                                                `<table class="table table-bordered" style="width:100%;">
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <center>
+                                                                    <h1>${data?.loggedInUser?.Name}</h1>
+                                                                    <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
+                                                                    <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
+                                                                    <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
+                                                                </center>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                `
+                                        );
+                                        $(win.document.body)
+                                            .css('font-size', '10pt')
+                                            .append(
                                                 `<table class="table table-bordered" style="width:100%;">
                                                         <tr>
                                                             <td colspan="2">
