@@ -93,13 +93,8 @@
                 $('#statementTable').DataTable({
                     "footerCallback": function (row, data, start, end, display) {
                         //Get data here
-                        console.log(data);
+                        globalData = data;
                         //Do whatever you want. Example:
-                        var totalAmount = 0;
-                        for (var i = 0; i < data.length; i++) {
-                            totalAmount += parseFloat(data[i][4]);
-                        }
-                        console.log(totalAmount);
                     },
                    
                     "language":
@@ -144,11 +139,22 @@
                         $(api.column(3).footer()).html('');
                         $(api.column(4).footer()).html('');
                         $(api.column(5).footer()).html('');
+                        $(api.column(6).footer()).html('');
+                        $(api.column(7).footer()).html('');
+                        $(api.column(8).footer()).html('');
+                        $(api.column(9).footer()).html('');
                         $(api.column(12).footer()).html('');
-
-                        for (var i = 6; i <= 11; i++) {
+                        var balanceAmt = 0.00;
+                        var totalAmt = 0.00;
+                        for (var i = 10; i <= 11; i++) {
                             sum = api.column(i, { page: 'current' }).data().sum();
-
+                            if (i == 10)
+                                totalAmt = sum;
+                            else if (i == 11) {
+                                balanceAmt = totalAmt - sum;
+                                formated = parseFloat(balanceAmt).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                                $(api.column(12).footer()).html('<b>-<span>&#8377;</span></b>' + formated);
+                            }
                             //to format this sum
                             formated = parseFloat(sum).toLocaleString(undefined, { minimumFractionDigits: 2 });
                             $(api.column(i).footer()).html('<b> <span>&#8377;</span></b>' + formated);
@@ -166,6 +172,13 @@
                                     datatype: 'json',
                                     url: '/CourierDetails/GetLoggedInUser',
                                     success: function (data) {
+                                        console.log("globalData=", globalData);
+                                        var grandTotal = 0.00,paidAmt=0.00, balanceAmt=0.00;
+                                        for (var i = 0; i < globalData.length; i++) {
+                                            grandTotal += globalData[i].GrandTotal;
+                                            paidAmt += globalData[i].PaidAmount;
+                                        }
+                                        balanceAmt = grandTotal - paidAmt;
                                         $(win.document.body)
                                             .css('font-size', '10pt')
                                             .prepend(
@@ -186,16 +199,14 @@
                                         $(win.document.body)
                                             .css('font-size', '10pt')
                                             .append(
-                                                `<table class="table table-bordered" style="width:100%;">
+                                                `<table class="table table-responsive table-striped dataTable" role="grid" aria-describedby="statementTable_info" style="width: 100%;">
                                                         <tr>
-                                                            <td colspan="2">
-                                                                <center>
-                                                                    <h1>${data?.loggedInUser?.Name}</h1>
-                                                                    <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
-                                                                    <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
-                                                                    <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
-                                                                </center>
+                                                            <td colspan="10">
+                                                                <b>Total</b>
                                                             </td>
+                                                            <td><span>&#8377;</span>${grandTotal}</td>
+                                                            <td><span>&#8377;</span>${paidAmt}</td>
+                                                            <td>-<span>&#8377;</span>${balanceAmt}</td>
                                                         </tr>
                                                     </table>
                                                 `

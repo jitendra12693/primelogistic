@@ -92,9 +92,9 @@ namespace InTimeCourier.Controllers
                 new SqlParameter("@BalanceAmount",payment.BalanceAmount),
                 new SqlParameter("@PaidAmount", payment.PaidAmount),
                 new SqlParameter("@PaymentAmount",payment.PaymentAmount),
-                new SqlParameter("@ChequeNo",payment.ChequeNo),
-                new SqlParameter("@BankName",payment.BankName),
-                new SqlParameter("@ChequeDate",payment.ChequeDate),
+                new SqlParameter("@ChequeNo",payment.ChequeNo ?? (object)DBNull.Value),
+                new SqlParameter("@BankName",payment.BankName ?? (object)DBNull.Value),
+                new SqlParameter("@ChequeDate",payment.ChequeDate ?? (object)DBNull.Value),
                 new SqlParameter("@UserId",int.Parse("0"+ Session["UserId"]))).FirstOrDefault();
             TempData["PaymentMessage"] = response.Message;
             return RedirectToAction("Index");

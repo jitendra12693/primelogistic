@@ -69,6 +69,13 @@ namespace InTimeCourier.Controllers
         {
             try
             {
+                if(!string.IsNullOrEmpty(Request.QueryString["success"]) && !string.IsNullOrEmpty(Request.QueryString["status"]) && !string.IsNullOrEmpty(Request.QueryString["trackingNo"]))
+                {
+                    ViewBag.Message = Request.QueryString["success"];
+                    ViewBag.Status = int.Parse("0"+Request.QueryString["status"]);
+                    ViewBag.TrackingNo = Request.QueryString["trackingNo"];
+                }
+
                 ViewBag.Location = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
                 ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 var data = db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId);
@@ -157,7 +164,7 @@ namespace InTimeCourier.Controllers
             }
            // return new EmptyResult(ViewBag);
            // return View(ViewBag);
-            return RedirectToAction("AddCourrier");
+            return RedirectToAction("AddCourrier",new { success= ViewBag.Message,status= ViewBag.Status,trackingNo= ViewBag.TrackingNo });
         }
         public ActionResult Edit(long? id)
         {
