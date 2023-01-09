@@ -13,7 +13,7 @@
 
 </div>
 <div class="col-lg-7">
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "courierId" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formId" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
@@ -522,7 +522,7 @@
             }
             else {
                 var CNNo = $('#CNNo').val();
-                $('#courierId').trigger("reset");
+                $('#formId').trigger("reset");
                 $('#CNNo').val(CNNo);
                 $('#CourrierId').val('')
                 $("#btnSubmit").attr("disabled", false)
@@ -532,7 +532,7 @@
         };
 
         $("#btnReset").click(function () {
-            $('#courierId').trigger("reset");
+            $('#formId').trigger("reset");
             $("#btnSubmit").attr("disabled", false)
             $("#btnSubmit").attr('value', 'Save');
         });
