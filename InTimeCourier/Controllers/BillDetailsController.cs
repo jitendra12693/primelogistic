@@ -71,7 +71,7 @@ namespace InTimeCourier.Controllers
                 UpdatedBy =  int.Parse("0"+ Session["UserId"]),
                 BillId = billDetails.BillId
             };
-            var courrierRes = objDb.Exec_SPrc<CorierResponse>(sprcname, Paramenters, "InLogisticModel", "primelogistic", true).FirstOrDefault();
+            var courrierRes = objDb.Exec_SPrc<CorierResponse>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true).FirstOrDefault();
             TempData["Message"] = courrierRes.Message;
             return RedirectToAction("Index");
         }
@@ -110,7 +110,7 @@ namespace InTimeCourier.Controllers
                 ToDate = String.IsNullOrEmpty(obj.PeriodTo) ? "" : obj.PeriodTo,
                 BillId=obj.BillId
             };
-            return objDb.Exec_SPrc<BillDetails>(sprcname, Paramenters, "InLogisticModel", "primelogistic", true);
+            return objDb.Exec_SPrc<BillDetails>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true);
         }
         public IEnumerable<BillPayment> GetPaymentDetails(BillPayment payment)
         {
@@ -120,7 +120,7 @@ namespace InTimeCourier.Controllers
             {
                 BillId = payment.BillId
             };
-            return objDb.Exec_SPrc<BillPayment>(sprcname, Paramenters, "InLogisticModel", "primelogistic", true);
+            return objDb.Exec_SPrc<BillPayment>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true);
         }
         public string RenderPartialViewToString(string viewName, object model)
         {

@@ -12,6 +12,7 @@ namespace InTimeCourier.Models
     {
         [Key]
         public int NetworkId { get; set; }
+        [Required]
         public string NetworkName { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }

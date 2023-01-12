@@ -16,129 +16,129 @@
     @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formId" }))
     {
         @Html.AntiForgeryToken()
-    <div class="form-horizontal">
-        @Html.HiddenFor(model => model.CourrierId)
-        @Html.HiddenFor(model => model.isInvoiceDone)
-        @Html.HiddenFor(model => model.CreatedDt)
-        @Html.HiddenFor(model => model.StatusId)
-        @Html.HiddenFor(model => model.IsActive)
-        @Html.HiddenFor(model => model.CreatedBy)
-        @Html.HiddenFor(model => model.TrackingNo)
+        <div class="form-horizontal">
+            @Html.HiddenFor(model => model.CourrierId)
+            @Html.HiddenFor(model => model.isInvoiceDone)
+            @Html.HiddenFor(model => model.CreatedDt)
+            @Html.HiddenFor(model => model.StatusId)
+            @Html.HiddenFor(model => model.IsActive)
+            @Html.HiddenFor(model => model.CreatedBy)
+            @Html.HiddenFor(model => model.TrackingNo)
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @if (ViewBag.Status == 1)
-        {
-            <div class="alert alert-success">@ViewBag.Message</div>
-        }
-        else if (ViewBag.Status == 0)
-        {
-            <div class="alert alert-danger">@ViewBag.Message</div>
-        }
-        <div class="row">
-            <div class="form-group" style="display:none;">
-                @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control", @value = @ViewBag.TrackingNo } })
-                    @Html.HiddenFor(model => model.TrackingNo, new { htmlAttributes = new { @id = "hdnTrackingId", @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @if (ViewBag.Status == 1)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }
+            else if (ViewBag.Status == 0)
+            {
+                <div class="alert alert-danger">@ViewBag.Message</div>
+            }
+            <div class="row">
+                <div class="form-group" style="display:none;">
+                    @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control", @value = @ViewBag.TrackingNo } })
+                        @Html.HiddenFor(model => model.TrackingNo, new { htmlAttributes = new { @id = "hdnTrackingId", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @onblur = "filldataifexist()", @placeholder = "Enter AWB No." } })
-                    @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @onblur = "filldataifexist()", @placeholder = "Enter AWB No." } })
+                        @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })*@
-                    @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.DestinationId, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter Destination" } })*@
+                        @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DestinationId, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
-                    @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
+                        @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                <label class="control-label col-md-4">Mode</label>
-                <div class="col-md-8">
-                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    <label class="control-label col-md-4">Mode</label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                <label class="control-label col-md-4">Network</label>
-                <div class="col-md-8">
-                    @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
-                    @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    <label class="control-label col-md-4">Network</label>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
+                        @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
-                    @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
+                        @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 form-group">
-                @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @style = "width:140%", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg" } })
-                    @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @style = "width:140%", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg" } })
+                        @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                    </div>
+                    <label class="control-label col-md-2">Qty</label>
+                    <div class="col-md-3">
+                        @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty" } })
+                        @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-                <label class="control-label col-md-2">Qty</label>
-                <div class="col-md-3">
-                    @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty" } })
-                    @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Rate" } })
+                        @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter ODA Charges" } })
+                        @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Discount Amt." } })
+                        @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <div class="col-md-offset-6 col-md-12">
+                        <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit" />
+                        <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
+                    </div>
                 </div>
             </div>
+            <hr />
             <div class="col-md-6 form-group">
-                @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Rate" } })
-                    @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter ODA Charges" } })
-                    @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Discount Amt." } })
-                    @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6 form-group">
-                @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
-                    @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6 form-group">
-                <div class="col-md-offset-6 col-md-12">
-                    <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit" />
-                    <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
-                </div>
+                @Html.ActionLink("Back to courier List", "CourrierList")
             </div>
         </div>
-        <hr />
-        <div class="col-md-6 form-group">
-            @Html.ActionLink("Back to courier List", "CourrierList")
-        </div>
-    </div>
     }
 </div>
 <div class="col-lg-5">
@@ -209,6 +209,8 @@
         }
         $(document).ready(function () {
             $("#TrackingNo").attr("readonly", "readonly");
+            var url = window.location.href;
+            history.pushState(null, null, url.split('?')[0]);
         })
         $(function () {
             $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
@@ -310,30 +312,12 @@
                             for (var i = 0; i < strResponse.Table.length; i++) {
                                 resp.push(strResponse.Table[i]);
                             }
-                            //// alert(JSON.parse(data))
-                            // //$.each(strResponse.Table, function (i, item) {
-                            // //    ratedetails.FromWt.push(item.FromWt);
-                            // //    ratedetails.ToWt.push(item.ToWt);
-                            // //    ratedetails.rate.push(item.Rate);
-                            // //});
-                            // $("#Rate").val(data.rate);
-
-                            //if (strResponse.Table[0].PartyType = 'Logistic') {
-                            //    $("#Qty").attr("readonly", false);
-                            //}
-                            //else {
-                            //    $("#Qty").attr("readonly", true);
-                            //}
                         }
                         else {
-
-                            //$("#Qty").attr("readonly", true);
                             resp = [];
-                            //alert("rate not available");
                         }
-
                     }
-                })
+                });
             }
 
         }
@@ -345,40 +329,59 @@
             var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
             var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
             if (weight > 0) {
-                if (resp.length > 0) {
-                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
-                    if (rateresp.length > 0) {
-                        $("#Rate").val(rateresp[0].Rate);
-                        //if (resp[0].PartyType == 'Logistic') {
-                        if ($("#Qty").val() != "") {
-                            var amt = rateresp[0].Rate * parseInt(qty)
-                            $("#Amount").val(amt + ODACharges - discount);
+                if (parseInt(weight) > 0) {
+                    $("#Qty").attr("disabled", true)
+                    if (resp.length > 0) {
+                        var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                        if (rateresp.length > 0) {
+                            $("#Rate").val(rateresp[0].Rate);
+                            if ($("#Qty").val() != "") {
+                                $("#Qty").val(weight);
+                                qty = weight;
+                                var amt = rateresp[0].Rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                            }
+                            else {
+                                $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                            }
                         }
                         else {
-                            $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                        }
-
-                        //}
-                        //else {
-                        //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                        //}
-
-                    }
-                    else {
-                        if (rate > 0) {
-                            $("#Amount").val((rate * qty) + ODACharges - discount);
-                        }
-                        else {
+                            $("#Rate").val('');
                             $("#Amount").val('');
                         }
-
                     }
-                } else {
-                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                    else {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                    }
+
+                }
+                else {
+                    $("#Qty").attr("disabled", false)
+                    //$("#Qty").val("1");
+                    if (resp.length > 0) {
+                        var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                        if (rateresp.length > 0) {
+                            $("#Rate").val(rateresp[0].Rate);
+                            if ($("#Qty").val() != "") {
+                                var amt = rateresp[0].Rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                            }
+                            else {
+                                $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                            }
+                        }
+                        else {
+                            $("#Rate").val('');
+                            $("#Amount").val('');
+                        }
+                    } else {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                    }
                 }
             }
             else {
-                //$("#Qty").val('');
+                $("#Qty").attr("disabled", false)
+                $("#Qty").val("1");
                 $("#Rate").val('');
                 $("#Amount").val('');
             }
@@ -392,74 +395,93 @@
             var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
             var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
             if (weight > 0) {
-                if (resp.length > 0) {
-                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
-                    if (rateresp.length > 0) {
-                        if (resp[0].PartyType == 'Logistic') {
-                            if ($("#Qty").val() != "") {
-                                var amt = rate * parseInt(qty)
-                                $("#Amount").val(amt + ODACharges - discount);
+                if (parseInt(weight) > 0) {
+                    $("#Qty").attr("disabled", true);
+                    if (resp.length > 0) {
+                        var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                        if (rateresp.length > 0) {
+                            $("#Amount").val(rate * qty + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(ODA Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+                        else {
+                            if (rate > 0) {
+                                $("#Amount").val((rate * qty) + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
                                     alert('please enter valid data(ODA Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
-                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                    $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
                                 }
                             }
                             else {
-                                $("#Amount").val(rate + ODACharges - discount);
+                                $("#Amount").val('');
+                            }
+
+                        }
+                    } else {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(ODA Charges or Discount)')
+                            $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        }
+                    }
+                }
+                else {
+                    $("#Qty").attr("disabled", false)
+                   // $("#Qty").val("1");
+                    if (resp.length > 0) {
+                        var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                        if (rateresp.length > 0) {
+                            $("#Amount").val(rate * qty + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(ODA Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+                        else {
+                            if (rate > 0) {
+                                $("#Amount").val((rate * qty) + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
                                     alert('please enter valid data(ODA Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
-                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                    $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
                                 }
                             }
+                            else {
+                                $("#Amount").val('');
+                            }
 
                         }
-                        else {
-                            $("#Amount").val(rate + ODACharges - discount);
-                            if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
-                                $("#Amount").val('');
-                                $("#ODACharges").val('');
-                                $("#Discount").val('');
-                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
-                            }
-                        }
-
-                    }
-                    else {
-                        if (rate > 0) {
-                            $("#Amount").val((rate * qty) + ODACharges - discount);
-                            if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
-                                $("#Amount").val('');
-                                $("#ODACharges").val('');
-                                $("#Discount").val('');
-                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
-                            }
-                        }
-                        else {
+                    } else {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(ODA Charges or Discount)')
                             $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
                         }
-
-                    }
-                } else {
-                    $("#Amount").val((rate * qty) + ODACharges - discount);
-                    if (parseFloat($("#Amount").val()) <= 0) {
-                        alert('please enter valid data(ODA Charges or Discount)')
-                        $("#Amount").val('');
-                        $("#ODACharges").val('');
-                        $("#Discount").val('');
-                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
                     }
                 }
             }
             else {
-                $("#Qty").val('');
+                $("#Qty").attr("disabled", false);
+                $("#Qty").val("1");
                 $("#Rate").val('');
                 $("#Amount").val('');
             }
@@ -535,7 +557,7 @@
                     $("#IsActive").val(strResponse.Table[0].IsActive)
                     $("#CreatedBy").val(strResponse.Table[0].CreatedBy)
                     $("#TrackingNo").val(strResponse.Table[0].TrackingNo)
-                    $("#btnSubmit").attr("disabled", true)
+                    $("#btnSubmit").attr("disabled", true);
                 }
 
             }

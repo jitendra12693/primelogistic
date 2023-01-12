@@ -37,7 +37,7 @@ namespace InTimeCourier.Controllers
                 BillId = obj.BillId,
                 LoadType=type
             };
-            return objDb.Exec_SPrc<BillDetails>(sprcname, Paramenters, "InLogisticModel", "primelogistic", true);
+            return objDb.Exec_SPrc<BillDetails>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true);
         }
 
         [HttpPost]
