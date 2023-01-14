@@ -537,6 +537,27 @@ namespace InTimeCourier.Controllers
             }
             return Json(new { response = "Deleted"}, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public JsonResult SearchDestination(string Prefix)
+        {
+            var DestinationList = (from c in db.DestinationMaster
+                                   where c.Name.StartsWith(Prefix)
+                             select new { c.Name, c.Id });
+            return Json(DestinationList, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public JsonResult SearchParty(string Prefix)
+        {
+            var PartyList = (from c in db.PartyMasters
+                                   where c.PartyName.StartsWith(Prefix)
+                                   select new { c.PartyName, c.PartyId });
+            return Json(PartyList, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 
     public class UpdateCourrier

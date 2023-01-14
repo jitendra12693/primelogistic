@@ -12,37 +12,38 @@ namespace InTimeCourier.Models
         [Key]
         public long CourrierId { get; set; }
 
-        [Required]
+       // [Required(ErrorMessage = "Party is required")]
         public long PartyId { get; set; }
 
         public long? SourceId { get; set; }
 
+        [Required(ErrorMessage = "Party is required")]
         [StringLength(50)]
         public string Distance { get; set; }
 
-        [Required]
+       // [Required]
         public long? DestinationId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Amount is required")]
         public decimal? Amount { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Mode is required")]
         public int? CourrierModeId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "AWB No is required")]
         [StringLength(15)]
         public string CNNo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Docket Date is required")]
         public DateTime DepartureDt { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Weight is required")]
         public decimal Weight { get; set; }
 
         [StringLength(15)]
         public string TrackingNo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Rate is required")]
         public decimal? Rate { get; set; }
 
         public int? StatusId { get; set; }
@@ -57,11 +58,11 @@ namespace InTimeCourier.Models
 
         public bool? IsActive { get; set; }
 
-        //[Required]
+        [Required(ErrorMessage = "Destination is required")]
         public string Location { get; set; }
         public decimal? ODACharges { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Network is required")]
         public int NetworkModeId { get; set; }
         public decimal? Discount { get; set; }
         public int Qty { get; set; }
