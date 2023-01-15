@@ -204,7 +204,11 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
-    <script type="text/javascript">
+<script type="text/javascript">
+    var Party = '';
+    var Destination = ''
+    var PartyList = [];
+    var DestinationList = [];
         function StringToInt(number) {
             if (number == null || number == undefined || number == NaN || number == '') {
                 return 0;
@@ -216,7 +220,20 @@
             $("#TrackingNo").attr("readonly", "readonly");
             var url = window.location.href;
             history.pushState(null, null, url.split('?')[0]);
-            //SearchText();
+            Party =@Html.Raw(Json.Encode(@ViewBag.Party));
+            $.each(Party, function (index, item) {
+                var PartyElement = {};
+                PartyElement.Name = item.Text;
+                PartyElement.Id = item.Value;
+                PartyList.push(PartyElement);
+            })
+            Destination =@Html.Raw(Json.Encode(@ViewBag.DestinationList));
+            $.each(Destination, function (index, item) {
+                var DestinationElement = {};
+                DestinationElement.Name = item.Text;
+                DestinationElement.Id = item.Value;
+                DestinationList.push(DestinationElement);
+            })
         })
         $(function () {
             $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
@@ -623,14 +640,17 @@
         $(function () {
             $("#Location").autocomplete({
                 source: function (request, response) {
-                    $.ajax({
-                        url: 'SearchDestination',
-                        data: "{ 'Prefix': '" + request.term + "'}",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (data) {
-                            if (!data.length) {
+                    //$.ajax({
+                    //    url: 'SearchDestination',
+                    //    data: "{ 'Prefix': '" + request.term + "'}",
+                    //    dataType: "json",
+                    //    type: "POST",
+                    //    contentType: "application/json; charset=utf-8",
+                    //success: function (data) {
+                    var LocTextValue = $("#Location").val()
+                    var filterList = DestinationList.filter(x => x.Name.toLowerCase().includes(LocTextValue.toLowerCase()));
+                   
+                            if (!filterList.length) {
                                 var result = [
                                     {
                                         label: 'No destination found',
@@ -641,21 +661,21 @@
                                 $('#DestinationId').val('');
                             }
                             else {
-                                response($.map(data, function (data, id) {
+                                response($.map(filterList, function (filterList, id) {
                                     return {
-                                        label: data.Name,
-                                        value: data.Id
+                                        label: filterList.Name,
+                                        value: filterList.Id
                                     };
                                 }));
                             }
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
+                        //},
+                        //error: function (response) {
+                        //    alert(response.responseText);
+                        //},
+                        //failure: function (response) {
+                        //    alert(response.responseText);
+                        //}
+                   /* });*/
                 },
                 select: function (e, i) {
                     $('#Location').val(i.item.label);
@@ -677,14 +697,16 @@
         $(function () {
             $("#Distance").autocomplete({
                 source: function (request, response) {
-                    $.ajax({
-                        url: 'SearchParty',
-                        data: "{ 'Prefix': '" + request.term + "'}",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (data) {
-                            if (!data.length) {
+                    //$.ajax({
+                    //    url: 'SearchParty',
+                    //    data: "{ 'Prefix': '" + request.term + "'}",
+                    //    dataType: "json",
+                    //    type: "POST",
+                    //    contentType: "application/json; charset=utf-8",
+                    //    success: function (data) {
+                    var PartyTextValue = $("#Distance").val()
+                    var filterList = PartyList.filter(x => x.Name.toLowerCase().includes(PartyTextValue.toLowerCase()));
+                    if (!filterList.length) {
                                 var result = [
                                     {
                                         label: 'No party found',
@@ -695,21 +717,21 @@
                                 $('#PartyId').val('');
                             }
                             else {
-                                response($.map(data, function (data, id) {
+                        response($.map(filterList, function (filterList, id) {
                                     return {
-                                        label: data.PartyName,
-                                        value: data.PartyId
+                                        label: filterList.Name,
+                                        value: filterList.Id
                                     };
                                 }));
                             }
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
+                    //    },
+                    //    error: function (response) {
+                    //        alert(response.responseText);
+                    //    },
+                    //    failure: function (response) {
+                    //        alert(response.responseText);
+                    //    }
+                    //});
                 },
                 select: function (e, i) {
                     $('#Distance').val(i.item.label);
@@ -727,8 +749,8 @@
             }
         });
 
-       
 
-        
-    </script>
+
+
+</script>
 }
