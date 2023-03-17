@@ -1,6 +1,8 @@
 ﻿@model dynamic
 @{
     Layout = null;
+    ViewBag.Title = "Courrier List";
+    var loggedInUser = (InTimeCourier.Models.AdminUser)Session["LoggedInUser"];
 }
 
 <style tyle="text/css">
@@ -25,64 +27,70 @@
 <div id="SearchCourierlist">
     @if (Model != null)
     {
-        <div style="width:49.5%;float:left;">
-            <table class="table table-bordered" style="border:1px solid #000000;font-size:12px;width:100%;" id="myTable">
+        <div>
+            <table class="table table-bordered" id="myTable" style="width: 100%; font-size: 13px;">
                 <tr>
-                    <th>
+                    <th style="text-align:center">
+                        Sr.No.
+                    </th>
+                    <th style="text-align:center">
                         Book Date
                     </th>
-                    <th>
-                        CNNo
+                    <th style="text-align:center">
+                        AWBNo.
                     </th>
-                    <th>
-                        Network
-                    </th>
-                    <th>
+                    <th style="text-align:center">
                         Mode
                     </th>
-                    <th>
-                        Location
+                    <th style="text-align:center">
+                        Destination
                     </th>
-                    <th>
+                    <th style="text-align:center">
                         Weight
                     </th>
-                    <th>
+                    <th style="text-align:center">
+                        ODA
+                    </th>
+                    <th style="text-align:center">
                         Amount
                     </th>
                     <th id="tdAction">Action</th>
                 </tr>
                 @if (Model != null)
                 {
-                    //int count = 1;
+                    var cnt = 1;
                     foreach (InTimeCourier.Models.CorrierDetails item in Model.CorrierDetails1)
                     {
                         <tr>
-                            @*<td>@count</td>*@
-                            <td>
+                            <td style="text-align:center">
+                                @cnt
+                            </td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.BookingDate)
                             </td>
-                            <td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.CNNo)
                             </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.NetworkName)
-                            </td>
-                            <td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.CourierMode)
                             </td>
-                            <td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.Location)
                             </td>
-                            <td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.Weight)
                             </td>
-                            <td>
+                            <td style="text-align:center">
+                                @Html.DisplayFor(modelItem => item.ODACharges)
+                            </td>
+                            <td style="text-align:center">
                                 @Html.DisplayFor(modelItem => item.Amount)
                             </td>
                             <td id="tdActionVal">
                                 <a href="#" id="projectImages" onclick="SelectedCourrier(@item.CourrierId)" data-toggle="modal" data-target="#divUpdateCourrier">Edit</a>
                             </td>
                         </tr>
+                        cnt++;
                     }
                 }
                 else
@@ -94,123 +102,237 @@
             </table>
         </div>
     }
-    @if (Model != null)
-    {
-        if (Model.CorrierDetails2 != null)
+    @*@if (Model != null)
         {
-            <div style="width:49.5%;float:right;margin-left:1%;">
-                <table class="table table-bordered pull-right" style="border:1px solid #000000;font-size:12px;width:100%;" id="myTable1">
-                    <tr>
-                        <th>
-                            Book Date
-                        </th>
-                        <th>
-                            CNNo
-                        </th>
-                        <th>
-                            Network
-                        </th>
-                        <th>
-                            Mode
-                        </th>
-                        <th>
-                            Location
-                        </th>
-                        <th>
-                            Weight
-                        </th>
-                        <th>
-                            Amount
-                        </th>
-                        <th id="tdAction">Action</th>
-                    </tr>
-                    @if (Model != null)
-                    {
-                        foreach (InTimeCourier.Models.CorrierDetails item in Model.CorrierDetails2)
+            if (Model.CorrierDetails2 != null)
+            {
+                <div style="width:49.5%;float:right;margin-left:1%;">
+                    <table class="table table-bordered pull-right" style="border:1px solid #000000;font-size:10px;width:100%;" id="myTable1">
+                        <tr>
+                            <th>
+                                Book Date
+                            </th>
+                            <th>
+                                AWB No.
+                            </th>
+
+                            <th>
+                                Mode
+                            </th>
+                            <th>
+                                Destination
+                            </th>
+                            <th>
+                                Weight
+                            </th>
+                            <th>
+                                Extra Charges
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th id="tdAction">Action</th>
+                        </tr>
+                        @if (Model != null)
+                        {
+                            foreach (InTimeCourier.Models.CorrierDetails item in Model.CorrierDetails2)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BookingDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CNNo)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CourierMode)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Location)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Weight)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ODACharges)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Amount)
+                                    </td>
+                                    <td id="tdActionVal">
+                                        <a href="#" id="projectImages" onclick="SelectedCourrier(@item.CourrierId)" data-toggle="modal" data-target="#divUpdateCourrier">Edit</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.BookingDate)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CNNo)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.NetworkName)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CourierMode)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Location)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Weight)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Amount)
-                                </td>
-                                <td id="tdActionVal">
-                                    <a href="#" id="projectImages" onclick="SelectedCourrier(@item.CourrierId)" data-toggle="modal" data-target="#divUpdateCourrier">Edit</a>
-                                </td>
+                                <td colspan="9">No Record found</td>
                             </tr>
                         }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="9">No Record found</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-        }
-    }
+                    </table>
+                </div>
+            }
+        }*@
 
-    <table class="table table-bordered" style="border:1px solid #000000;width:100%;">
+    <table class="table table-bordered" style="width: 100%;font-size: 13px;">
         <tfoot>
             <tr>
-                <td width="25%"><b>Net Total</b></td>
-                <td width="75%" style="text-align:right;"><label id="lblNetTotal"></label></td>
+                <td style="text-align:center"><strong>Bank Name</strong></td>
+                <td style="text-align:center">@loggedInUser.BankName</td>
+                <td style="text-align:right;width:25%"><b>Net Total &nbsp;</b></td>
+                <td style="text-align:right;width:10%"><b><label id="lblNetTotal"></label></b></td>
             </tr>
             <tr>
-                <td width="25%">Discount</td>
-                <td width="75%" style="text-align:right;"><label id="lblDiscount"></label></td>
+                <td style="text-align:center"><strong>A/C</strong></td>
+                <td style="text-align:center">@loggedInUser.AccountNumber</td>
+                <td style="text-align: right; width: 25%">Discount &nbsp; </td>
+                <td style="text-align: right; width: 10%"><b><label id="lblDiscount"></label></b></td>
             </tr>
             <tr>
-                <td width="25%">Total</td>
-                <td width="75%" style="text-align:right;"><label id="lblTotal"></label></td>
+                <td style="text-align:center"><strong>IFSC Code</strong></td>
+                <td style="text-align:center">@loggedInUser.IFSCCode</td>
+                <td style="text-align: right; width: 25%"><b>Total &nbsp; </b></td>
+                <td style="text-align: right; width: 10%"><b><label id="lblTotal"></label></b></td>
             </tr>
             <tr>
-                <td>Fuel Charges (<label id="partyFuelCharge"></label>)</td>
-                <td style="text-align:right"><label id="lblFullCahrges"></label></td>
-            </tr>
-            <tr id="trCGST">
-                <td>C.G.S.T. (9%)</td>
-                <td style="text-align:right"><label id="lblBillCGST"></label></td>
-            </tr>
-            <tr id="trSGST">
-                <td>S.G.S.T. (9%)</td>
-                <td style="text-align:right"><label id="lblBillSGST"></label></td>
-            </tr>
-            <tr id="trIGST">
-                <td>I.G.S.T. (18%)</td>
-                <td style="text-align:right"><label id="lblBillIGST"></label></td>
+                <td style="text-align:center"><strong>PAN No.</strong></td>
+                <td style="text-align:center">@loggedInUser.PANNumber</td>
+                <td style="text-align: right; width: 25%">Fuel Charges (<label id="partyFuelCharge"></label>) &nbsp; </td>
+                <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges"></label></b></td>
             </tr>
             <tr>
-                <td><b>Grand Total</b></td>
-                <td style="text-align:right"><label id="lblGrandTotal"></label></td>
+                <td style="text-align:center"><strong>GST Number</strong></td>
+                <td style="text-align:center">@loggedInUser.GSTNumber</td>
+
+                <td style="text-align: right; width: 25%" id="gstname">  </td>
+                <td style="text-align: right; width: 10%" id="gstValue"></td>
             </tr>
             <tr>
-                <td><b>In Word</b></td>
-                <td><label id="lblGrandTotalInWord"></label></td>
+                <td colspan="2" style="text-align:center"><strong>Amount In Words.</strong></td>
+                <td style="text-align: right; width: 25%"><b>Grand Total &nbsp;</b></td>
+                <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal"></label></b></td>
             </tr>
+            <tr>
+                <td colspan="2" id="lblGrandTotalInWord" style="text-align:center"></td>
+                <td></td>
+                <td></td>
+            </tr>
+            @*<tr>
+                    <td><strong>Bank Name</strong></td>
+                    <td>Dummy Bank</td>
+                    <td style="text-align:right;width:30%"><b>Net Total &nbsp;</b></td>
+                    <td style="text-align:right;width:10%"><b><label id="lblNetTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td><strong>A/C</strong></td>
+                    <td>3223232323</td>
+                    <td style="text-align: right; width: 30%">Discount &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblDiscount"></label></b></td>
+                </tr>
+                <tr>
+                    <td><strong>IFSC Code</strong></td>
+                    <td>ABFNBNF001</td>
+                    <td style="text-align: right; width: 30%"><b>Total &nbsp; </b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td><strong>PAN No.</strong></td>
+                    <td>GFFHGHGJ56656</td>
+                    <td style="text-align: right; width: 30%">Fuel Charges (<label id="partyFuelCharge"></label>) &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges"></label></b></td>
+                </tr>
+                <tr>
+                    <td><strong>GST Number</strong></td>
+                    <td>GHGH566565HJHJH</td>
+                    <td style="text-align: right; width: 30%">C.G.S.T. (9%) &nbsp; </td>
+                    <td style="text-align: right; width: 10% "><b><label id="lblBillCGST"></label></b></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Amount In Words</strong></td>
+                    <td style="text-align: right; width: 30%">S.G.S.T. (9%) &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblBillSGST"></label></b></td>
+                </tr>
+                <tr>
+
+                    <td colspan="2" rowspan="2"><label id="lblGrandTotalInWord"></label></td>
+                    <td style="text-align: right; width: 30%">I.G.S.T. (18%) &nbsp;</td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblBillIGST"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; width: 30%"><b>Grand Total &nbsp;</b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal"></label></b></td>
+                </tr>*@
+
+
+            @*<tr>
+                    <td><strong>Terms & Conditions</strong></td>
+                    <td style="text-align:right;width:30%"><b>Net Total &nbsp;</b></td>
+                    <td style="text-align:right;width:10%"><b><label id="lblNetTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <p>
+                            1. Kindly notify us in writing regarding any discrepancy in this invoice within 7 days. Otherwise, <br />This invoice shall be deemed to be correct & payable by you.
+                            <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of PRIME LOGISTICS .
+                            <br />
+                            3. Interest @@2% per month will be charged on delayed payments.
+                            <br />
+                            4. Subject to Mumbai Jurisdiction
+                        </p>
+
+                    </td>
+                    <td style="text-align: right; width: 30%">Discount &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblDiscount"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; width: 30%"><b>Total &nbsp; </b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; width: 30%">Fuel Charges (<label id="partyFuelCharge"></label>) &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges"></label></b></td>
+                </tr>
+                <tr id="trCGST">
+
+                    <td style="text-align: right; width: 30%">C.G.S.T. (9%) &nbsp; </td>
+                    <td style="text-align: right; width: 10% "><b><label id="lblBillCGST"></label></b></td>
+                </tr>
+                <tr id="trSGST">
+
+                    <td style="text-align: right; width: 30%">S.G.S.T. (9%) &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblBillSGST"></label></b></td>
+                </tr>
+                <tr trIGST>
+                    <td><strong>Amount In Words</strong></td>
+                    <td style="text-align: right; width: 30%">I.G.S.T. (18%) &nbsp;</td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblBillIGST"></label></b></td>
+                </tr>
+                <tr>
+                    <td><label id="lblGrandTotalInWord"></label></td>
+                    <td style="text-align: right; width: 30%"><b>Grand Total &nbsp;</b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal"></label></b></td>
+                </tr>*@
         </tfoot>
     </table>
     <input type="hidden" id="hdnPartyName" />
     <input type="hidden" id="hdnAddress" />
     <input type="hidden" id="hdnRecordCount" />
     <input type="hidden" id="hdnPartyGSTNo" />
+    <input type="hidden" id="hdnbillno" />
+    <input type="hidden" id="hdnbilldate" />
+    <input type="hidden" id="hdnSrNo" />
+    <input type="hidden" id="hdnInvoiceDt" />
+    <input type="hidden" id="hdnInvoiceNumber" />
 </div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
 
-
+    <script type="text/javascript">
+    $(document).ready(function () {
+        alert('');
+    });
+    </script>
+    }

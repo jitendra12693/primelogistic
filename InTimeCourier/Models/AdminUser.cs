@@ -60,6 +60,7 @@ namespace InTimeCourier.Models
 
         public string GSTNumber { get; set; }
         public string CompanyLogo { get; set; }
+        public string SignPic { get; set; }
 
         public int? CreatedBy { get; set; }
 

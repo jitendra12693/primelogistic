@@ -14,7 +14,7 @@
             <th>S.G.S.T  (9%)</th>
             <th>Amount</th>
             <th>Paid Amt</th>
-            <th>Cheque No</th>
+            @*<th>Cheque No</th>*@
             <th>Bill Date</th>
             <th>Action</th>
         </tr>
@@ -34,13 +34,20 @@
                     <td>@item.SGST</td>
                     <td>@item.GrandTotal</td>
                     <td>@item.PaidAmount</td>
-                    <td>@item.ChequeNo</td>
+                    @*<td>@item.ChequeNo</td>*@
                     <td>@Convert.ToDateTime(item.BillDate).ToShortDateString()</td>
                     <td style="width:7%;">
-                        <a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
-                            <i class="glyphicon glyphicon-edit"></i>
+
+                        <a href="#" onclick="printBillDetails(@item.BillId)" title="Print Invoice">
+                            <i class="glyphicon glyphicon-print"></i>
+                        </a>&nbsp; &nbsp; | &nbsp; &nbsp;
+                        <a href="#" onclick="deleteBillDetails(@item.BillId)" title="Delete Invoice">
+                            <i class="glyphicon glyphicon-trash"></i>
                         </a>
-                        <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>
+                        @*<a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
+            <i class="glyphicon glyphicon-edit"></i>
+        </a>
+        <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
                     </td>
                 </tr>
             }

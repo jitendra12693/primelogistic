@@ -45,14 +45,25 @@
                 @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @id = "txtToDate", @class = "form-control", @placeholder = "MM/DD/YYYY" } })
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
-                <button type="reset" id="btnClear" class="btn btn-danger">Clear Search</button>
-                <button type="button" id="btnExportPdf" class="btn btn-primary"> Export Report</button>
-                <button type="button" id="btnReciept" class="btn btn-danger" >Generate Reciept</button>
-                <a href="@Url.Action("ResultExportToExcel")" class="btn btn-primary">Export Today's Manifesto</a> 
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-md-offset-2 col-md-1">
+                    <button type="button" id="btnSearch" class="btn btn-primary">Search</button>
+                </div>
+                <div class="col-md-1">
+                    <button type="reset" id="btnClear" class="btn btn-danger">Clear Search</button>
+                </div>
+
+                <div class="col-md-1">
+                    <a href="@Url.Action("ResultExportToExcel")" class="btn btn-primary">Export Today's Manifesto</a>
+                </div>
+                <div class="col-md-offset-1 col-md-1">
+                    <button type="button" id="btnGenerateInvoice" onclick="GetInvoiceDetails()" class="btn btn-warning" style="display:none">Generate Invoice</button>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnInvoice" class="btn btn-danger" onclick="GenerateInvoice()" style="display:none">Download Invoice</button>
+                </div>
+            </div>
             </div>
         </div>
-    </div>
 }

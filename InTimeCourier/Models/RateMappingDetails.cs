@@ -26,6 +26,7 @@ namespace InTimeCourier.Models
 
         public string CourrierModeName { get; set; }
         public string PartyName { get; set; }
+        public bool IsActive { get; set; }
 
 
     }

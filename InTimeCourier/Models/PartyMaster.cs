@@ -29,6 +29,7 @@ namespace InTimeCourier.Models
         [StringLength(50)]
         public string EmailId { get; set; }
 
+        [Required]
         [StringLength(12)]
         public string MobileNo { get; set; }
 
@@ -45,19 +46,23 @@ namespace InTimeCourier.Models
         [StringLength(100)]
         public string City { get; set; }
 
+        [Required]
         [StringLength(20)]
         public string GSTNumber { get; set; }
 
         public bool? IsIGST { get; set; }
 
+        [Required]
         public decimal? FuelCharges { get; set; }
 
         public decimal? Discount { get; set; }
 
+        [Required]
         public int StateId { get; set; }
 
         public int CountryId { get; set; }
 
+        [Required]
         [StringLength(6)]
         public string Pincode { get; set; }
 

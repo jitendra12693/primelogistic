@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<InTimeCourier.Models.CorrierDetails>
 
 @{
-    ViewBag.Title = "CourrierList";
+    ViewBag.Title = "Courrier List";
     var loggedInUser = (InTimeCourier.Models.AdminUser)Session["LoggedInUser"];
 }
 <style>
@@ -27,11 +27,38 @@
             margin-right: auto;
         }
     }
+   /* .modal {
+        display: block !important;
+    }
+
+    .modal-dialog {
+        overflow-y: initial !important
+    }*/
+
+    .testmodel {
+        height: 200px;
+        overflow-y: auto;
+    }
+   /* tbody {
+        display: block;
+        height: 50px;
+        overflow: auto;
+    }*/
+
+       /* thead, tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+    thead {
+        width: calc( 100% - 1em )
+    }*/
 </style>
 <h2>Sale Report List</h2>
 
 <p>
-    @Html.ActionLink("Create New Courrier", "AddCourrier")
+    @Html.ActionLink("Create New AWB Entry", "AddCourrier")
 </p>
 <div class="col col-lg-12">
     @{Html.RenderAction("SearchCorier", "CourierDetails");}
@@ -54,16 +81,16 @@
                     <td colspan="2">
                         <center>
                             <div style="margin-top:-3%;margin-bottom:-3%">
-                                <img src="@loggedInUser.CompanyLogo" style="height:150px;" />
+                                <img src="@loggedInUser.SignPic" style="height:105px;" />
                                 @*<h1>Prime Logistic</h1>*@
                             </div>
-                            
-                            <h4>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</h4>
-                            <h4>
+                            <hr />
+                            <span>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</span>
+                            <span>
                                 Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null)
                                 {<span>/ +91 @loggedInUser.AlternateContact</span>}
-                            </h4>
-                            <h4>Email Id: @loggedInUser.EmailId</h4>
+                            </span>
+                            <span>Email Id: @loggedInUser.EmailId</span>
                         </center>
                     </td>
                 </tr>
@@ -74,7 +101,7 @@
                         <label id="lblContact"></label><br />
                         <b>Party G.S.T. No. :</b><label id="partyGSTNumber"></label>
                     </td>
-                    <td width="30%;">
+                    <td width="30%">
                         <b>Bill No: </b><label id="lblBillNo"></label><br />
                         <b>Bill Date: </b>
                         <label id="lblBillDate"></label>
@@ -191,16 +218,54 @@
             <div class="modal-body" id="modalBody">
 
             </div>
-            <!--<div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>-->
-            @*<button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>*@
-            <!--<input type="hidden" id="hdnCourrierId" />
-                <input type="hidden" id="hdnCreatedBy" />
-                <input type="hidden" id="hdnCreatedDate" />
-                <input type="hidden" id="hdnIsIGSTParty"/>
-            </div>-->
         </div>
 
+    </div>
+</div>
+
+<div class="modal fade" id="divGenerateInvoiceDetails" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel" style="text-align:center">Generate Invoice Details</h4>
+            </div>
+            <div class="modal-body testmodel" style="display:block;height:200px;overflow:auto">
+                <form id="invdtls">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Invoice No.</label>
+                                <input type="text" class="form-control" id="txtInvNo" maxlength="12">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Invoice Date</label>
+                                <input type="text" class="form-control" id="txtInvoiceDt" placeholder="MM/DD/YYYY" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label" style="font-size:x-small">Available Existing Deleted Invoice Details</label>
+                                <hr  style="margin-top:0px"/>
+                               <table class="table table-bordered" id="tblList" style="font-size:xx-small">
+                                   <thead>
+                                       <tr>
+                                           <th>Invoice No</th>
+                                           <th>Assined Party Name</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody id="tbltbdy">
+                                   </tbody>
+                               </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btnCancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnConfirm" onclick="checkInvoice()">Confirm Invoice</button>
+            </div>
+        </div>
     </div>
 </div>
 @section Scripts {
@@ -208,19 +273,25 @@
     <script src="~/Scripts/SearchCourier.js"></script>
     <script src="~/Scripts/autocolumn.js"></script>
     <script type="text/javascript">
-
+        var Party = '';
+        var Destination = ''
+        var PartyList = [];
+        var DestinationList = [];
         $('#PrintReport').columnize({ columns: 2 })
 
         $(function () {
             $("#txtBookingDate").datepicker();
+            $("#txtInvoiceDt").datepicker();
+            $("#txtInvoiceDt").datepicker('setDate', new Date());
         });
 
         //$('#btnCross').click(function () {
         //    $('#formUpdate')[0].reset();
         //});
 
-        $('#btnClose').click(function () {
-            $('#formUpdate')[0].reset();
+        $('#btnCancel').click(function () {
+            $('#invdtls')[0].reset();
+            $("#txtInvoiceDt").datepicker('setDate', new Date());
         });
 
         $('#btnSaveCourrier').click(function () {
@@ -289,6 +360,7 @@
                     //$("#txtCNNumber").val(data.Courrier.CNNo);
                     //$("#txtDistance").val(data.Courrier.Location);
                     //$('#txtBookingDate').val(ConvertJsonDateString(data.Courrier.DepartureDt));
+
                 },
                 error: function (error) {
                     alert(error);
@@ -339,6 +411,162 @@
             var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
             $("#txtAmount").val(amount);
         });
+
+        var SrNo = '';
+        var InvoiceNo = '';
+
+        function GetInvoiceDetails() {
+            var PartyId = $('#PartyId').val();
+            var count = $('#hdnRecordCount').val();
+            if (count == '' || count == undefined) {
+                alert('No Data Found! Please first search your transaction again');
+                return false;
+            }
+            debugger;
+            if (PartyId != '') {
+                $.ajax({
+                    url: '/BillDetails/GetNewInvoiceNo',
+                    type: 'GET',
+                    dataType: "json",
+                    success: function (data) {
+                        var strResponse = JSON.parse(data);
+                        if (strResponse.Table.length == 1) {
+                            SrNo = strResponse.Table[0].SrNo;
+                            InvoiceNo = strResponse.Table[0].InvoiceNo;
+                            $('#txtInvNo').val(InvoiceNo);
+                        }
+                        if (strResponse.Table1.length > 0) {
+                            var tblhtml = '';
+                            $.each(strResponse.Table1, function (key, item) {
+                                tblhtml += ' <tr><td>' + item.InvoiceFormat +'</td>'+
+                                    '<td>' + item.PartyName+'</td></tr>' 
+
+                            });
+                            $('#tbltbdy').html(tblhtml);
+                        }
+                        $('#divGenerateInvoiceDetails').modal({
+                            backdrop: 'static',
+                            keyboard: true,
+                            show: true
+                        }); 
+                    },
+                    error: function (error) {
+                        alert(error.responseText);
+                    }
+                });
+            }
+            else {
+                alert('Please Search Details First');
+            }
+           
+        }
+
+        function checkInvoice() {
+            var invoiceNo = $('#txtInvNo').val();
+            if (invoiceNo != '') {
+                $.ajax({
+                    url: '/BillDetails/CheckInvoiceNo',
+                    data: { InvoiceNo: invoiceNo },
+                    type: 'GET',
+                    dataType: "json",
+                    success: function (data) {
+                        debugger;
+                        var strResponse = JSON.parse(data);
+                        if (strResponse.Table.length == 1) {
+                            if (strResponse.Table[0].Result == 0) {
+                                if (strResponse.Table[0].IsActive == 0) {
+                                    SrNo = strResponse.Table[0].InvoiceSrNo
+                                    InvoiceNo = invoiceNo
+                                    $('#hdnInvoiceNumber').val(InvoiceNo);
+                                    $('#hdnSrNo').val(SrNo);
+                                    $('#hdnInvoiceDt').val($('#txtInvoiceDt').val());
+                                    $('#btnGenerateInvoice').hide();
+                                    //$('#btnInvoice').show();
+                                    $('#btnCancel').click()
+                                    GenerateInvoice();
+                                }
+                                else {
+                                    $('#txtInvNo').focus();
+                                    alert('Invoice Number Already Used Please try another')
+                                }
+                            }
+                            else {
+                                SrNo = invoiceNo.substr(invoiceNo.substring(0, 7).length, invoiceNo.length - invoiceNo.substring(0, 7).length)
+                                $('#hdnSrNo').val(SrNo);
+                                $('#hdnInvoiceDt').val($('#txtInvoiceDt').val());
+                                InvoiceNo = invoiceNo;
+                                $('#hdnInvoiceNumber').val(InvoiceNo);
+                                $('#btnGenerateInvoice').hide();
+                                //$('#btnInvoice').show();
+                                $('#btnCancel').click()
+                                GenerateInvoice();
+                            }
+
+                        }
+                    },
+                    error: function (error) {
+                        alert(error.responseText);
+                    }
+                });
+            }
+           
+        }
+
+        //$("#btnConfirm").click(function () {
+        //    debugger;
+        //    //---------------------------------------------------------------------------
+        //    var partyId = $("#PartyId").val();
+        //    var fromDate = $("#txtFromDate").val();
+        //    var toDate = $("#txtToDate").val();
+        //    if (partyId == '') {
+        //        alert("Please select party name");
+        //        return false;
+        //    }
+        //    if (fromDate == '' || toDate == '') {
+        //        alert("Please select From and To date");
+        //        return false;
+        //    }
+        //    var count = $('#hdnRecordCount').val();
+        //    var partyId = $('#PartyId').val();
+        //    var fromDate = $('#txtFromDate').val();
+        //    var toDate = $('#txtToDate').val();
+        //    var grandTotal = $('#lblGrandTotal').text();
+        //    var fullCharges = $('#lblFullCahrges').text();
+        //    var TotalAmount = $('#lblTotal').text();
+        //    var netAmount = $('#lblNetTotal').text();
+        //    var discount = $('#lblDiscount').text();
+        //    var billId = 0;
+
+        //    if (count == '') {
+        //        alert('Please first search your transaction');
+        //        return false;
+        //    }
+        //    //showAjaxLoader();
+        //    //$.ajax({
+        //    //    type: 'POST',
+        //    //    datatype: 'json',
+        //    //    url: '/CourierDetails/SaveBillDetails',
+        //    //    data: {
+        //    //        partyId: partyId, fromDate: fromDate, toDate: toDate, grandTotal: grandTotal,
+        //    //        TotalAmount: TotalAmount, fullCharges: fullCharges,
+        //    //        CGST: CGST, SGST: SGST, BillId: billId
+        //    //    },
+        //    //    success: function (data) {
+        //    //        /*theDialog.dialog('open');*/
+
+        //    //        hideAjaxLoader();
+        //    //        secajax(data.BillId, data.CurrentDate);
+        //    //    },
+        //    //    error: function (error) {
+        //    //        alert(error.responseText);
+        //    //        hideAjaxLoader();
+        //    //    }
+        //    //});
+        //    //---------------------------------------------------------------------------
+        //});
+
+       
+
     </script>
 
 }

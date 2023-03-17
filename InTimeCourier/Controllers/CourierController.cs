@@ -62,7 +62,7 @@ namespace InTimeCourier.Controllers
         [HttpGet]
         public ActionResult CourierModeList()
         {
-            IEnumerable<CourrierMode> list = db.CourrierModes.OrderByDescending(x => x.CourrierModeId).ToList();
+            IEnumerable<CourrierMode> list = db.CourrierModes.OrderBy(x => x.CourrierModeName).ToList();
             return View(list);
         }
 
@@ -116,17 +116,26 @@ namespace InTimeCourier.Controllers
                 var partyList = db.PartyMasters.Where(x => x.MobileNo == party.MobileNo).ToList();
                 if(partyList.Count==0 &&  party!=null)
                 {
-                    party.CreatedBy = CourierHelper.UserId;
-                    party.CreatedDt = DateTime.Now;
-                    party.IsActive = true;
-                    db.PartyMasters.Add(party);
-                    
-                    db.SaveChanges();
-                    ViewBag.Message = "Party added successfully!!!";
+                    var partyexist = db.PartyMasters.Where(x => x.PartyName == party.PartyName.Trim() && x.PartyType == party.PartyType.Trim()).ToList();
+                    if (partyexist.Count > 0)
+                    {
+                        ViewBag.ErrorMessage = "This party already contains this group name";
+                    }
+                    else
+                    {
+                        party.CreatedBy = CourierHelper.UserId;
+                        party.CreatedDt = DateTime.Now;
+                        party.IsActive = true;
+                        db.PartyMasters.Add(party);
+                        db.SaveChanges();
+                        ViewBag.Message = "Party added successfully!!!";
+                    }
+                   
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "This party already exists";
+                   ViewBag.ErrorMessage = "This mobile no. already exists";
+                    
                 }
             }
             else
@@ -192,6 +201,7 @@ namespace InTimeCourier.Controllers
         {
             if(ModelState.IsValid)
             {
+                //var partyexist= db.PartyMasters.Where(x => x.PartyName == party.PartyName && x.PartyType == party.PartyType).ToList();
                 party.ModifyBy = CourierHelper.UserId;
                 party.ModifyDate = DateTime.Now;
                 party.IsActive = true;
@@ -264,6 +274,21 @@ namespace InTimeCourier.Controllers
                 party.ActivationMode = list[0].IsActive == true ? "Active" : "Deactive" ;
             }
             return party;
+        }
+
+        public ActionResult AcivateDeativateMode(int? id)
+        {
+            if (id > 0)
+            {
+                SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+                if (connString.State == ConnectionState.Closed)
+                    connString.Open();
+                SqlCommand cmd = new SqlCommand("uspActivateDeactivateMode", connString);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ModeId", id);
+                int a = cmd.ExecuteNonQuery();
+            }
+            return RedirectToAction("CourierModeList");
         }
     }
 }

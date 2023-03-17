@@ -1,7 +1,9 @@
 ﻿using InTimeCourier.App_Start;
 using InTimeCourier.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -134,6 +136,60 @@ namespace InTimeCourier.Controllers
                 viewResult.View.Render(viewContext, sw);
                 return sw.GetStringBuilder().ToString();
             }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteBillDetails(int BillId)
+        {
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            if (connString.State == ConnectionState.Closed)
+                connString.Open();
+            SqlCommand cmd = new SqlCommand("uspDeleteBillDetails", connString);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@BillId", BillId);
+            cmd.Parameters.Add("@Result", SqlDbType.Int);
+            cmd.Parameters["@Result"].Direction = ParameterDirection.Output;
+            cmd.ExecuteNonQuery();
+            string response = Convert.ToString(cmd.Parameters["@Result"].Value);
+            var v = new { responseId = response };
+            return Json(v, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetNewInvoiceNo()
+        {
+            DataSet ds = new DataSet();
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            SqlCommand cmd = new SqlCommand("uspGetInvoiceNumber", connString);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(ds);
+            return Json(JsonConvert.SerializeObject(ds), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult CheckInvoiceNo(string InvoiceNo)
+        {
+            DataSet ds = new DataSet();
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            SqlCommand cmd = new SqlCommand("uspCheckInvoiceNoDetails", connString);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@InvoiceNo", InvoiceNo);
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(ds);
+            return Json(JsonConvert.SerializeObject(ds), JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public JsonResult GetInvoiceDetails(string BillId)
+        {
+            DataSet ds = new DataSet();
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            SqlCommand cmd = new SqlCommand("uspGetBillDetailsByBillId", connString);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@BillId", BillId);
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(ds);
+            return Json(JsonConvert.SerializeObject(ds), JsonRequestBehavior.AllowGet);
         }
     }
     public class Responsedetails

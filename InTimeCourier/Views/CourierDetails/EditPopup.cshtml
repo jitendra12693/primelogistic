@@ -5,125 +5,267 @@
     ViewBag.Title = "Edit Courier Details";
     Layout = null;
 }
+<style>
+    .ui-autocomplete {
+        z-index: 2147483647;
+    }
+</style>
 
 <h2>Edit Courier Details</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("EditPopup", "CourierDetails"))
 {
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.CourrierId)
-    @Html.HiddenFor(model => model.isInvoiceDone)
-    <div class="row">
-        <div class="col-md-6 form-group" style="display:none;">
-            @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CourrierId)
+        @Html.HiddenFor(model => model.isInvoiceDone)
+        @Html.HiddenFor(model => model.DestinationId)
+        @Html.HiddenFor(model => model.PartyId)
+        <div class="row">
+            <div class="col-md-6 form-group" style="display:none;">
+                @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+            <div class="col-md-6 form-group">
+                @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5", maxlength = "15" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })*@
-                @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            <div class="col-md-6 form-group">
+                @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Distance, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Party Name--", maxlength = "30" } })
+                    @*@Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })*@
+                    @Html.ValidationMessageFor(model => model.Distance, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })
-                @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
+            <div class="col-md-6 form-group">
+                @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Destination Name--", maxlength = "25" } })
+                    @*@Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control"})*@
+                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 form-group">
-            <label class="control-label col-md-5">Mode</label>
-            <div class="col-md-7">
-                @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            <label class="control-label col-md-5">Network</label>
-            <div class="col-md-7">
-                @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
-                @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
-                @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg" } })
-                @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("Quantity", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Please enter your Qty" } })
-                @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your rate(Per / Kg)" } })
-                @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your ODA Charges" } })
-                @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Discount" } })
-                @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-5" })
-            <div class="col-md-7">
-                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
-                @Html.HiddenFor(model => model.CreatedDt, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.HiddenFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-md-6 form-group">
-            <div class="col-md-offset-10 col-md-12">
-                <input type="submit" value="Update" class="btn btn-primary" id="btnSubmit"/>
-                <input type="button" value="Delete" class="btn btn-danger" id="btnDelete" onclick="Delete()"/>
-            </div>
-        </div>
 
+            <div class="col-md-6 form-group">
+                <label class="control-label col-md-5">Mode</label>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="control-label col-md-5">Network</label>
+                <div class="col-md-7">
+                    @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
+                    @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
+                    @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg", maxlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Quantity", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Please enter your Qty", maxlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your rate(Per / Kg)", maxlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Extra Charges", maxlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Discount", maxlength = "10" } })
+                    @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-5" })
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                    @Html.HiddenFor(model => model.CreatedDt, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+
+
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <div class="col-md-offset-10 col-md-12">
+                    <input type="button" value="Update" class="btn btn-primary" id="btnUpdate" />
+                    <input type="button" value="Delete" class="btn btn-danger" id="btnDelete" onclick="Delete()" />
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>
+    if (ViewBag.Party != null)
+    {
+<script type="text/javascript">
+            Party =@Html.Raw(Json.Encode(@ViewBag.Party));
+$.each(Party, function (index, item) {
+    var PartyElement = {};
+    PartyElement.Name = item.Text;
+    PartyElement.Id = item.Value;
+    PartyList.push(PartyElement);
+})
+Destination =@Html.Raw(Json.Encode(@ViewBag.DestinationList));
+$.each(Destination, function (index, item) {
+    var DestinationElement = {};
+    DestinationElement.Name = item.Text;
+    DestinationElement.Id = item.Value;
+    DestinationList.push(DestinationElement);
+})
+var PartyName = PartyList.filter(x => x.Id == $('#PartyId').val());
+$('#Distance').val(PartyName[0].Name);
+
+var Location = DestinationList.filter(x => x.Id == $('#DestinationId').val());
+$('#Location').val(Location[0].Name);
+
+    fetchRateDetails();
+    //$(function () {
+    $("#Distance").autocomplete({
+        source: function (request, response) {
+            var PartyTextValue = $("#Distance").val()
+            var filterList = PartyList.filter(x => x.Name.toLowerCase().includes(PartyTextValue.toLowerCase()));
+            if (!filterList.length) {
+                var result = [
+                    {
+                        label: 'No party found',
+                        value: response.term
+                    }
+                ];
+                response(result);
+                $('#PartyId').val('');
+            }
+            else {
+                response($.map(filterList, function (filterList, id) {
+                    return {
+                        label: filterList.Name,
+                        value: filterList.Id
+                    };
+                }));
+            }
+        },
+        select: function (e, i) {
+            $('#Distance').val(i.item.label);
+            $('#PartyId').val(i.item.value);
+            fetchRateDetails();
+            return false;
+        },
+        minLength: 1
+    });
+   // });
+
+    $('#Distance').on('blur', function () {
+        var Party_Id = $('#PartyId').val();
+        if (Party_Id == '') {
+            $('#Distance').val('');
+        }
+    });
+
+    $(function () {
+        $("#Location").autocomplete({
+            source: function (request, response) {
+                var LocTextValue = $("#Location").val()
+                var filterList = DestinationList.filter(x => x.Name.toLowerCase().includes(LocTextValue.toLowerCase()));
+
+                if (!filterList.length) {
+                    var result = [
+                        {
+                            label: 'No destination found',
+                            value: response.term
+                        }
+                    ];
+                    response(result);
+                    $('#DestinationId').val('0');
+                }
+                else {
+                    response($.map(filterList, function (filterList, id) {
+                        return {
+                            label: filterList.Name,
+                            value: filterList.Id
+                        };
+                    }));
+                }
+
+            },
+            select: function (e, i) {
+                $('#Location').val(i.item.label);
+                $('#DestinationId').val(i.item.value);
+                return false;
+            },
+            minLength: 1
+        });
+    });
+
+    $('#Location').on('blur', function () {
+        var Dest_Id = $('#DestinationId').val();
+        if (Dest_Id == '') {
+            $('#Location').val('');
+        }
+    });
+
+    $("#btnUpdate").click(function (e) {
+        debugger;
+    e.preventDefault();
+    //Show loading display here
+        var valdata = $('form').serialize();   
+    $.ajax({
+        url: '@Url.Action("EditPopup")',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        success: function (data) {
+            //Show popup
+            if (data == 'Success') {
+                $('#divUpdateCourrier').modal('hide');
+                alert('Your Courier Updated Successfully');
+                $('#btnSearch').click();
+            }
+        }
+    });
+});
+
+</script>
+    }
 }
 
 <div>
@@ -143,10 +285,11 @@
             }
         }
         $(document).ready(function () {
+            debugger;
+            alert('');
             $("#TrackingNo").attr("readonly", "readonly");
             var d = $('#DepartureDt').val().split(' ')[0];
             $('#DepartureDt').val(d.split("-").reverse().join("/"));
-            fetchRateDetails();
         })
         $(function () {
             $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
@@ -160,7 +303,7 @@
             dateFormat: 'dd/mm/yy'
         });
         $("#DepartureDt").datepicker("option", "changeYear", true);
-        $("#Amount").attr("readonly", "readonly");
+       // $("#Amount").attr("readonly", "readonly");
         $("#DepartureDt").attr("readonly", "readonly");
 
     </script>

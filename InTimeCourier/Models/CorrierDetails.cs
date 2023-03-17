@@ -23,7 +23,7 @@ namespace InTimeCourier.Models
         [DisplayFormat(DataFormatString = "{0:0.000}")]
         public decimal? Weight { get; set; }
         public string BookingDate { get; set; }
-        [DisplayFormat(DataFormatString = "{0:0.000}")]
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public decimal? Amount { get; set; }
 
         public DateTime? CreatedDt { get; set; }
@@ -45,15 +45,15 @@ namespace InTimeCourier.Models
         public int CourrierModeId { get; set; }
         public int NetworkModeId { get; set; }
         public int Quantity { get; set; }
-        [DisplayFormat(DataFormatString = "{0:0.000}")]
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public decimal? DiscountAmount { get; set; }
-        [DisplayFormat(DataFormatString = "{0:0.000}")]
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public decimal? ODACharges { get; set; }
         public string Location { get; set; }
         public string NetworkName { get; set; }
         public string CourierMode { get; set; }
         public int RowRank { get; set; }
-        [DisplayFormat(DataFormatString = "{0:0.000}")]
+        [DisplayFormat(DataFormatString = "{0:0.00}")]
         public decimal CalculatedAmount { get; set; }
     }
 }

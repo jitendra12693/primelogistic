@@ -56,7 +56,7 @@ namespace InTimeCourier.Models
 
         public DateTime? ModifyDate { get; set; }
 
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
 
         [Required(ErrorMessage = "Destination is required")]
         public string Location { get; set; }

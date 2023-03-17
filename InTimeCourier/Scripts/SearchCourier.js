@@ -1,8 +1,13 @@
 ﻿var get_Url = '';
+var CGST = '';
+var SGST = '';
 $(function () {
     $("#txtFromDate").datepicker();
+   // $("#txtInvDate").datepicker();
     $("#txtToDate").datepicker();
     $("#Amount").attr("readonly", "readonly");
+    $("#txtFromDate").attr("readonly", "readonly");
+    $("#txtToDate").attr("readonly", "readonly");
 });
 
 var changeFromYear = $("#FromDate").datepicker("option", "changeYear");
@@ -10,8 +15,11 @@ var changeToYear = $("#ToDate").datepicker("option", "changeYear");
 // Setter
 $("#FromDate").datepicker("option", "changeFromYear", true);
 $("#ToDate").datepicker("option", "changeToYear", true);
+//$("#txtInvDate").datepicker("option", "changeToYear", true);
 
 $("#btnSearch").click(function () {
+    //$('#btnInvoice').hide();
+    
     var partyId = $("#PartyId").val();
     //var fromDate = $("#txtFromDate").val();
     //var toDate = $("#txtToDate").val();
@@ -43,32 +51,67 @@ $("#btnSearch").click(function () {
             success: function (data) {
                 if (data.TotalRecord.RecordCount == 0) {
                     $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
-                        + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
+                        + '<th>AWBNo.</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
                     $("#lblTotal").text();
                     hideAjaxLoader();
                 } else {
                     $("#SearchCourierlist").html(data.html);
-                    $("#lblTotal").html(data.TotalRecord.TotalAmount);
-                    $("#lblFullCahrges").html(data.TotalRecord.FullCharges);
+                    $("#lblTotal").html(data.TotalRecord.TotalAmount.toFixed(2));
+                    if (data.TotalRecord.FuelChargesLabel == "0.00 %") {
+                        $("#lblFullCahrges").html('0.00');
+                    }
+                    else
+                    {
+                        $("#lblFullCahrges").html(data.TotalRecord.FullCharges.toFixed(2));
+                    }
+                    //$("#lblFullCahrges").html(data.TotalRecord.FullCharges.toFixed(2));
                     $("#hdnIsIGSTParty").val(data?.PartyDetails?.IsIGST);
-                    $("#lblNetTotal").html(data.TotalRecord.NetAmount);
-                    $("#lblDiscount").html(data.TotalRecord.Discount);
-                    var CGST = data.TotalRecord.CGST;
-                    var SGST = data.TotalRecord.SGST;
+                    $("#lblNetTotal").html(data.TotalRecord.NetAmount.toFixed(2));
+                    $("#lblDiscount").html(data.TotalRecord.Discount.toFixed(2));
+                    CGST = parseFloat(data.TotalRecord.CGST.toFixed(2));
+                    SGST = parseFloat(data.TotalRecord.SGST.toFixed(2));
+                    var html = '';
                     if (data?.PartyDetails?.IsIGST) {
                         var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
                         $('#lblBillIGST').text(totalIgst);
-                        $('#trCGST').hide();
-                        $('#trSGST').hide();
-                        $('#trIGST').show();
+                        html = `
+                                <span>I.G.S.T. (18 %)&nbsp;</span>
+                               `
+                        //$('#cgst').hide();
+                        //$('#sgst').hide();
+                        //$('#igst').show();
+                        //$('#lblBillIGST').show();
+                        $('#gstValue').html('<b>'+totalIgst+'</b>');
+                        $('#gstname').html(html);
+                        $('#lblBillCGST').text('0.00');
+                        $('#lblBillSGST').text('0.00');
                     } else {
+
                         $('#lblBillCGST').text(CGST);
                         $('#lblBillSGST').text(SGST);
-                        $('#trIGST').hide();
-                        $('#trCGST').show();
-                        $('#trSGST').show();
+                        html = `
+                                <span>S.G.S.T. (9 %)</span>&nbsp;<hr/>
+                                <span>C.G.S.T. (9 %)</span>&nbsp;
+                               `
+                        $('#gstValue').html('<b>'+CGST+'</b>' + '<hr/><b>' + SGST+'</b>');
+                        $('#gstname').html(html);
+                        //$('#igst').hide();
+                        //$('#cgst').show();
+                        //$('#sgst').show();
+                        //$('#lblBillCGST').show();
+                        //$('#lblBillSGST').show();
+                        $('#lblBillIGST').text('0.00');
                     }
-                    $("#lblGrandTotal").html(data.TotalRecord.GrandTotal);
+                    var grndttl = 0;
+                    var chkvaluetype = checkNumber(parseFloat(data.TotalRecord.GrandTotal.toFixed(2)));
+                    if (chkvaluetype == 1) {
+                        grndttl = data.TotalRecord.GrandTotal.toFixed(2);
+                    }
+                    else if (chkvaluetype == 2) {
+                        grndttl = data.TotalRecord.GrandTotal.toFixed(2).split('.')
+                        grndttl = (parseInt(grndttl[0]) + 1).toFixed(2);
+                    }
+                    $("#lblGrandTotal").html(grndttl);
                     $("#hdnPartyName").val(data.PartyDetails.PartyName);
                     $("#hdnAddress").val(data.PartyDetails.Address);
                     $("#hdnRecordCount").val(data.TotalRecord.RecordCount);
@@ -76,6 +119,7 @@ $("#btnSearch").click(function () {
                     $('#hdnPartyGSTNo').val(data.PartyDetails.GSTNumber);
                     $('#lblGrandTotalInWord').text(data.InWord);
                     $('#partyFuelCharge').text(data.TotalRecord.FuelChargesLabel);
+                    $('#btnGenerateInvoice').show();
                     hideAjaxLoader();
 
                 }
@@ -92,66 +136,180 @@ $("#btnSearch").click(function () {
     }
 });
 
+function checkNumber(x) {
+
+    // check if the passed value is a number
+    if (typeof x == 'number' && !isNaN(x)) {
+
+        // check if it is integer
+        if (Number.isInteger(x)) {
+            return 1;
+        }
+        else {
+            return 2
+        }
+
+    } 
+}
+
 $("#btnClear").click(function () {
     hideAjaxLoader();
     $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
         + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
+   // $('#btnInvoice').hide();
 });
 
 
-$("#btnExportPdf").click(function () {
+/*$("#btnExportPdf").click(function () {*/
+function GenerateInvoice() {
+    debugger;
+    //$('#btnInvoice').hide();
+    //---------------------------------------------------------------------------
+    var partyId = $("#PartyId").val();
+    var fromDate = $("#txtFromDate").val();
+    var toDate = $("#txtToDate").val();
+    if (partyId == '') {
+        alert("Please select party name");
+        return false;
+    }
+    if (fromDate == '' || toDate == '') {
+        alert("Please select From and To date");
+        return false;
+    }
+    var count = $('#hdnRecordCount').val();
+    var partyId = $('#PartyId').val();
+    var fromDate = $('#txtFromDate').val();
+    var toDate = $('#txtToDate').val();
+    var grandTotal = $('#lblGrandTotal').text();
+    var fullCharges = $('#lblFullCahrges').text();
+    var TotalAmount = $('#lblTotal').text();
+    var netAmount = $('#lblNetTotal').text();
+    var discount = $('#lblDiscount').text();
+    var InvoiceNo = $('#hdnInvoiceNumber').val();
+    var SrNo = $('#hdnSrNo').val();
+    var InvoiceDate = $('#hdnInvoiceDt').val();
+
+    if (count == '') {
+        alert('Please first search your transaction');
+        return false;
+    }
+    showAjaxLoader();
+    $.ajax({
+        type: 'POST',
+        datatype: 'json',
+        url: '/CourierDetails/SaveBillDetails',
+        data: {
+            partyId: partyId, fromDate: fromDate, toDate: toDate, grandTotal: grandTotal,
+            TotalAmount: TotalAmount, fullCharges: fullCharges,
+            CGST: CGST, SGST: SGST, InvoiceNo: InvoiceNo, SrNo: SrNo, InvoiceDate: InvoiceDate
+        },
+        success: function (data) {
+            /*theDialog.dialog('open');*/
+            debugger;
+            hideAjaxLoader();
+            //secajax(data.BillId, data.CurrentDate);
+            if(data.billid != '' && data.CurrentDate!='')
+            {
+                alert('Invoice Generated Successfully');
+                $('#btnGenerateInvoice').hide();
+                $("#btnClear").click();
+                $('#hdnRecordCount').val('');
+                $('#hdnInvoiceDt').val('');
+                $('#hdnSrNo').val('');
+                $('#hdnInvoiceNumber').val('');
+            }
+           
+        },
+        error: function (error) {
+            alert(error.responseText);
+            hideAjaxLoader();
+            //$('#btnInvoice').hide();
+        }
+    });
+    //---------------------------------------------------------------------------
+    }
+//});
+
+function secajax(billid, billdate) {
+    $('#btnGenerateInvoice').show();
+    $('#hdnbillno').val(billid);
+    $('#hdnbilldate').val(billdate);
+    var datearray = $('#txtFromDate').val().split("/");
+    var newdatefrom = datearray[2] + '/' + datearray[0] + '/' + datearray[1];
+    newdatefrom = datearray[1] + '-' + new Date(newdatefrom).toLocaleString("en-us", { month: "short" }) + '-' + datearray[2]
+    var datearray1 = $('#txtToDate').val().split("/");
+    var newdateto = datearray1[2] + '/' + datearray1[0] + '/' + datearray1[1];
+    newdateto = datearray1[1] + '-' + new Date(newdateto).toLocaleString("en-us", { month: "short" }) + '-' + datearray1[2]
     $.ajax({
         type: 'GET',
         datatype: 'json',
         url: '/CourierDetails/GetLoggedInUser',
         success: function (data) {
             var header = `<center>
-                <div style="margin-top:-3%;margin-bottom:-3%">
-                    <img src="${data?.loggedInUser?.CompanyLogo}" style="height:150px;" />
+                <div style="margin-top:-10px;margin-bottom:-30px">
+                   <div><b> TAX INVOICE </b></div>
+                    <hr style='margin-bottom:2%'>
+                    <img src="${data?.loggedInUser?.CompanyLogo}" style="height:45px;float:left;margin-top:-1%" />
                 </div>
-                <h5>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h5>
-                <h5>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4><h4>Email Address: ${data?.loggedInUser?.EmailId}</h5 ><hr />
-                <table style="width:100%;">
-                <tr>
-                <td>M/s</td>
-                <td> ${$("#hdnPartyName").val()}</td>
-                <td>G.S.T. No.</td>
-                <td>${$('#hdnPartyGSTNo').val()}</td>
-                </tr>
-                <tr>
-                <td>Address</td>
-                <td colspan="3">${$('#hdnAddress').val()}</td>
-                </tr>
-                <tr>
-                <td>From</td>
-                <td>${$('#txtFromDate').val()}</td>
-                <td>To</td>'
-                <td>${$('#txtToDate').val()}</td>
-                </tr>
+             
+                <div style='float:right'>
+                <span style='font-size:small'>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</span>
+                <span style='font-size:small'><br/>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </span>
+                <span style='font-size:small'>, Email Address: ${data?.loggedInUser?.EmailId}</span>
+                </div>
+         
+                <table style="width:100%;font-size:13px;margin-top:12%">
+
+        <tr>
+			<td colspan="2" style='text-align:left'><b>Bill To</b></td>
+			<td style='text-align:right;width:20%'><b>Invoice No.&nbsp;</b></td>
+			<td style='width:15%;text-align:center'><b>${$('#hdnbillno').val()}</b></td>
+		</tr>
+		<tr>
+			<td colspan="2" rowspan="3" style='text-align:left'><b><u>${$("#hdnPartyName").val()}</u></b><br/>${$('#hdnAddress').val()}<br/><b>G.S.T. No. :- </b>${$('#hdnPartyGSTNo').val()}</td>
+			<td style='text-align:right;width:20%'><b>Invoice Date &nbsp;</b></td>
+			<td style='width:15%;text-align:center'><b>${$('#hdnbilldate').val()}</b></td>
+		</tr>
+		<tr>
+			<td style='text-align:right;width:20%'><b>Period From &nbsp;</b></td>
+			<td style='width:15%;text-align:center'><b>${newdatefrom}</b></td>
+		</tr>
+		<tr>
+			<td style='text-align:right;width:20%'><b>Period To &nbsp;</b></td>
+			<td style='width:15%;text-align:center'><b>${newdateto}</b></td>
+		</tr>
                  </table>
                 </center>`;
-            var footer = `<table style='width:100%;'>
-        <tr>
-            <td><strong>Bank Name</strong></td>
-            <td>${data?.loggedInUser?.BankName}</td>
-            <td><strong>A/C</strong></td>
-            <td>${data?.loggedInUser?.AccountNumber}</td>
-        </tr>
-        <tr>
-            <td><strong>IFSC Code</strong></td>
-            <td>${data?.loggedInUser?.IFSCCode}</td>
-            <td><strong>PAN NO</strong></td>
-            <td>${data?.loggedInUser?.PANNumber}</td>
-        </tr>
-        <tr>
-            <td><strong>GST Number</strong></td>
-            <td colspan="3">${data?.loggedInUser?.GSTNumber}</td>
-        </tr>
-    </table>`;
+            var footer = `<table style='width:100%;font-size:13px;'>
+       
+         <tr>
+			 <td style='width:65%;text-align:center'><strong>Terms & Conditions</strong></td>
+			<td style='text-align:center'><strong>For Prime Logistic</strong></td>
+		</tr>
+		<tr>
+			<td><p style='font-size:x-small'>
+                    1. Kindly notify us in writing regarding any discrepancy in this invoice within 7 days. Otherwise, <br />This invoice shall be deemed to be correct & payable by you.
+                    <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of PRIME LOGISTICS .
+                    <br />
+                    3. Interest @2% per month will be charged on delayed payments.
+                    <br />
+                    4. All Invoices are to be Paid within the Credit Period Specified as per the Contractual Terms.
+                    <br/>
+                     5. Subject to Mumbai Jurisdiction
+                </p></td>
+			<td style='text-align:center'> <img style='height:50px' src="${data?.loggedInUser?.SignPic}"/></td>
+		</tr>
+		<tr>
+            <td style='text-align:center'><strong>“This is Computer Generated Invoice”</strong></td>
+			<td style='text-align:center'><strong>Authorised Signatory</strong></td>
+		</tr>
 
+    </table>`;
+            
+            debugger;
             $('.table-bordered tr').each(function () {
-                $(this).children('th').eq(7).remove();
-                $(this).children('td').eq(7).remove();
+                $(this).children('th').eq(8).remove();
+                $(this).children('td').eq(8).remove();
                 $(this).children('th').eq(4).attr("colspan", "2");
                 $(this).children('td').eq(4).attr("colspan", "2");
                 //$('#myTable').attr("class","tableClass");
@@ -165,12 +323,19 @@ $("#btnExportPdf").click(function () {
             printWindow.document.write(footer + '</body></html>');
             printWindow.document.close();
             printWindow.print();
+            //$("#btnClear").click();
+            //$('#hdnRecordCount').val('');
+            //$('#hdnInvoiceDt').val('');
+            //$('#hdnSrNo').val('');
+            //$('#hdnInvoiceNumber').val('');
+            //$('#btnInvoice').hide();
         },
         error: function (err) {
             console.log("error=", err);
+            //$('#btnInvoice').hide();
         }
     });
-});
+}
 
 function StringToInt(number) {
     if (number == null || number == undefined || number == NaN || number == '') {
@@ -273,7 +438,7 @@ $("#btnReciept").click(function () {
                 }
             }
 
-
+           
             $('#lblBillGrandTotal').text(grandTotal);
             $('#partyGSTNumber').text()
             $('#divDisplayWords').text($('#lblGrandTotalInWord').text());
@@ -479,6 +644,53 @@ function NumToWord(inputNumber, id) {
     $("#lblGrandTotalInWord").text(finalOutput);
 }
 
+//function calculateAmount() {
+//    var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+//    var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+//    var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+//    var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+//    var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+//    if (weight > 0) {
+//        if (resp.length > 0) {
+//            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+//            if (rateresp.length > 0) {
+//                $("#Rate").val(rateresp[0].Rate);
+//                //if (resp[0].PartyType == 'Logistic') {
+//                if ($("#Qty").val() != "") {
+//                    var amt = rateresp[0].Rate * parseInt(qty)
+//                    $("#Amount").val(amt + ODACharges - discount);
+//                }
+//                else {
+//                    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+//                }
+
+//                //}
+//                //else {
+//                //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+//                //}
+
+//            }
+//            else {
+//                $("#Rate").val('');
+//                //if (rate > 0) {
+//                //    $("#Amount").val((rate * qty) + ODACharges - discount);
+//                //}
+//                //else {
+//                $("#Amount").val('');
+//                       // }
+
+//            }
+//        } else {
+//            $("#Amount").val((rate * qty) + ODACharges - discount);
+//        }
+//    }
+//    else {
+//        //$("#Qty").val('');
+//        $("#Rate").val('');
+//        $("#Amount").val('');
+//    }
+
+//}
 function calculateAmount() {
     var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
     var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
@@ -486,41 +698,78 @@ function calculateAmount() {
     var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
     var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
     if (weight > 0) {
-        if (resp.length > 0) {
-            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
-            if (rateresp.length > 0) {
-                $("#Rate").val(rateresp[0].Rate);
-                //if (resp[0].PartyType == 'Logistic') {
-                if ($("#Qty").val() != "") {
-                    var amt = rateresp[0].Rate * parseInt(qty)
-                    $("#Amount").val(amt + ODACharges - discount);
+        if (parseInt(weight) > 0) {
+            $("#Qty").attr('readonly', 'readonly');
+            if (resp.length > 0) {
+                var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                if (rateresp.length > 0) {
+                    $("#Rate").val(rateresp[0].Rate);
+                    //if (resp[0].PartyType == 'Logistic') {
+                    if ($("#Qty").val() != "") {
+                        if (Number.isInteger(weight) == false) {
+                            $("#Qty").val(parseInt(weight) + 1);
+                            qty = parseInt(weight) + 1;
+                        }
+                        else {
+                            $("#Qty").val(weight);
+                            qty = weight;
+                        }
+                        var amt = rateresp[0].Rate * parseInt(qty)
+                        $("#Amount").val(amt + ODACharges - discount);
+                    }
+                    else {
+                        $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                    }
+
+                    //}
+                    //else {
+                    //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                    //}
+
                 }
                 else {
-                    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                    $("#Rate").val('');
+                    //if (rate > 0) {
+                    //    $("#Amount").val((rate * qty) + ODACharges - discount);
+                    //}
+                    //else {
+                    $("#Amount").val('');
+                    // }
+
                 }
-
-                //}
-                //else {
-                //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
-                //}
-
+            } else {
+                $("#Amount").val((rate * qty) + ODACharges - discount);
             }
-            else {
-                $("#Rate").val('');
-                //if (rate > 0) {
-                //    $("#Amount").val((rate * qty) + ODACharges - discount);
-                //}
-                //else {
-                $("#Amount").val('');
-                       // }
 
-            }
-        } else {
-            $("#Amount").val((rate * qty) + ODACharges - discount);
         }
+        else {
+            $('#Qty').removeAttr('readonly');
+            //$("#Qty").val("1");
+            if (resp.length > 0) {
+                var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                if (rateresp.length > 0) {
+                    $("#Rate").val(rateresp[0].Rate);
+                    if ($("#Qty").val() != "") {
+                        var amt = rateresp[0].Rate * parseInt(qty)
+                        $("#Amount").val(amt + ODACharges - discount);
+                    }
+                    else {
+                        $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                    }
+                }
+                else {
+                    $("#Rate").val('');
+                    $("#Amount").val('');
+                }
+            } else {
+                $("#Amount").val((rate * qty) + ODACharges - discount);
+            }
+        }
+
     }
     else {
-        //$("#Qty").val('');
+        $('#Qty').removeAttr('readonly');
+        $("#Qty").val('1');
         $("#Rate").val('');
         $("#Amount").val('');
     }
@@ -562,6 +811,86 @@ function fetchRateDetails() {
 }
 
 
+//function ratechangedcalculateAmount() {
+//    var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+//    var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+//    var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+//    var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+//    var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+//    if (weight > 0) {
+//        if (resp.length > 0) {
+//            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+//            if (rateresp.length > 0) {
+//                //if (resp[0].PartyType == 'Logistic') {
+//                //    if ($("#Qty").val() != "") {
+//                //        var amt = rate * parseInt(qty)
+//                //        $("#Amount").val(amt + ODACharges - discount);
+//                //        if (parseFloat($("#Amount").val()) <= 0) {
+//                //            alert('please enter valid data(ODA Charges or Discount)')
+//                //            $("#Amount").val('');
+//                //            $("#ODACharges").val('');
+//                //            $("#Discount").val('');
+//                //            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+//                //        }
+//                //    }
+//                //    else {
+//                //        $("#Amount").val(rate + ODACharges - discount);
+//                //        if (parseFloat($("#Amount").val()) <= 0) {
+//                //            alert('please enter valid data(ODA Charges or Discount)')
+//                //            $("#Amount").val('');
+//                //            $("#ODACharges").val('');
+//                //            $("#Discount").val('');
+//                //            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+//                //        }
+//                //    }
+
+//                //}
+//                //else {
+//                    $("#Amount").val(rate + ODACharges - discount);
+//                    if (parseFloat($("#Amount").val()) <= 0) {
+//                        alert('please enter valid data(ODA Charges or Discount)')
+//                        $("#Amount").val('');
+//                        $("#ODACharges").val('');
+//                        $("#Discount").val('');
+//                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+//                    }
+//                //}
+
+//            }
+//            else {
+//                if (rate > 0) {
+//                    $("#Amount").val((rate * qty) + ODACharges - discount);
+//                    if (parseFloat($("#Amount").val()) <= 0) {
+//                        alert('please enter valid data(ODA Charges or Discount)')
+//                        $("#Amount").val('');
+//                        $("#ODACharges").val('');
+//                        $("#Discount").val('');
+//                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+//                    }
+//                }
+//                else {
+//                    $("#Amount").val('');
+//                }
+
+//            }
+//        } else {
+//            $("#Amount").val((rate * qty) + ODACharges - discount);
+//            if (parseFloat($("#Amount").val()) <= 0) {
+//                alert('please enter valid data(ODA Charges or Discount)')
+//                $("#Amount").val('');
+//                $("#ODACharges").val('');
+//                $("#Discount").val('');
+//                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+//            }
+//        }
+//    }
+//    else {
+//        $("#Qty").val('');
+//        $("#Rate").val('');
+//        $("#Amount").val('');
+//    }
+
+//}
 function ratechangedcalculateAmount() {
     var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
     var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
@@ -569,74 +898,93 @@ function ratechangedcalculateAmount() {
     var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
     var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
     if (weight > 0) {
-        if (resp.length > 0) {
-            var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
-            if (rateresp.length > 0) {
-                //if (resp[0].PartyType == 'Logistic') {
-                //    if ($("#Qty").val() != "") {
-                //        var amt = rate * parseInt(qty)
-                //        $("#Amount").val(amt + ODACharges - discount);
-                //        if (parseFloat($("#Amount").val()) <= 0) {
-                //            alert('please enter valid data(ODA Charges or Discount)')
-                //            $("#Amount").val('');
-                //            $("#ODACharges").val('');
-                //            $("#Discount").val('');
-                //            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
-                //        }
-                //    }
-                //    else {
-                //        $("#Amount").val(rate + ODACharges - discount);
-                //        if (parseFloat($("#Amount").val()) <= 0) {
-                //            alert('please enter valid data(ODA Charges or Discount)')
-                //            $("#Amount").val('');
-                //            $("#ODACharges").val('');
-                //            $("#Discount").val('');
-                //            $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
-                //        }
-                //    }
-
-                //}
-                //else {
-                    $("#Amount").val(rate + ODACharges - discount);
+        if (parseInt(weight) > 0) {
+            $("#Qty").attr('readonly', 'readonly');
+            if (resp.length > 0) {
+                var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                if (rateresp.length > 0) {
+                    $("#Amount").val(rate * qty + ODACharges - discount);
                     if (parseFloat($("#Amount").val()) <= 0) {
-                        alert('please enter valid data(ODA Charges or Discount)')
+                        alert('please enter valid data(Extra Charges or Discount)')
                         $("#Amount").val('');
                         $("#ODACharges").val('');
                         $("#Discount").val('');
-                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
-                    }
-                //}
-
-            }
-            else {
-                if (rate > 0) {
-                    $("#Amount").val((rate * qty) + ODACharges - discount);
-                    if (parseFloat($("#Amount").val()) <= 0) {
-                        alert('please enter valid data(ODA Charges or Discount)')
-                        $("#Amount").val('');
-                        $("#ODACharges").val('');
-                        $("#Discount").val('');
-                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
                     }
                 }
                 else {
-                    $("#Amount").val('');
-                }
+                    if (rate > 0) {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(Extra Charges or Discount)')
+                            $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        }
+                    }
+                    else {
+                        $("#Amount").val('');
+                    }
 
+                }
+            } else {
+                $("#Amount").val((rate * qty) + ODACharges - discount);
+                if (parseFloat($("#Amount").val()) <= 0) {
+                    alert('please enter valid data(Extra Charges or Discount)')
+                    $("#Amount").val('');
+                    $("#ODACharges").val('');
+                    $("#Discount").val('');
+                    $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                }
             }
-        } else {
-            $("#Amount").val((rate * qty) + ODACharges - discount);
-            if (parseFloat($("#Amount").val()) <= 0) {
-                alert('please enter valid data(ODA Charges or Discount)')
-                $("#Amount").val('');
-                $("#ODACharges").val('');
-                $("#Discount").val('');
-                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+        }
+        else {
+            $('#Qty').removeAttr('readonly');
+            // $("#Qty").val("1");
+            if (resp.length > 0) {
+                var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                if (rateresp.length > 0) {
+                    $("#Amount").val(rate * qty + ODACharges - discount);
+                    if (parseFloat($("#Amount").val()) <= 0) {
+                        alert('please enter valid data(Extra Charges or Discount)')
+                        $("#Amount").val('');
+                        $("#ODACharges").val('');
+                        $("#Discount").val('');
+                        $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                    }
+                }
+                else {
+                    if (rate > 0) {
+                        $("#Amount").val((rate * qty) + ODACharges - discount);
+                        if (parseFloat($("#Amount").val()) <= 0) {
+                            alert('please enter valid data(Extra Charges or Discount)')
+                            $("#Amount").val('');
+                            $("#ODACharges").val('');
+                            $("#Discount").val('');
+                            $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                        }
+                    }
+                    else {
+                        $("#Amount").val('');
+                    }
+
+                }
+            } else {
+                $("#Amount").val((rate * qty) + ODACharges - discount);
+                if (parseFloat($("#Amount").val()) <= 0) {
+                    alert('please enter valid data(Extra Charges or Discount)')
+                    $("#Amount").val('');
+                    $("#ODACharges").val('');
+                    $("#Discount").val('');
+                    $("#Amount").val(parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                }
             }
         }
     }
     else {
-        $("#Qty").val('');
+        $('#Qty').removeAttr('readonly');
+        $("#Qty").val("1");
         $("#Rate").val('');
         $("#Amount").val('');
     }
@@ -671,5 +1019,111 @@ function Delete() {
             });
         }
     }
-
 };
+
+
+//$(function () {
+//    $("#Location").autocomplete({
+//        source: function (request, response) {
+//            var LocTextValue = $("#Location").val()
+//            var filterList = DestinationList.filter(x => x.Name.toLowerCase().includes(LocTextValue.toLowerCase()));
+
+//            if (!filterList.length) {
+//                var result = [
+//                    {
+//                        label: 'No destination found',
+//                        value: response.term
+//                    }
+//                ];
+//                response(result);
+//                $('#DestinationId').val('0');
+//            }
+//            else {
+//                response($.map(filterList, function (filterList, id) {
+//                    return {
+//                        label: filterList.Name,
+//                        value: filterList.Id
+//                    };
+//                }));
+//            }
+
+//        },
+//        select: function (e, i) {
+//            $('#Location').val(i.item.label);
+//            $('#DestinationId').val(i.item.value);
+//            return false;
+//        },
+//        minLength: 1
+//    });
+//});
+
+//$('#Location').on('blur', function () {
+//    var Dest_Id = $('#DestinationId').val();
+//    if (Dest_Id == '') {
+//        $('#Location').val('');
+//    }
+//});
+
+
+//$(function () {
+//    $("#Distance").autocomplete({
+//        source: function (request, response) {
+//            var PartyTextValue = $("#Distance").val()
+//            var filterList = PartyList.filter(x => x.Name.toLowerCase().includes(PartyTextValue.toLowerCase()));
+//            if (!filterList.length) {
+//                var result = [
+//                    {
+//                        label: 'No party found',
+//                        value: response.term
+//                    }
+//                ];
+//                response(result);
+//                $('#PartyId').val('');
+//            }
+//            else {
+//                response($.map(filterList, function (filterList, id) {
+//                    return {
+//                        label: filterList.Name,
+//                        value: filterList.Id
+//                    };
+//                }));
+//            }
+//        },
+//        select: function (e, i) {
+//            $('#Distance').val(i.item.label);
+//            $('#PartyId').val(i.item.value);
+//            fetchRateDetails();
+//            return false;
+//        },
+//        minLength: 1
+//    });
+//});
+
+//$('#Distance').on('blur', function () {
+//    var Party_Id = $('#PartyId').val();
+//    if (Party_Id == '') {
+//        $('#Distance').val('');
+//    }
+//});
+
+
+var Party = '';
+var Destination = ''
+var PartyList = [];
+var DestinationList = [];
+
+
+$("#btnUpdate").click(function (e) {
+    e.preventDefault();
+    //Show loading display here
+    var form = $("#signupform");
+    $.ajax({
+        url: '@Url.Action("EditPopup")',
+        data: form.serialize(),
+        type: 'POST',
+        success: function (data) {
+            //Show popup
+            $("#popup").html(data);
+        }
+    });
+});

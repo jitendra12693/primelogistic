@@ -42,19 +42,22 @@ namespace InTimeCourier.Controllers
             List<CorrierDetails> list = GetCourierList(ref dtTotal, ref dtPartyDetails, partyId, trackingNo, fromDate, toDate);
             CorrierDetails objCorrierDetails = new CorrierDetails();
             objCorrierDetails.CorrierDetails1 = new List<Models.CorrierDetails>();
-            objCorrierDetails.CorrierDetails2 = new List<Models.CorrierDetails>();
-            for (int i = 1; i <= list.Count; i++)
+            //objCorrierDetails.CorrierDetails2 = new List<Models.CorrierDetails>();
+            //for (int i = 1; i <= list.Count; i++)
+            //{
+            //    if (i % 2 == 0)
+            //    {
+            //        objCorrierDetails.CorrierDetails2.Add(list[i - 1]);
+            //    }
+            //    else
+            //    {
+            //        objCorrierDetails.CorrierDetails1.Add(list[i - 1]);
+            //    }
+            //}
+            foreach(var item in list)
             {
-                if (i % 2 == 0)
-                {
-                    objCorrierDetails.CorrierDetails2.Add(list[i - 1]);
-                }
-                else
-                {
-                    objCorrierDetails.CorrierDetails1.Add(list[i - 1]);
-                }
+                objCorrierDetails.CorrierDetails1.Add(item);
             }
-
             var html = RenderPartialViewToString("SearchList", objCorrierDetails);
             string totalInWord = ConvertInWord.ConvertToWords(dtTotal.GrandTotal.ToString());
             var v = new { html = html, TotalRecord = dtTotal, PartyDetails = dtPartyDetails, InWord = totalInWord };
@@ -62,35 +65,42 @@ namespace InTimeCourier.Controllers
         }
         public ActionResult SearchCorier()
         {
-            ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+            //ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+            ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item => new { PartyId = item.PartyId, PartyName = item.PartyType == null ? item.PartyName + item.PartyType : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             return View();
         }
         public ActionResult AddCourrier()
         {
             try
             {
-                if(!string.IsNullOrEmpty(Request.QueryString["success"]) && !string.IsNullOrEmpty(Request.QueryString["status"]) && !string.IsNullOrEmpty(Request.QueryString["trackingNo"]))
+                if(!string.IsNullOrEmpty(Request.QueryString["success"]) && !string.IsNullOrEmpty(Request.QueryString["status"]) || !string.IsNullOrEmpty(Request.QueryString["trackingNo"]))
                 {
                     ViewBag.Message = Request.QueryString["success"];
                     ViewBag.Status = int.Parse("0"+Request.QueryString["status"]);
                     ViewBag.TrackingNo = Request.QueryString["trackingNo"];
                 }
+                if (!string.IsNullOrEmpty(Request.QueryString["dateLock"]))
+                {
+                    ViewBag.DateLock = Request.QueryString["dateLock"];
+                    ViewBag.LockDate= Request.QueryString["lockdate"];
+                }
 
                //ViewBag.Location = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
-                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item=>new {PartyId=item.PartyId,PartyName=item.PartyType==null? item.PartyName + item.PartyType  : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 var data = db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId);
-                ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
+                ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeName), "CourrierModeId", "CourrierModeName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
-                var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
+                var list = db.CourrierMasters.Where(x=>x.IsActive==true).OrderByDescending(x => x.CourrierId).ToList();
                 var listnew=list.Take(12).ToList();
                 int cnt = 0;
                 foreach (var item in listnew)
                 {
                     var Location= db.DestinationMaster.Where(x => x.IsActive == true && x.Id==item.DestinationId).FirstOrDefault();
-                    if(Location!=null)
+                    if (Location!=null)
                     {
                         list[cnt].Location = Location.Name;
+                        list[cnt].TrackingNo = item.DepartureDt.ToString("dd-MMM-yyyy");
                     }
                     cnt++;
                 }
@@ -106,7 +116,7 @@ namespace InTimeCourier.Controllers
         [HttpPost]
         public ActionResult AddCourrier(CourrierMaster courier)
         {
-            ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
+            ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeName), "CourrierModeId", "CourrierModeName");
             ViewBag.Location = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
             ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
@@ -115,14 +125,48 @@ namespace InTimeCourier.Controllers
             {
                 if(courier != null && courier.CourrierId>0)
                 {
-                        courier.ModifyBy = 1;
+                    if (courier.DestinationId == 0)
+                    {
+                        //Add Destination if not available
+                        DestinationMaster destinationMaster = new DestinationMaster();
+                        destinationMaster.Name = courier.Location;
+                        destinationMaster.Description = "Added via AWB Entry";
+                        destinationMaster.IsActive = true;
+                        destinationMaster.CreatedDate = DateTime.Now;
+                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                        db.SaveChanges();
+                        courier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+
+                    }
+                        courier.ModifyBy = int.Parse("0" + Session["UserId"]);
                         courier.ModifyDate = DateTime.Now;
+                        courier.IsActive = true;
+                        courier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
                         db.Entry(courier).State = System.Data.Entity.EntityState.Modified;
                         db.SaveChanges();
+                        ViewBag.Message = "Your Courier Updated Successfully"; //"Your courier registered successfully with courier tracking no: " + response[0].TrackingNo;
+                        ViewBag.Status = 1;
                 }
                 else
                 {
-                    var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@DestinationId,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty",
+                    //Add Destination if not available
+                    if(courier.DestinationId==0)
+                    {
+                        DestinationMaster destinationMaster = new DestinationMaster();
+                        destinationMaster.Name = courier.Location;
+                        destinationMaster.Description = "Added via AWB Entry";
+                        destinationMaster.IsActive = true;
+                        destinationMaster.CreatedDate = DateTime.Now;
+                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                        db.SaveChanges();
+                        courier.DestinationId=db.DestinationMaster.OrderByDescending(x => x.Id).Select(x=>x.Id).FirstOrDefault();
+
+                    }
+
+                    courier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
+                    var response = db.Database.SqlQuery<CorierResponse>("exec uspInsertCourrierDetails @PartyId,@Amount,@CreatedBy,@TrackingNo,@CNNo,@Weight,@DepartureDt,@Rate,@DestinationId,@CourrierModeId,@ODACharges,@NetworModeId,@Discount,@Qty,@PartyName",
                                     new SqlParameter("@PartyId", courier.PartyId),
                                     new SqlParameter("@CourrierModeId", courier.CourrierModeId),
                                     new SqlParameter("@NetworModeId", courier.NetworkModeId),
@@ -136,15 +180,21 @@ namespace InTimeCourier.Controllers
                                     new SqlParameter("@Discount", courier.Discount ?? (object)DBNull.Value),
                                     new SqlParameter("@DepartureDt", courier.DepartureDt),
                                     new SqlParameter("@DestinationId", courier.DestinationId),
+                                    new SqlParameter("@PartyName", courier.Distance),
                                     new SqlParameter("@Rate", courier.Rate)).ToList();
                     ViewBag.Message = response[0].Message; //"Your courier registered successfully with courier tracking no: " + response[0].TrackingNo;
                     ViewBag.Status = response[0].Status;
                     courier.TrackingNo = response[0].TrackingNo;
                     ViewBag.TrackingNo = response[0].TrackingNo;
+                    ViewBag.DateLock = courier.IsActive;
+                    if(courier.IsActive==true)
+                    {
+                        ViewBag.LockDate = courier.DepartureDt;
+                    }
 
                 }
 
-                var list = db.CourrierMasters.OrderByDescending(x => x.CourrierId).ToList();
+                var list = db.CourrierMasters.Where(x => x.IsActive == true).OrderByDescending(x => x.CourrierId).ToList();
                 var listnew = list.Take(12).ToList();
                 int cnt = 0;
                 foreach (var item in listnew)
@@ -164,7 +214,9 @@ namespace InTimeCourier.Controllers
             }
            // return new EmptyResult(ViewBag);
            // return View(ViewBag);
-            return RedirectToAction("AddCourrier",new { success= ViewBag.Message,status= ViewBag.Status,trackingNo= ViewBag.TrackingNo });
+            return RedirectToAction("AddCourrier",new { success= ViewBag.Message,status= ViewBag.Status,
+                trackingNo= ViewBag.TrackingNo,dateLock= ViewBag.DateLock,lockdate=ViewBag.LockDate
+            });
         }
         public ActionResult Edit(long? id)
         {
@@ -173,10 +225,11 @@ namespace InTimeCourier.Controllers
             {
                 //ViewBag.Location = new SelectList(db.SourceMasters.OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
-                ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                //ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item => new { PartyId = item.PartyId, PartyName = item.PartyType == null ? item.PartyName + item.PartyType : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
-                var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
+                var list = db.CourrierMasters.Where(x => x.IsActive == true).Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
             catch (Exception ex)
@@ -194,10 +247,11 @@ namespace InTimeCourier.Controllers
             {
                 //ViewBag.Location = new SelectList(db.SourceMasters.OrderBy(x => x.SourceId).ToList(), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
-                ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                //ViewBag.Party = new SelectList(db.PartyMasters.OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item => new { PartyId = item.PartyId, PartyName = item.PartyType == null ? item.PartyName + item.PartyType : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
-                var list = db.CourrierMasters.Where(x => x.CourrierId == id).ToList();
+                var list = db.CourrierMasters.Where(x => x.IsActive == true).Where(x => x.CourrierId == id).ToList();
                 courrierList = list;
             }
             catch (Exception ex)
@@ -215,38 +269,68 @@ namespace InTimeCourier.Controllers
             //{
             if (courrier != null)
             {
-                courrier.ModifyBy = 1;
+                if (courrier.DestinationId == 0)
+                {
+                    //Add Destination if not available
+                    DestinationMaster destinationMaster = new DestinationMaster();
+                    destinationMaster.Name = courrier.Location;
+                    destinationMaster.Description = "Added via AWB Entry";
+                    destinationMaster.IsActive = true;
+                    destinationMaster.CreatedDate = DateTime.Now;
+                    destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                    db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                    db.SaveChanges();
+                    courrier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+
+                }
+                courrier.ModifyBy = int.Parse("0" + Session["UserId"]);
                 courrier.ModifyDate = DateTime.Now;
+                courrier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courrier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
                 db.Entry(courrier).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
             //}
-            return View("CourrierList");
+            return View("AddCourrier");
         }
         [HttpPost]
-        public ActionResult EditPopup(CourrierMaster courrier)
+        public ActionResult EditPopup(CourrierMaster courrierMaster)
         {
             //if (ModelState.IsValid)
             //{
-            if (courrier != null)
+            if (courrierMaster != null)
             {
-                courrier.ModifyBy = 1;
-                courrier.ModifyDate = DateTime.Now;
-                db.Entry(courrier).State = System.Data.Entity.EntityState.Modified;
+                if (courrierMaster.DestinationId == 0)
+                {
+                    //Add Destination if not available
+                    DestinationMaster destinationMaster = new DestinationMaster();
+                    destinationMaster.Name = courrierMaster.Location;
+                    destinationMaster.Description = "Added via AWB Entry";
+                    destinationMaster.IsActive = true;
+                    destinationMaster.CreatedDate = DateTime.Now;
+                    destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                    db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                    db.SaveChanges();
+                    courrierMaster.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                }
+                courrierMaster.ModifyBy = int.Parse("0" + Session["UserId"]);
+                courrierMaster.ModifyDate = DateTime.Now;
+                courrierMaster.Distance = db.PartyMasters.Where(sa => sa.PartyId == courrierMaster.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
+                db.Entry(courrierMaster).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
             //}
-            return View("CourrierList");
+            return Json("Success", JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public ActionResult UpdateEdit(CourrierMaster courrier)
         {
             if (courrier != null)
             {
-                courrier.ModifyBy = 1;
+                courrier.ModifyBy = int.Parse("0" + Session["UserId"]);
                 courrier.ModifyDate = DateTime.Now;
                 courrier.IsActive = true;
                 courrier.StatusId = 1;
+                courrier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courrier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
                 db.Entry(courrier).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
@@ -257,7 +341,7 @@ namespace InTimeCourier.Controllers
             var list = (from CM in db.CourrierMasters
                         join P in db.PartyMasters on CM.PartyId equals P.PartyId
                         join N in db.NetworkMaster on CM.NetworkModeId equals N.NetworkId
-                        join C in db.CourrierModes on CM.CourrierModeId equals C.CourrierModeId
+                        join C in db.CourrierModes on CM.CourrierModeId equals C.CourrierModeId where CM.IsActive==true
                         select new CorrierDetails
                         {
                             Amount = CM.Amount,
@@ -298,14 +382,16 @@ namespace InTimeCourier.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal, decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, int BillId)
+        public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal, 
+            decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, string InvoiceNo,int SrNo,string InvoiceDate)
         {
             SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
             if (connString.State == ConnectionState.Closed)
                 connString.Open();
             SqlCommand cmd = new SqlCommand("uspInsertBillDetails", connString);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@BillId", BillId);
+            cmd.Parameters.AddWithValue("@InvoiceNo", InvoiceNo);
+            cmd.Parameters.AddWithValue("@SrNo", SrNo);
             cmd.Parameters.AddWithValue("@PartyId", partyId);
             cmd.Parameters.AddWithValue("@PeriodFrom", fromDate);
             cmd.Parameters.AddWithValue("@PeriodTo", toDate);
@@ -313,6 +399,7 @@ namespace InTimeCourier.Controllers
             cmd.Parameters.AddWithValue("@FullCharges", fullCharges);
             cmd.Parameters.AddWithValue("@CGST", CGST);
             cmd.Parameters.AddWithValue("@SGST", SGST);
+            cmd.Parameters.AddWithValue("@InvoiceDate", InvoiceDate);
             cmd.Parameters.AddWithValue("@GrandTotal", grandTotal);
             cmd.Parameters.AddWithValue("@UserId", int.Parse("0" + Session["UserId"]));
             cmd.Parameters.Add("@GeneratedBillId", SqlDbType.VarChar, 50);
@@ -394,8 +481,6 @@ namespace InTimeCourier.Controllers
                         dtTotal.FullCharges = decimal.Parse("0" + dr["Full Charges"]);
                         dtTotal.NetAmount = decimal.Parse("0" + dr["NetAmount"]);
                         dtTotal.Discount = decimal.Parse("0" + dr["Discount"]);
-
-                        dtTotal.GrandTotal = dtTotal.TotalAmount + dtTotal.CGST + dtTotal.SGST + dtTotal.FullCharges;
                     }
                 }
                 if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
@@ -411,6 +496,31 @@ namespace InTimeCourier.Controllers
                         dtPartydetails.FuelCharges = Convert.ToString(dr["FuelCharges"]);
                         dtPartydetails.PartyType = Convert.ToString(dr["PartyType"]);
                         dtPartydetails.IsIGST = Convert.ToBoolean(dr["IsIGST"]);
+                        if(dtTotal.FuelChargesLabel=="0.00 %")
+                        {
+                            dtTotal.GrandTotal = dtTotal.TotalAmount + dtTotal.CGST + dtTotal.SGST;
+                            var grndttl = dtTotal.GrandTotal.ToString("0.00");
+                            var spltgrndttl = grndttl.Split('.');
+                            int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                            int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                            if (pr2 > 0)
+                            {
+                                dtTotal.GrandTotal = pr1 + 1;
+                            }
+
+                        }
+                        else
+                        {
+                            dtTotal.GrandTotal = dtTotal.TotalAmount + dtTotal.CGST + dtTotal.SGST + dtTotal.FullCharges;
+                            var grndttl = dtTotal.GrandTotal.ToString("0.00");
+                            var spltgrndttl = grndttl.Split('.');
+                            int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                            int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                            if (pr2 > 0)
+                            {
+                                dtTotal.GrandTotal = pr1 + 1;
+                            }
+                        }
                     }
                 }
             }
@@ -538,24 +648,26 @@ namespace InTimeCourier.Controllers
             return Json(new { response = "Deleted"}, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        public JsonResult SearchDestination(string Prefix)
-        {
-            var DestinationList = (from c in db.DestinationMaster
-                                   where c.Name.StartsWith(Prefix)
-                             select new { c.Name, c.Id });
-            return Json(DestinationList, JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //public JsonResult SearchDestination(string Prefix)
+        //{
+        //    var DestinationList = (from c in db.DestinationMaster
+        //                           where c.Name.StartsWith(Prefix)
+        //                     select new { c.Name, c.Id });
+        //    return Json(DestinationList, JsonRequestBehavior.AllowGet);
+        //}
 
 
-        [HttpPost]
-        public JsonResult SearchParty(string Prefix)
-        {
-            var PartyList = (from c in db.PartyMasters
-                                   where c.PartyName.StartsWith(Prefix)
-                                   select new { c.PartyName, c.PartyId });
-            return Json(PartyList, JsonRequestBehavior.AllowGet);
-        }
+        //[HttpPost]
+        //public JsonResult SearchParty(string Prefix)
+        //{
+        //    var PartyList = (from c in db.PartyMasters
+        //                           where c.PartyName.StartsWith(Prefix)
+        //                           select new { c.PartyName, c.PartyId });
+        //    return Json(PartyList, JsonRequestBehavior.AllowGet);
+        //}
+
+
 
 
     }

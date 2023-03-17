@@ -88,9 +88,9 @@
             </div>
         </div>
         <div class="col-md-6 form-group">
-            @Html.Label("ODA Charges", htmlAttributes: new { @class = "control-label col-md-5" })
+            @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-5" })
             <div class="col-md-7">
-                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your ODA Charges" } })
+                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Extra Charges" } })
                 @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -234,7 +234,7 @@
             dateFormat: 'dd/mm/yy'
         });
         $("#DepartureDt").datepicker("option", "changeYear", true);
-        $("#Amount").attr("readonly", "readonly");
+        //$("#Amount").attr("readonly", "readonly");
         $("#DepartureDt").attr("readonly", "readonly");
         //$("#Weight").change(function () {
         //    debugger;
@@ -400,7 +400,7 @@
                                 var amt = rate * parseInt(qty)
                                 $("#Amount").val(amt + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
-                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    alert('please enter valid data(Extra Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
@@ -410,7 +410,7 @@
                             else {
                                 $("#Amount").val(rate + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
-                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    alert('please enter valid data(Extra Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
@@ -422,7 +422,7 @@
                         else {
                             $("#Amount").val(rate + ODACharges - discount);
                             if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
+                                alert('please enter valid data(Extra Charges or Discount)')
                                 $("#Amount").val('');
                                 $("#ODACharges").val('');
                                 $("#Discount").val('');
@@ -435,7 +435,7 @@
                         if (rate > 0) {
                             $("#Amount").val((rate * qty) + ODACharges - discount);
                             if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
+                                alert('please enter valid data(Extra Charges or Discount)')
                                 $("#Amount").val('');
                                 $("#ODACharges").val('');
                                 $("#Discount").val('');
@@ -450,7 +450,7 @@
                 } else {
                     $("#Amount").val((rate * qty) + ODACharges - discount);
                     if (parseFloat($("#Amount").val()) <= 0) {
-                        alert('please enter valid data(ODA Charges or Discount)')
+                        alert('please enter valid data(Extra Charges or Discount)')
                         $("#Amount").val('');
                         $("#ODACharges").val('');
                         $("#Discount").val('');

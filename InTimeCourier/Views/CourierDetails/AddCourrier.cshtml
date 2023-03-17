@@ -21,7 +21,7 @@
         @Html.HiddenFor(model => model.isInvoiceDone)
         @Html.HiddenFor(model => model.CreatedDt)
         @Html.HiddenFor(model => model.StatusId)
-        @Html.HiddenFor(model => model.IsActive)
+        @*@Html.HiddenFor(model => model.IsActive)*@
         @Html.HiddenFor(model => model.CreatedBy)
         @Html.HiddenFor(model => model.TrackingNo)
         @Html.HiddenFor(model => model.DestinationId)
@@ -30,7 +30,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @if (ViewBag.Status == 1)
         {
-            <div class="alert alert-success">@ViewBag.Message</div>
+           <div class="alert alert-success">@ViewBag.Message</div>
         }
         else if (ViewBag.Status == 0)
         {
@@ -48,14 +48,14 @@
             <div class="col-md-6 form-group">
                 @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @onblur = "filldataifexist()", @placeholder = "Enter AWB No." } })
+                    @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control", @onblur = "filldataifexist()", @placeholder = "Enter AWB No.", maxlength = "15", @autofocus = "autofocus" } })
                     @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6 form-group">
                 @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Distance, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Party Name--" } })
+                    @Html.EditorFor(model => model.Distance, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Party Name--", maxlength = "30" } })
                     @*@Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "--Please Select--", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true" })*@
                     @Html.ValidationMessageFor(model => model.Distance, "", new { @class = "text-danger" })
                 </div>
@@ -63,7 +63,7 @@
             <div class="col-md-6 form-group">
                 @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Destination Name--" } })
+                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", @placeholder = "--Search Destination Name--", maxlength = "25" } })
                     @*@Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control"})*@
                     @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
                 </div>
@@ -85,42 +85,54 @@
             </div>
             <div class="col-md-6 form-group">
                 @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
+                <div class="col-md-4">
                     @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
                     @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    @if (ViewBag.DateLock == "True")
+                    {
+                        @Html.CheckBoxFor(model => model.IsActive, new { @value = "true" })<span class="glyphicon glyphicon-lock">LCKDT</span>
+                        @Html.Hidden("LockDate", (object)ViewBag.LockDate)
+                    }
+                    else
+                    {
+                        @Html.CheckBoxFor(model => model.IsActive, new { @value = "false" })<span class="glyphicon glyphicon-lock">LCKDT</span>
+                    }
+
                 </div>
             </div>
 
             <div class="col-md-6 form-group">
                 @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-3">
-                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @style = "width:140%", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg" } })
+                    @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @style = "width:140%", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg", maxlength = "10" } })
                     @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
                 </div>
                 <label class="control-label col-md-2">Qty</label>
                 <div class="col-md-3">
-                    @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty" } })
+                    @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Qty", maxlength = "10" } })
                     @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6 form-group">
                 @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Rate" } })
+                    @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Rate", maxlength = "10" } })
                     @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6 form-group">
                 @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter ODA Charges" } })
+                    @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Extra Charges", maxlength = "10" } })
                     @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6 form-group">
                 @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-4" })
                 <div class="col-md-8">
-                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Discount Amt." } })
+                    @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Enter Discount Amt.", maxlength = "10" } })
                     @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -133,7 +145,7 @@
             </div>
             <div class="col-md-6 form-group">
                 <div class="col-md-offset-6 col-md-12">
-                    <input type="submit" value="Save" class="btn btn-primary" onclick="CheckSource()" id="btnSubmit" />
+                    <input type="submit" value="Save" class="btn btn-primary" id="btnSubmit" />
                     <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
                 </div>
             </div>
@@ -146,13 +158,16 @@
     }
 </div>
 <div class="col-lg-5">
-    <table class="table table-bordered" style="border:1px solid #000000;font-size:11px;width:100%;" id="myTable">
+    <table class="table table-bordered" style="border:1px solid #000000;font-size:10px;width:100%;" id="myTable">
         <tr>
             <th>
                 Booking Date
             </th>
             <th>
-                CNNo
+                AWB No.
+            </th>
+            <th>
+                Party Name
             </th>
             <th>
                 Destination
@@ -163,7 +178,7 @@
             <th>
                 Amount
             </th>
-            <th id="tdAction">Action</th>
+            @*<th id="tdAction">Action</th>*@
         </tr>
         @if (ViewBag.Courrier != null)
         {
@@ -171,10 +186,13 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DepartureDt)
+                        @Html.DisplayFor(modelItem => item.TrackingNo)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.CNNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Distance)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Location)
@@ -185,9 +203,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Amount)
                     </td>
-                    <td id="tdActionVal">
+                    @*<td id="tdActionVal">
                         @Html.ActionLink("Edit", "Edit", new { id = item.CourrierId })
-                    </td>
+                    </td>*@
                 </tr>
             }
         }
@@ -209,6 +227,8 @@
     var Destination = ''
     var PartyList = [];
     var DestinationList = [];
+    var isDateLock = '';
+    var lockdate = '';
         function StringToInt(number) {
             if (number == null || number == undefined || number == NaN || number == '') {
                 return 0;
@@ -234,9 +254,26 @@
                 DestinationElement.Id = item.Value;
                 DestinationList.push(DestinationElement);
             })
+           // var IsDateLock=@Html.Raw(Json.Encode(@ViewBag.DateLock));
+            isDateLock = $('#IsActive').val();
+            lockdate = $('#LockDate').val();
+            if (isDateLock == 'true') {
+                $("#IsActive").click();
+            }
+           
         })
         $(function () {
             $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
+            if (isDateLock == 'true') {
+                //$("#IsActive").click();
+                lockdate = lockdate.split(' ')[0];
+                lockdate = lockdate.split('/');
+                lockdate = lockdate[2] + '/' + lockdate[0] + '/' + lockdate[1];
+                $("#DepartureDt").val(lockdate);
+            }
+            else {
+                $("#DepartureDt").datepicker('setDate', new Date());
+            }
         });
         var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
         // Setter
@@ -247,9 +284,9 @@
             dateFormat: 'dd/mm/yy'
         });
         $("#DepartureDt").datepicker("option", "changeYear", true);
-        $("#Amount").attr("readonly", "readonly");
+       // $("#Amount").attr("readonly", "readonly");
         // $("#Qty").attr("readonly", true);
-        $("#DepartureDt").attr("readonly", "readonly");
+        //$("#DepartureDt").attr("readonly", "readonly");
         //$("#Weight").change(function () {
         //    debugger;
         //    var arr = $("#Weight").val().split('.');
@@ -329,7 +366,9 @@
                     //data: JSON.stringify(courrierDetail),
                     success: function (data) {
                         var strResponse = JSON.parse(data);
-                        $("#Qty").val("1");
+                        if ($('#CourrierId').val() == '') {
+                            $("#Qty").val("1");
+                        }
                         if (strResponse.Table.length > 0) {
                             resp = [];
                             for (var i = 0; i < strResponse.Table.length; i++) {
@@ -338,6 +377,7 @@
                         }
                         else {
                             resp = [];
+                            alert("rate not available");
                         }
                     }
                 });
@@ -353,14 +393,20 @@
             var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
             if (weight > 0) {
                 if (parseInt(weight) > 0) {
-                    $("#Qty").attr("disabled", true)
+                    $("#Qty").attr('readonly', 'readonly');
                     if (resp.length > 0) {
                         var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
                         if (rateresp.length > 0) {
                             $("#Rate").val(rateresp[0].Rate);
                             if ($("#Qty").val() != "") {
-                                $("#Qty").val(weight);
-                                qty = weight;
+                                if (Number.isInteger(weight) == false) {
+                                    $("#Qty").val(parseInt(weight) + 1);
+                                    qty = parseInt(weight) + 1;
+                                }
+                                else {
+                                    $("#Qty").val(weight);
+                                    qty = weight;
+                                }
                                 var amt = rateresp[0].Rate * parseInt(qty)
                                 $("#Amount").val(amt + ODACharges - discount);
                             }
@@ -379,7 +425,7 @@
 
                 }
                 else {
-                    $("#Qty").attr("disabled", false)
+                  $('#Qty').removeAttr('readonly');
                     //$("#Qty").val("1");
                     if (resp.length > 0) {
                         var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
@@ -403,7 +449,7 @@
                 }
             }
             else {
-                $("#Qty").attr("disabled", false)
+                $('#Qty').removeAttr('readonly');
                 $("#Qty").val("1");
                 $("#Rate").val('');
                 $("#Amount").val('');
@@ -419,13 +465,13 @@
             var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
             if (weight > 0) {
                 if (parseInt(weight) > 0) {
-                    $("#Qty").attr("disabled", true);
+                    $("#Qty").attr('readonly', 'readonly');
                     if (resp.length > 0) {
                         var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
                         if (rateresp.length > 0) {
                             $("#Amount").val(rate * qty + ODACharges - discount);
                             if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
+                                alert('please enter valid data(Extra Charges or Discount)')
                                 $("#Amount").val('');
                                 $("#ODACharges").val('');
                                 $("#Discount").val('');
@@ -436,7 +482,7 @@
                             if (rate > 0) {
                                 $("#Amount").val((rate * qty) + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
-                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    alert('please enter valid data(Extra Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
@@ -451,7 +497,7 @@
                     } else {
                         $("#Amount").val((rate * qty) + ODACharges - discount);
                         if (parseFloat($("#Amount").val()) <= 0) {
-                            alert('please enter valid data(ODA Charges or Discount)')
+                            alert('please enter valid data(Extra Charges or Discount)')
                             $("#Amount").val('');
                             $("#ODACharges").val('');
                             $("#Discount").val('');
@@ -460,14 +506,14 @@
                     }
                 }
                 else {
-                    $("#Qty").attr("disabled", false)
+                    $('#Qty').removeAttr('readonly');
                     // $("#Qty").val("1");
                     if (resp.length > 0) {
                         var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
                         if (rateresp.length > 0) {
                             $("#Amount").val(rate * qty + ODACharges - discount);
                             if (parseFloat($("#Amount").val()) <= 0) {
-                                alert('please enter valid data(ODA Charges or Discount)')
+                                alert('please enter valid data(Extra Charges or Discount)')
                                 $("#Amount").val('');
                                 $("#ODACharges").val('');
                                 $("#Discount").val('');
@@ -478,7 +524,7 @@
                             if (rate > 0) {
                                 $("#Amount").val((rate * qty) + ODACharges - discount);
                                 if (parseFloat($("#Amount").val()) <= 0) {
-                                    alert('please enter valid data(ODA Charges or Discount)')
+                                    alert('please enter valid data(Extra Charges or Discount)')
                                     $("#Amount").val('');
                                     $("#ODACharges").val('');
                                     $("#Discount").val('');
@@ -493,7 +539,7 @@
                     } else {
                         $("#Amount").val((rate * qty) + ODACharges - discount);
                         if (parseFloat($("#Amount").val()) <= 0) {
-                            alert('please enter valid data(ODA Charges or Discount)')
+                            alert('please enter valid data(Extra Charges or Discount)')
                             $("#Amount").val('');
                             $("#ODACharges").val('');
                             $("#Discount").val('');
@@ -503,7 +549,7 @@
                 }
             }
             else {
-                $("#Qty").attr("disabled", false);
+                $('#Qty').removeAttr('readonly');
                 $("#Qty").val("1");
                 $("#Rate").val('');
                 $("#Amount").val('');
@@ -538,12 +584,26 @@
             var strResponse = JSON.parse(response);
             if (strResponse.Table.length > 0) {
                 if (strResponse.Table[0].isInvoiceDone == false) {
+                    if (strResponse.Table[0].DestinationId > 0) {
+                        var Location = DestinationList.filter(x => x.Id == strResponse.Table[0].DestinationId);
+                        $('#Location').val(Location[0].Name);
+                    }
                     $("#DestinationId").val(strResponse.Table[0].DestinationId)
+                    if (strResponse.Table[0].PartyId > 0) {
+                        var PartyName = PartyList.filter(x => x.Id == strResponse.Table[0].PartyId);
+                        $('#Distance').val(PartyName[0].Name);
+                    }
                     $("#PartyId").val(strResponse.Table[0].PartyId)
                     $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
                     $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
                     var d = strResponse.Table[0].DepartureDt.split('T')[0];
-                    $('#DepartureDt').val(d.split("-").reverse().join("/"));
+                    $('#DepartureDt').val(d.split("-").join("/"));
+                    if (parseInt(strResponse.Table[0].Weight) > 0) {
+                        $("#Qty").attr('readonly', 'readonly');
+                    }
+                    else {
+                        $('#Qty').removeAttr('readonly');
+                    }
                     $("#Weight").val(strResponse.Table[0].Weight)
                     $("#Qty").val(strResponse.Table[0].Qty)
                     $("#Rate").val(strResponse.Table[0].Rate)
@@ -554,19 +614,33 @@
                     $("#isInvoiceDone").val(strResponse.Table[0].isInvoiceDone)
                     $("#CreatedDt").val(strResponse.Table[0].CreatedDt)
                     $("#StatusId").val(strResponse.Table[0].StatusId)
-                    $("#IsActive").val(strResponse.Table[0].IsActive)
+                   // $("#IsActive").val(strResponse.Table[0].IsActive)
                     $("#CreatedBy").val(strResponse.Table[0].CreatedBy)
                     $("#TrackingNo").val(strResponse.Table[0].TrackingNo)
                     $("#btnSubmit").attr('value', 'Update');
                 }
                 else {
                     alert('Bill Generated for this Entry')
+                    if (strResponse.Table[0].DestinationId > 0) {
+                        var Location = DestinationList.filter(x => x.Id == strResponse.Table[0].DestinationId);
+                        $('#Location').val(Location[0].Name);
+                    }
                     $("#DestinationId").val(strResponse.Table[0].DestinationId)
+                    if (strResponse.Table[0].PartyId > 0) {
+                        var PartyName = PartyList.filter(x => x.Id == strResponse.Table[0].PartyId);
+                        $('#Distance').val(PartyName[0].Name);
+                    }
                     $("#PartyId").val(strResponse.Table[0].PartyId)
                     $("#CourrierModeId").val(strResponse.Table[0].CourrierModeId)
                     $("#NetworkModeId").val(strResponse.Table[0].NetworkModeId)
                     var d = strResponse.Table[0].DepartureDt.split('T')[0];
                     $('#DepartureDt').val(d.split("-").reverse().join("/"));
+                    if (parseInt(strResponse.Table[0].Weight) > 0) {
+                        $("#Qty").attr('readonly', 'readonly');
+                    }
+                    else {
+                        $('#Qty').removeAttr('readonly');
+                    }
                     $("#Weight").val(strResponse.Table[0].Weight)
                     $("#Qty").val(strResponse.Table[0].Qty)
                     $("#Rate").val(strResponse.Table[0].Rate)
@@ -577,7 +651,7 @@
                     $("#isInvoiceDone").val(strResponse.Table[0].isInvoiceDone)
                     $("#CreatedDt").val(strResponse.Table[0].CreatedDt)
                     $("#StatusId").val(strResponse.Table[0].StatusId)
-                    $("#IsActive").val(strResponse.Table[0].IsActive)
+                   // $("#IsActive").val(strResponse.Table[0].IsActive)
                     $("#CreatedBy").val(strResponse.Table[0].CreatedBy)
                     $("#TrackingNo").val(strResponse.Table[0].TrackingNo)
                     $("#btnSubmit").attr("disabled", true);
@@ -587,22 +661,38 @@
             else {
                 var CNNo = $('#CNNo').val();
                 $('#formId').trigger("reset");
+                if (isDateLock == 'true') {
+                    $("#IsActive").click();
+                    $("#DepartureDt").val(lockdate);
+                }
+                else
+                {
+                    $("#DepartureDt").datepicker('setDate', new Date());
+                }
                 $('#CNNo').val(CNNo);
                 $('#CourrierId').val('');
                 $("#isInvoiceDone").val('');
-                $("#CreatedDt").val('');
+               
                 $("#StatusId").val('');
-                $("#IsActive").val('');
+                //$("#IsActive").val('');
                 $("#CreatedBy").val('');
                 $("#TrackingNo").val('');
                 $("#btnSubmit").attr("disabled", false)
                 $("#btnSubmit").attr('value', 'Save');
             }
-
+            fetchRateDetails();
         };
 
         $("#btnReset").click(function () {
             $('#formId').trigger("reset");
+            if (isDateLock == 'true') {
+                $("#IsActive").click();
+                $("#DepartureDt").val(lockdate);
+            }
+            else {
+                $("#DepartureDt").datepicker('setDate', new Date());
+            }
+            
             $("#btnSubmit").attr("disabled", false)
             $("#btnSubmit").attr('value', 'Save');
         });
@@ -640,16 +730,9 @@
         $(function () {
             $("#Location").autocomplete({
                 source: function (request, response) {
-                    //$.ajax({
-                    //    url: 'SearchDestination',
-                    //    data: "{ 'Prefix': '" + request.term + "'}",
-                    //    dataType: "json",
-                    //    type: "POST",
-                    //    contentType: "application/json; charset=utf-8",
-                    //success: function (data) {
                     var LocTextValue = $("#Location").val()
                     var filterList = DestinationList.filter(x => x.Name.toLowerCase().includes(LocTextValue.toLowerCase()));
-                   
+
                             if (!filterList.length) {
                                 var result = [
                                     {
@@ -658,7 +741,7 @@
                                     }
                                 ];
                                 response(result);
-                                $('#DestinationId').val('');
+                                $('#DestinationId').val('0');
                             }
                             else {
                                 response($.map(filterList, function (filterList, id) {
@@ -668,14 +751,7 @@
                                     };
                                 }));
                             }
-                        //},
-                        //error: function (response) {
-                        //    alert(response.responseText);
-                        //},
-                        //failure: function (response) {
-                        //    alert(response.responseText);
-                        //}
-                   /* });*/
+
                 },
                 select: function (e, i) {
                     $('#Location').val(i.item.label);
@@ -697,13 +773,6 @@
         $(function () {
             $("#Distance").autocomplete({
                 source: function (request, response) {
-                    //$.ajax({
-                    //    url: 'SearchParty',
-                    //    data: "{ 'Prefix': '" + request.term + "'}",
-                    //    dataType: "json",
-                    //    type: "POST",
-                    //    contentType: "application/json; charset=utf-8",
-                    //    success: function (data) {
                     var PartyTextValue = $("#Distance").val()
                     var filterList = PartyList.filter(x => x.Name.toLowerCase().includes(PartyTextValue.toLowerCase()));
                     if (!filterList.length) {
@@ -724,18 +793,11 @@
                                     };
                                 }));
                             }
-                    //    },
-                    //    error: function (response) {
-                    //        alert(response.responseText);
-                    //    },
-                    //    failure: function (response) {
-                    //        alert(response.responseText);
-                    //    }
-                    //});
                 },
                 select: function (e, i) {
                     $('#Distance').val(i.item.label);
                     $('#PartyId').val(i.item.value);
+                    fetchRateDetails();
                     return false;
                 },
                 minLength: 1
@@ -748,9 +810,11 @@
                 $('#Distance').val('');
             }
         });
+   
 
-
-
+    $("input[type='checkbox']").on('change', function () {
+        this.checked == true ? $('#IsActive').val("true") : $('#IsActive').val("false");
+    })
 
 </script>
 }

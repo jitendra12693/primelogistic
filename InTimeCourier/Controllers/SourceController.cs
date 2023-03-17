@@ -110,7 +110,8 @@ namespace InTimeCourier.Controllers
             {
                 //ViewBag.Source = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceName), "SourceId", "SourceName");
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
-                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName), "PartyId", "PartyName");
+                //ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName), "PartyId", "PartyName");
+                ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item => new { PartyId = item.PartyId, PartyName = item.PartyType == null ? item.PartyName + item.PartyType : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
                 if (Id > 0)
                 {
@@ -138,7 +139,7 @@ namespace InTimeCourier.Controllers
                 ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeId), "CourrierModeId", "CourrierModeName");
                 ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName), "PartyId", "PartyName");
                 ViewBag.Networks = new SelectList(db.NetworkMaster.Where(x => x.IsActive == true).Select(item => new { NetworkModeId = item.NetworkId, NetworkName = item.NetworkName }).OrderBy(x => x.NetworkName), "NetworkModeId", "NetworkName");
-                var checkexists = db.RateMapping.Where(x => x.PartyId == mapping.PartyId && x.ModeId==mapping.ModeId).FirstOrDefault();
+                var checkexists = db.RateMapping.Where(x => x.PartyId == mapping.PartyId && x.ModeId==mapping.ModeId && x.NetworkModeId==mapping.NetworkModeId).FirstOrDefault();
                 if(checkexists != null && mapping.Id==0 && (checkexists.FromWt==mapping.FromWt || checkexists.ToWt==mapping.ToWt))
                 {
                     ViewBag.ErrorMsg = "This Party and Mode Rate Already Exists";
@@ -146,7 +147,7 @@ namespace InTimeCourier.Controllers
                 }
                 else
                 {
-                    var checkidexists = db.RateMapping.Where(x => x.PartyId == mapping.PartyId && x.ModeId == mapping.ModeId && x.Id!=mapping.Id && (x.FromWt == mapping.FromWt || x.ToWt == mapping.ToWt)).FirstOrDefault();
+                    var checkidexists = db.RateMapping.Where(x => x.PartyId == mapping.PartyId && x.ModeId == mapping.ModeId && x.Id!=mapping.Id && (x.FromWt == mapping.FromWt || x.ToWt == mapping.ToWt) && x.NetworkModeId == mapping.NetworkModeId).FirstOrDefault();
                     if(checkidexists!=null)
                     {
                         ViewBag.ErrorMsg = "This Party and Mode Rate Already Exists";
@@ -239,7 +240,8 @@ namespace InTimeCourier.Controllers
         [HttpGet]
         public ActionResult GetRateMappingList()
         {
-            ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+            //ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
+            ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).Select(item => new { PartyId = item.PartyId, PartyName = item.PartyType == null ? item.PartyName + item.PartyType : item.PartyName + " : " + item.PartyType }).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             //ViewBag.SourceMode = new SelectList(db.SourceMasters.Where(x => x.IsActive == true).OrderBy(x => x.SourceName).ToList(), "SourceId", "SourceName");
             ViewBag.CourrierMode = new SelectList(db.CourrierModes.Where(x => x.IsActive == true).OrderBy(x => x.CourrierModeName).ToList(), "CourrierModeId", "CourrierModeName");
             try
@@ -253,7 +255,7 @@ namespace InTimeCourier.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetRateMappingData(string modeId, string partyId)
+        public JsonResult GetRateMappingData(string partyId)
         {
             //ViewBag.Party = new SelectList(db.PartyMasters.Where(x => x.IsActive == true).OrderBy(x => x.PartyName).ToList(), "PartyId", "PartyName");
             List<RateMappingDetails> rateMappingList = new List<RateMappingDetails>();
@@ -266,7 +268,7 @@ namespace InTimeCourier.Controllers
                 SqlCommand cmd = new SqlCommand("uspSelectRateDetails", connString);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@PartyId", partyId==""?null:partyId);
-                cmd.Parameters.AddWithValue("@ModeId", modeId==""?null:modeId);
+                //cmd.Parameters.AddWithValue("@ModeId", modeId==""?null:modeId);
                 SqlDataAdapter sda = new SqlDataAdapter(cmd);
                 sda.Fill(ds);
                 if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -283,6 +285,7 @@ namespace InTimeCourier.Controllers
                         //ratedetails.CourrierModeId = Convert.ToInt32(dr["CourrierModeId"]);
                         ratedetails.NetworkModeName = Convert.ToString(dr["NetworkModeName"]);
                         ratedetails.Id = Convert.ToInt32(dr["Id"]);
+                        ratedetails.IsActive = Convert.ToBoolean(dr["IsActive"]);
                         rateMappingList.Add(ratedetails);
                     }
                 }
@@ -337,6 +340,21 @@ namespace InTimeCourier.Controllers
         public ActionResult RateMapping()
         {
             return View();
+        }
+
+        public ActionResult AcivateDeativateRateMapping(int? Id)
+        {
+            if (Id > 0)
+            {
+                SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+                if (connString.State == ConnectionState.Closed)
+                    connString.Open();
+                SqlCommand cmd = new SqlCommand("uspActivateDeactivateRateMapping", connString);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", Id);
+                int a = cmd.ExecuteNonQuery();
+            }
+            return RedirectToAction("GetRateMappingList");
         }
     }
     public class RateMappingData
