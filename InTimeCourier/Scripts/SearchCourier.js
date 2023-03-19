@@ -120,6 +120,7 @@ $("#btnSearch").click(function () {
                     $('#lblGrandTotalInWord').text(data.InWord);
                     $('#partyFuelCharge').text(data.TotalRecord.FuelChargesLabel);
                     $('#btnGenerateInvoice').show();
+                    $('#chkall').show();
                     hideAjaxLoader();
 
                 }
@@ -212,6 +213,7 @@ function GenerateInvoice() {
             {
                 alert('Invoice Generated Successfully');
                 $('#btnGenerateInvoice').hide();
+                $('#chkall').hide();
                 $("#btnClear").click();
                 $('#hdnRecordCount').val('');
                 $('#hdnInvoiceDt').val('');
@@ -232,6 +234,7 @@ function GenerateInvoice() {
 
 function secajax(billid, billdate) {
     $('#btnGenerateInvoice').show();
+    $('#chkall').hide();
     $('#hdnbillno').val(billid);
     $('#hdnbilldate').val(billdate);
     var datearray = $('#txtFromDate').val().split("/");
@@ -1127,3 +1130,27 @@ $("#btnUpdate").click(function (e) {
         }
     });
 });
+
+
+$('#allcb').change(function () {
+    if ($(this).prop('checked')) {
+        $('tbody tr td input[type="checkbox"]').each(function () {
+            $(this).prop('checked', true);
+            /*$('#spnchk').text('Deselect All');*/
+        });
+    } else {
+        $('tbody tr td input[type="checkbox"]').each(function () {
+            $(this).prop('checked', false);
+           /* $('#spnchk').text('Select All');*/
+        });
+    }
+});
+
+
+function GetCheckboxAllId() {
+    $('tbody tr td input[type="checkbox"]').each(function () {
+        if ($(this).prop('checked') == true) {
+            alert($(this).val());
+        }
+    });
+}

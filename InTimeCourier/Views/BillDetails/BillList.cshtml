@@ -23,9 +23,10 @@
             foreach (var item in Model.ToList())
             {
                 <tr>
-                    <td>
-                        @Html.ActionLink("" + item.BillNo, "SelectedPartyCourrierList", new { PartyId = item.PartyId, PeriodFrom = item.PeriodFrom,PeriodTo=item.PeriodTo })
-                    </td>
+                    @*<td>
+                        @Html.ActionLink("" + item.BillNo, "SelectedPartyCourrierList", new { PartyId = item.PartyId, PeriodFrom = item.PeriodFrom, PeriodTo = item.PeriodTo })
+                    </td>*@
+                    <td>@item.BillNo</td>
                     <td>@item.PartyName</td>
                     <td>@item.GSTINNumber</td>
                     <td>@item.TotalAmount</td>
@@ -45,9 +46,9 @@
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                         @*<a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
-            <i class="glyphicon glyphicon-edit"></i>
-        </a>
-        <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
+                <i class="glyphicon glyphicon-edit"></i>
+            </a>
+            <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
                     </td>
                 </tr>
             }

@@ -201,20 +201,6 @@
            
 
             function printBillDetails(billId) {
-                //if (confirm('Are you sure you want to delete this Bill?')) {
-
-                //} else {
-                //    //alert('Cancelled');
-                //}
-                //$('#btnGenerateInvoice').show();
-                //$('#hdnbillno').val(billId);
-                //$('#hdnbilldate').val(billdate);
-                //var datearray = $('#txtFromDate').val().split("/");
-                //var newdatefrom = datearray[2] + '/' + datearray[0] + '/' + datearray[1];
-                //newdatefrom = datearray[1] + '-' + new Date(newdatefrom).toLocaleString("en-us", { month: "short" }) + '-' + datearray[2]
-                //var datearray1 = $('#txtToDate').val().split("/");
-                //var newdateto = datearray1[2] + '/' + datearray1[0] + '/' + datearray1[1];
-                //newdateto = datearray1[1] + '-' + new Date(newdateto).toLocaleString("en-us", { month: "short" }) + '-' + datearray1[2]
                 $.ajax({
                     type: 'GET',
                     datatype: 'json',
@@ -274,8 +260,22 @@
                                 cnt++;
                                 recordscount++;
                             })
-                            if (recordscount < 5) {
-                                htmltrn += '<tr style="height:300px">'+
+
+                            //for (i = 1; i <= 27; i++) {
+                            //    htmltrn += '<tr><td style="text-align:center"> ' + cnt + '</td>' +
+                            //        '<td style="text-align:center">BookingDate</td>' +
+                            //        '<td style = "text-align:center">item.CNNo</td>' +
+                            //        '<td style = "text-align:center"> item.CourierMode</td> ' +
+                            //        '<td style = "text-align:center">item.Location </td> ' +
+                            //        '<td style = "text-align:center">item.Weight</td> ' +
+                            //        '<td style = "text-align:center">item.ODACharges</td> ' +
+                            //        '<td style = "text-align:center">item.Amount</td></tr> '
+                            //    cnt++;
+                            //    recordscount++;
+                            //}
+                           
+                            if (recordscount <= 27) {
+                                htmltrn += '<tr style="height:' + switchcase(recordscount) +'px">'+
                                     '<td style="text-align:center"></td>'+
                                     '<td style="text-align:center"></td>' +
                                     '<td style = "text-align:center"></td>' +
@@ -424,8 +424,6 @@
                 </tr>
 
             </table>`;
-
-                        debugger;
                         $('.table-bordered tr').each(function () {
                             $(this).children('th').eq(8).remove();
                             $(this).children('td').eq(8).remove();
@@ -450,6 +448,21 @@
                         console.log("error=", err);
                     }
                 });
+            }
+
+            function switchcase(recordscount) {
+                var hgt = '';
+                if (recordscount == 1) {
+                    hgt = 550;
+                }
+                else if (recordscount == 2)
+                {
+                    hgt = 530;
+                }
+                else {
+                    hgt = 550-(((recordscount-1)*2)*10);         
+                }
+                return hgt;
             }
         </script>
     }

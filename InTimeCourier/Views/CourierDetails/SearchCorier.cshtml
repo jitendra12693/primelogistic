@@ -63,6 +63,17 @@
                 <div class="col-md-1">
                     <button type="button" id="btnInvoice" class="btn btn-danger" onclick="GenerateInvoice()" style="display:none">Download Invoice</button>
                 </div>
+                <div class="col-md-2">
+                    <div class='checkbox1' style="display:none" id="chkall">
+                        <input type='checkbox' id="allcb" checked />
+                        <label for="allcb">
+                            <span id="spnchk"><strong>Select All</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="checkedDetails" onclick="GetCheckboxAllId()" class="btn btn-warning">Get Id</button>
+                </div>
             </div>
             </div>
         </div>

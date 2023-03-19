@@ -12,6 +12,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Reflection;
 using Newtonsoft.Json;
+using Microsoft.Ajax.Utilities;
 
 namespace InTimeCourier.Controllers
 {
@@ -139,7 +140,19 @@ namespace InTimeCourier.Controllers
                         courier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
 
                     }
-                        courier.ModifyBy = int.Parse("0" + Session["UserId"]);
+                    decimal? fuelcharges = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.FuelCharges).FirstOrDefault();
+                    decimal? finalfuelcharges = 0;
+                    if (fuelcharges != null)
+                    {
+                        finalfuelcharges = (courier.Amount * fuelcharges) / 100;
+                    }
+                    else if (fuelcharges == Convert.ToDecimal(0.00))
+                    {
+                        finalfuelcharges = 0;
+                    }
+
+                    courier.FuelCharges = finalfuelcharges;
+                    courier.ModifyBy = int.Parse("0" + Session["UserId"]);
                         courier.ModifyDate = DateTime.Now;
                         courier.IsActive = true;
                         courier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
@@ -312,6 +325,18 @@ namespace InTimeCourier.Controllers
                     db.SaveChanges();
                     courrierMaster.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
                 }
+                decimal? fuelcharges= db.PartyMasters.Where(sa => sa.PartyId == courrierMaster.PartyId).Select(sa => sa.FuelCharges).FirstOrDefault();
+                decimal? finalfuelcharges = 0;
+                if (fuelcharges!=null)
+                {
+                    finalfuelcharges = (courrierMaster.Amount * fuelcharges) / 100;
+                } 
+                else if(fuelcharges==Convert.ToDecimal(0.00))
+                {
+                    finalfuelcharges = 0;
+                }
+
+                courrierMaster.FuelCharges = finalfuelcharges;
                 courrierMaster.ModifyBy = int.Parse("0" + Session["UserId"]);
                 courrierMaster.ModifyDate = DateTime.Now;
                 courrierMaster.Distance = db.PartyMasters.Where(sa => sa.PartyId == courrierMaster.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
