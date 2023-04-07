@@ -26,11 +26,12 @@
         @Html.HiddenFor(model => model.TrackingNo)
         @Html.HiddenFor(model => model.DestinationId)
         @Html.HiddenFor(model => model.PartyId)
+        @Html.HiddenFor(model => model.BillId)
 
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @if (ViewBag.Status == 1)
         {
-           <div class="alert alert-success">@ViewBag.Message</div>
+            <div class="alert alert-success">@ViewBag.Message</div>
         }
         else if (ViewBag.Status == 0)
         {
@@ -144,9 +145,10 @@
                 </div>
             </div>
             <div class="col-md-6 form-group">
-                <div class="col-md-offset-6 col-md-12">
+                <div class="col-lg-offset-4 col-md-8">
                     <input type="submit" value="Save" class="btn btn-primary" id="btnSubmit" />
-                    <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
+                    <input type="button" value="Delete" class="btn btn-danger" id="btnDelete" style="display:none;" />
+                    <button type="reset" class="btn btn-warning" id="btnReset">Reset</button>
                 </div>
             </div>
         </div>
@@ -577,7 +579,8 @@
                 }
             });
         };
-        function OnSuccess(response) {
+    function OnSuccess(response) {
+        $("#btnDelete").hide();
             hideAjaxLoader();
             $("#btnSubmit").attr("disabled", false)
             $("#btnSubmit").text("Save")
@@ -618,6 +621,7 @@
                     $("#CreatedBy").val(strResponse.Table[0].CreatedBy)
                     $("#TrackingNo").val(strResponse.Table[0].TrackingNo)
                     $("#btnSubmit").attr('value', 'Update');
+                    $("#btnDelete").show();
                 }
                 else {
                     alert('Bill Generated for this Entry')
@@ -731,7 +735,7 @@
             $("#Location").autocomplete({
                 source: function (request, response) {
                     var LocTextValue = $("#Location").val()
-                    var filterList = DestinationList.filter(x => x.Name.toLowerCase().includes(LocTextValue.toLowerCase()));
+                    var filterList = DestinationList.filter(x => x.Name.toLowerCase().startsWith(LocTextValue.toLowerCase()));
 
                             if (!filterList.length) {
                                 var result = [
@@ -774,7 +778,7 @@
             $("#Distance").autocomplete({
                 source: function (request, response) {
                     var PartyTextValue = $("#Distance").val()
-                    var filterList = PartyList.filter(x => x.Name.toLowerCase().includes(PartyTextValue.toLowerCase()));
+                    var filterList = PartyList.filter(x => x.Name.toLowerCase().startsWith(PartyTextValue.toLowerCase()));
                     if (!filterList.length) {
                                 var result = [
                                     {
@@ -816,5 +820,9 @@
         this.checked == true ? $('#IsActive').val("true") : $('#IsActive').val("false");
     })
 
+    $("#btnDelete").click(function () {
+        $("#BillId").val('1');
+        $("#btnSubmit").click();
+    });
 </script>
 }

@@ -68,5 +68,6 @@ namespace InTimeCourier.Models
         public int Qty { get; set; }
         public bool? isInvoiceDone { get; set; }
         public decimal? FuelCharges { get; set; }
+        public int? BillId { get; set; }
     }
 }

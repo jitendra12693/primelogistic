@@ -1,6 +1,9 @@
 ﻿var get_Url = '';
 var CGST = '';
 var SGST = '';
+var IGSTParty = false;
+var courrierIdList = [];
+var cridlist = [];
 $(function () {
     $("#txtFromDate").datepicker();
    // $("#txtInvDate").datepicker();
@@ -19,7 +22,8 @@ $("#ToDate").datepicker("option", "changeToYear", true);
 
 $("#btnSearch").click(function () {
     //$('#btnInvoice').hide();
-    
+    courrierIdList = [];
+    IGSTParty = false;
     var partyId = $("#PartyId").val();
     //var fromDate = $("#txtFromDate").val();
     //var toDate = $("#txtToDate").val();
@@ -64,7 +68,7 @@ $("#btnSearch").click(function () {
                     {
                         $("#lblFullCahrges").html(data.TotalRecord.FullCharges.toFixed(2));
                     }
-                    //$("#lblFullCahrges").html(data.TotalRecord.FullCharges.toFixed(2));
+                    IGSTParty = data?.PartyDetails?.IsIGST;
                     $("#hdnIsIGSTParty").val(data?.PartyDetails?.IsIGST);
                     $("#lblNetTotal").html(data.TotalRecord.NetAmount.toFixed(2));
                     $("#lblDiscount").html(data.TotalRecord.Discount.toFixed(2));
@@ -77,10 +81,6 @@ $("#btnSearch").click(function () {
                         html = `
                                 <span>I.G.S.T. (18 %)&nbsp;</span>
                                `
-                        //$('#cgst').hide();
-                        //$('#sgst').hide();
-                        //$('#igst').show();
-                        //$('#lblBillIGST').show();
                         $('#gstValue').html('<b>'+totalIgst+'</b>');
                         $('#gstname').html(html);
                         $('#lblBillCGST').text('0.00');
@@ -95,11 +95,6 @@ $("#btnSearch").click(function () {
                                `
                         $('#gstValue').html('<b>'+CGST+'</b>' + '<hr/><b>' + SGST+'</b>');
                         $('#gstname').html(html);
-                        //$('#igst').hide();
-                        //$('#cgst').show();
-                        //$('#sgst').show();
-                        //$('#lblBillCGST').show();
-                        //$('#lblBillSGST').show();
                         $('#lblBillIGST').text('0.00');
                     }
                     var grndttl = 0;
@@ -161,9 +156,8 @@ $("#btnClear").click(function () {
 });
 
 
-/*$("#btnExportPdf").click(function () {*/
+
 function GenerateInvoice() {
-    debugger;
     //$('#btnInvoice').hide();
     //---------------------------------------------------------------------------
     var partyId = $("#PartyId").val();
@@ -194,43 +188,53 @@ function GenerateInvoice() {
         alert('Please first search your transaction');
         return false;
     }
-    showAjaxLoader();
-    $.ajax({
-        type: 'POST',
-        datatype: 'json',
-        url: '/CourierDetails/SaveBillDetails',
-        data: {
-            partyId: partyId, fromDate: fromDate, toDate: toDate, grandTotal: grandTotal,
-            TotalAmount: TotalAmount, fullCharges: fullCharges,
-            CGST: CGST, SGST: SGST, InvoiceNo: InvoiceNo, SrNo: SrNo, InvoiceDate: InvoiceDate
-        },
-        success: function (data) {
-            /*theDialog.dialog('open');*/
-            debugger;
-            hideAjaxLoader();
-            //secajax(data.BillId, data.CurrentDate);
-            if(data.billid != '' && data.CurrentDate!='')
-            {
-                alert('Invoice Generated Successfully');
-                $('#btnGenerateInvoice').hide();
-                $('#chkall').hide();
-                $("#btnClear").click();
-                $('#hdnRecordCount').val('');
-                $('#hdnInvoiceDt').val('');
-                $('#hdnSrNo').val('');
-                $('#hdnInvoiceNumber').val('');
-            }
-           
-        },
-        error: function (error) {
-            alert(error.responseText);
-            hideAjaxLoader();
-            //$('#btnInvoice').hide();
+    courrierIdList = [];
+    $('tbody tr td input[type="checkbox"]').each(function () {
+        if ($(this).prop('checked') == true) {
+            courrierIdList.push($(this).val());
         }
     });
+    if (courrierIdList.length > 0) {
+        showAjaxLoader();
+        $.ajax({
+            type: 'POST',
+            datatype: 'json',
+            url: '/CourierDetails/SaveBillDetails',
+            data: {
+                partyId: partyId, fromDate: fromDate, toDate: toDate, grandTotal: grandTotal,
+                TotalAmount: TotalAmount, fullCharges: fullCharges,
+                CGST: CGST, SGST: SGST, InvoiceNo: InvoiceNo, SrNo: SrNo, InvoiceDate: InvoiceDate, courrierIdList: courrierIdList
+            },
+            success: function (data) {
+                /*theDialog.dialog('open');*/
+                hideAjaxLoader();
+                //secajax(data.BillId, data.CurrentDate);
+                if (data.billid != '' && data.CurrentDate != '') {
+                    alert('Invoice Generated Successfully');
+                    $('#btnGenerateInvoice').hide();
+                    $('#chkall').hide();
+                    $("#btnClear").click();
+                    $('#hdnRecordCount').val('');
+                    $('#hdnInvoiceDt').val('');
+                    $('#hdnSrNo').val('');
+                    $('#hdnInvoiceNumber').val('');
+                    courrierIdList = [];
+                }
+
+            },
+            error: function (error) {
+                alert(error.responseText);
+                hideAjaxLoader();
+                //$('#btnInvoice').hide();
+            }
+        });
+    }
+    else {
+        alert('Please Select atleast one AWB Entry')
+    }
+  
     //---------------------------------------------------------------------------
     }
-//});
 
 function secajax(billid, billdate) {
     $('#btnGenerateInvoice').show();
@@ -1009,8 +1013,10 @@ function Delete() {
                 dataType: "json",
                 success: function (response) {
                     if (response.response == 'Deleted') {
+                        $('#divUpdateCourrier').modal('hide');
                         alert("Entry Deleted Succussfully !")
-                        window.location.href = "/CourierDetails/CourrierList";
+                        $('#btnSearch').click();
+                        //window.location.href = "/CourierDetails/CourrierList";
                     }
                 },
                 failure: function (response) {
@@ -1116,6 +1122,7 @@ var PartyList = [];
 var DestinationList = [];
 
 
+
 $("#btnUpdate").click(function (e) {
     e.preventDefault();
     //Show loading display here
@@ -1138,19 +1145,107 @@ $('#allcb').change(function () {
             $(this).prop('checked', true);
             /*$('#spnchk').text('Deselect All');*/
         });
+        chkbox();
     } else {
         $('tbody tr td input[type="checkbox"]').each(function () {
             $(this).prop('checked', false);
            /* $('#spnchk').text('Select All');*/
         });
+        chkbox();
     }
 });
 
 
-function GetCheckboxAllId() {
-    $('tbody tr td input[type="checkbox"]').each(function () {
-        if ($(this).prop('checked') == true) {
-            alert($(this).val());
-        }
-    });
-}
+
+function chkbox() {
+    cridlist = [];
+    var fuelpercntg = $('#partyFuelCharge').text();
+    var cnt = 0;
+        $('tbody tr td input[type="checkbox"]').each(function () {
+            if ($(this).prop('checked') == true) {
+                cridlist.push($(this).val());
+                cnt++;
+            }
+            else {
+                cnt++;
+            }
+        });
+    if (cnt == cridlist.length) {
+        $('#allcb').prop('checked', true);
+    }
+    else {
+        $('#allcb').prop('checked', false);
+    }
+    if (cridlist.length > 0) {
+        showAjaxLoader();
+        $.ajax({
+            type: 'POST',
+            datatype: 'json',
+            url: '/CourierDetails/CalculateInvoiceData',
+            data: { cridlist: cridlist, fuelpercntg: fuelpercntg },
+            success: function (data) {
+                var strresp = JSON.parse(data);
+                if (strresp.length > 0) {
+                    $("#lblTotal").html(strresp[0].TotalAmount.toFixed(2));
+                    $("#lblNetTotal").html(strresp[0].NetAmount.toFixed(2));
+                    $("#lblDiscount").html(strresp[0].Discount.toFixed(2));
+                    $("#lblGrandTotal").html(strresp[0].GrandTotal.toFixed(2));
+                    $("#hdnRecordCount").val(strresp[0].RecordCount);
+                    $('#lblGrandTotalInWord').html(strresp[0].InWord);
+                    $("#lblFullCahrges").html(strresp[0].FuelCharges.toFixed(2));
+                    CGST = parseFloat(strresp[0].CGST.toFixed(2));
+                    SGST = parseFloat(strresp[0].SGST.toFixed(2));
+                   // $('#partyFuelCharge').text(data.TotalRecord.FuelChargesLabel);
+                    var html = '';
+                    if (IGSTParty ==true) {
+                        var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
+                        $('#lblBillIGST').text(totalIgst);
+                        html = `
+                                <span>I.G.S.T. (18 %)&nbsp;</span>
+                               `
+                        $('#gstValue').html('<b>' + totalIgst + '</b>');
+                        $('#gstname').html(html);
+                        $('#lblBillCGST').text('0.00');
+                        $('#lblBillSGST').text('0.00');
+                    } else {
+
+                        $('#lblBillCGST').text(CGST.toFixed(2));
+                        $('#lblBillSGST').text(SGST.toFixed(2));
+                        html = `
+                                <span>S.G.S.T. (9 %)</span>&nbsp;<hr/>
+                                <span>C.G.S.T. (9 %)</span>&nbsp;
+                               `
+                        $('#gstValue').html('<b>' + CGST.toFixed(2) + '</b>' + '<hr/><b>' + SGST.toFixed(2) + '</b>');
+                        $('#gstname').html(html);
+                        $('#lblBillIGST').text('0.00');
+                    }
+                }
+                else {
+                    alert('something went wrong');
+                }
+                hideAjaxLoader();
+            },
+            error: function (error) {
+                alert(error.responseText);
+                hideAjaxLoader();
+                //$('#btnInvoice').hide();
+            }
+        });
+    }
+    else {
+        $("#lblTotal").html('0.00');
+        $("#lblNetTotal").html('0.00');
+        $("#lblDiscount").html('0.00');
+        $("#lblGrandTotal").html('0.00');
+        $("#hdnRecordCount").val('0');
+        $('#lblGrandTotalInWord').html('N/A');
+        $('#lblBillIGST').html('0.00');
+        $('#lblBillCGST').html('0.00');
+        $('#lblBillSGST').html('0.00');
+        $("#lblFullCahrges").html('0.00');
+        $('#gstValue').html('<b>0.00</b>' + '<hr/><b>0.00</b>');
+        //alert('Please Select atleast one AWB Entry')
+        //$('#allcb').prop('checked', false);
+    }
+};
+

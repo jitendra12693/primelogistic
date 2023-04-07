@@ -28,63 +28,66 @@
     <div class="alert alert-success">@Convert.ToString(TempData["PaymentMessage"])</div>
 }
 <div class="col-lg-12">
-    @{Html.RenderAction("SearchBill","BillDetails");}
+    @{Html.RenderAction("SearchBill", "BillDetails");}
 </div>
 <div class="clearfix"></div>
-<br /><br />
+<br />
+<br />
 <div class="col-lg-12">
     @{Html.RenderAction("BillList", "BillDetails");}
 </div>
 <div id="SearchCourierlist" style="display:none">
     @*<table class="table table-bordered" style="width: 100%;font-size: 13px;">
-        <tfoot>
-            <tr>
-                <td style="text-align:center"><strong>Bank Name</strong></td>
-                <td style="text-align:center">@loggedInUser.BankName</td>
-                <td style="text-align:right;width:25%"><b>Net Total &nbsp;</b></td>
-                <td style="text-align:right;width:10%"><b><label id="lblNetTotal"></label></b></td>
-            </tr>
-            <tr>
-                <td style="text-align:center"><strong>A/C</strong></td>
-                <td style="text-align:center">@loggedInUser.AccountNumber</td>
-                <td style="text-align: right; width: 25%">Discount &nbsp; </td>
-                <td style="text-align: right; width: 10%"><b><label id="lblDiscount"></label></b></td>
-            </tr>
-            <tr>
-                <td style="text-align:center"><strong>IFSC Code</strong></td>
-                <td style="text-align:center">@loggedInUser.IFSCCode</td>
-                <td style="text-align: right; width: 25%"><b>Total &nbsp; </b></td>
-                <td style="text-align: right; width: 10%"><b><label id="lblTotal"></label></b></td>
-            </tr>
-            <tr>
-                <td style="text-align:center"><strong>PAN No.</strong></td>
-                <td style="text-align:center">@loggedInUser.PANNumber</td>
-                <td style="text-align: right; width: 25%">Fuel Charges (<label id="partyFuelCharge"></label>) &nbsp; </td>
-                <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges"></label></b></td>
-            </tr>
-            <tr>
-                <td style="text-align:center"><strong>GST Number</strong></td>
-                <td style="text-align:center">@loggedInUser.GSTNumber</td>
+            <tfoot>
+                <tr>
+                    <td style="text-align:center"><strong>Bank Name</strong></td>
+                    <td style="text-align:center">@loggedInUser.BankName</td>
+                    <td style="text-align:right;width:25%"><b>Net Total &nbsp;</b></td>
+                    <td style="text-align:right;width:10%"><b><label id="lblNetTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align:center"><strong>A/C</strong></td>
+                    <td style="text-align:center">@loggedInUser.AccountNumber</td>
+                    <td style="text-align: right; width: 25%">Discount &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblDiscount"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align:center"><strong>IFSC Code</strong></td>
+                    <td style="text-align:center">@loggedInUser.IFSCCode</td>
+                    <td style="text-align: right; width: 25%"><b>Total &nbsp; </b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align:center"><strong>PAN No.</strong></td>
+                    <td style="text-align:center">@loggedInUser.PANNumber</td>
+                    <td style="text-align: right; width: 25%">Fuel Charges (<label id="partyFuelCharge"></label>) &nbsp; </td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges"></label></b></td>
+                </tr>
+                <tr>
+                    <td style="text-align:center"><strong>GST Number</strong></td>
+                    <td style="text-align:center">@loggedInUser.GSTNumber</td>
 
-                <td style="text-align: right; width: 25%" id="gstname">  </td>
-                <td style="text-align: right; width: 10%" id="gstValue"></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align:center"><strong>Amount In Words.</strong></td>
-                <td style="text-align: right; width: 25%"><b>Grand Total &nbsp;</b></td>
-                <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal"></label></b></td>
-            </tr>
-            <tr>
-                <td colspan="2" id="lblGrandTotalInWord" style="text-align:center"></td>
-                <td></td>
-                <td></td>
-            </tr>
-        </tfoot>
-    </table>*@
+                    <td style="text-align: right; width: 25%" id="gstname">  </td>
+                    <td style="text-align: right; width: 10%" id="gstValue"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align:center"><strong>Amount In Words.</strong></td>
+                    <td style="text-align: right; width: 25%"><b>Grand Total &nbsp;</b></td>
+                    <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal"></label></b></td>
+                </tr>
+                <tr>
+                    <td colspan="2" id="lblGrandTotalInWord" style="text-align:center"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>*@
 
 </div>
-    @section Scripts {
-        <script>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+    <script>
             $(function () {
                 $("#txtfromDate").datepicker({
                     changeMonth: true,
@@ -198,7 +201,7 @@
                 }
             }
 
-           
+
 
             function printBillDetails(billId) {
                 $.ajax({
@@ -261,20 +264,239 @@
                                 recordscount++;
                             })
 
-                            //for (i = 1; i <= 27; i++) {
-                            //    htmltrn += '<tr><td style="text-align:center"> ' + cnt + '</td>' +
-                            //        '<td style="text-align:center">BookingDate</td>' +
-                            //        '<td style = "text-align:center">item.CNNo</td>' +
-                            //        '<td style = "text-align:center"> item.CourierMode</td> ' +
-                            //        '<td style = "text-align:center">item.Location </td> ' +
-                            //        '<td style = "text-align:center">item.Weight</td> ' +
-                            //        '<td style = "text-align:center">item.ODACharges</td> ' +
-                            //        '<td style = "text-align:center">item.Amount</td></tr> '
-                            //    cnt++;
-                            //    recordscount++;
-                            //}
-                           
-                            if (recordscount <= 27) {
+                            if (recordscount <= 25) {
+                                htmltrn += '<tr style="height:' + switchcase(recordscount) +'px">'+
+                                    '<td style="text-align:center"></td>'+
+                                    '<td style="text-align:center"></td>' +
+                                    '<td style = "text-align:center"></td>' +
+                                    '<td style = "text-align:center"></td> ' +
+                                    '<td style = "text-align:center"></td> ' +
+                                    '<td style = "text-align:center"></td> ' +
+                                    '<td style = "text-align:center"></td> ' +
+                                    '<td style = "text-align:center"></td>'+
+                                '</tr>'
+                            }
+                            else {
+                                htmltrn += '</tr>'
+                            }
+                        }
+                        else {
+                            htmltrn +='<tr><td colspan="9">No Record found</td></tr>'
+                        }
+
+                        var CGST = parseFloat(strResponse.Table[0].CGST.toFixed(2));
+                        var SGST = parseFloat(strResponse.Table[0].SGST.toFixed(2));
+                        var gsthtml = '';
+                        var gstValue = '';
+                        if (strResponse.Table2[0].IsIGST) {
+                            var totalIgst = (parseFloat(CGST) + parseFloat(SGST)).toFixed(2);
+                            gsthtml = `
+                                <span>I.G.S.T. (18 %)&nbsp;</span>
+                               `
+                            gstValue=('<b>' + totalIgst + '</b>');
+                        }
+                        else {
+                            gsthtml = `
+                                <span>S.G.S.T. (9 %)</span>&nbsp;<hr/>
+                                <span>C.G.S.T. (9 %)</span>&nbsp;
+                               `
+                            gstValue = ('<b>' + CGST.toFixed(2) + '</b>' + '<hr/><b>' + SGST.toFixed(2) + '</b>');
+                        }
+
+                        var body=`<div>
+            <table class="table table-bordered" id="myTable" style="width: 100%; font-size: 13px;">
+                <tr>
+                    <th style="text-align:center">
+                        Sr.No.
+                    </th>
+                    <th style="text-align:center">
+                        Book Date
+                    </th>
+                    <th style="text-align:center">
+                        AWBNo.
+                    </th>
+                    <th style="text-align:center">
+                        Mode
+                    </th>
+                    <th style="text-align:center">
+                        Destination
+                    </th>
+                    <th style="text-align:center">
+                        Weight
+                    </th>
+                    <th style="text-align:center">
+                        ODA
+                    </th>
+                    <th style="text-align:center">
+                        Amount
+                    </th>
+                </tr>
+                <tbody>
+                    ${htmltrn}
+                </tbody>
+
+            </table>
+        </div>`
+                         body+=`<table class="table table-bordered" style="width: 100%;font-size: 13px;">
+        <tfoot>
+            <tr>
+                <td style="text-align:center"><strong>Bank Name</strong></td>
+                <td style="text-align:center">@loggedInUser.BankName</td>
+                <td style="text-align:right;width:25%"><b>Net Total &nbsp;</b></td>
+                <td style="text-align:right;width:10%"><b><label id="lblNetTotal">${strResponse.Table[0].NetTotal.toFixed(2)}</label></b></td>
+            </tr>
+            <tr>
+                <td style="text-align:center"><strong>A/C</strong></td>
+                <td style="text-align:center">@loggedInUser.AccountNumber</td>
+                <td style="text-align: right; width: 25%">Discount &nbsp; </td>
+                <td style="text-align: right; width: 10%"><b><label id="lblDiscount">${strResponse.Table[0].Discount.toFixed(2) }</label></b></td>
+            </tr>
+            <tr>
+                <td style="text-align:center"><strong>IFSC Code</strong></td>
+                <td style="text-align:center">@loggedInUser.IFSCCode</td>
+                <td style="text-align: right; width: 25%"><b>Total &nbsp; </b></td>
+                <td style="text-align: right; width: 10%"><b><label id="lblTotal">${strResponse.Table[0].Total.toFixed(2) }</label></b></td>
+            </tr>
+            <tr>
+                <td style="text-align:center"><strong>PAN No.</strong></td>
+                <td style="text-align:center">@loggedInUser.PANNumber</td>
+                <td style="text-align: right; width: 25%">Fuel Charges (<label id="partyFuelCharge">${strResponse.Table2[0].FuelCharges}</label>) &nbsp; </td>
+                <td style="text-align: right; width: 10%"><b><label id="lblFullCahrges">${strResponse.Table[0].FuelCharges.toFixed(2) }</label></b></td>
+            </tr>
+            <tr>
+                <td style="text-align:center"><strong>GST Number</strong></td>
+                <td style="text-align:center">@loggedInUser.GSTNumber</td>
+
+                <td style="text-align: right; width: 25%" id="gstname">${gsthtml}</td>
+                <td style="text-align: right; width: 10%" id="gstValue">${gstValue}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center"><strong>Amount In Words.</strong></td>
+                <td style="text-align: right; width: 25%"><b>Grand Total &nbsp;</b></td>
+                <td style="text-align: right; width: 10%"><b><label id="lblGrandTotal">${strResponse.Table[0].GrandTotal.toFixed(2) }</label></b></td>
+            </tr>
+            <tr>
+                <td colspan="2" id="lblGrandTotalInWord" style="text-align:center">${strResponse.Table[0].InWord}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>`
+
+                        $("#SearchCourierlist").html(body);
+                        var footer = `<table style='width:100%;font-size:13px;'>
+                 <tr>
+                     <td style='width:65%;text-align:center'><strong>Terms & Conditions</strong></td>
+                    <td style='text-align:center'><strong>For Prime Logistic</strong></td>
+                </tr>
+                <tr>
+                    <td><p style='font-size:x-small'>
+                            1. Kindly notify us in writing regarding any discrepancy in this invoice within 7 days. Otherwise, <br />This invoice shall be deemed to be correct & payable by you.
+                            <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of PRIME LOGISTICS .
+                            <br />
+                            3. Interest @@2% per month will be charged on delayed payments.
+                            <br />
+                            4. All Invoices are to be Paid within the Credit Period Specified as per the Contractual Terms.
+                            <br/>
+                             5. Subject to Mumbai Jurisdiction
+                        </p></td>
+                    <td style='text-align:center'> <img style='height:50px' src="${strResponse.Table3[0].SignPic}"/></td>
+                </tr>
+                <tr>
+                    <td style='text-align:center'><strong>“This is Computer Generated Invoice”</strong></td>
+                    <td style='text-align:center'><strong>Authorised Signatory</strong></td>
+                </tr>
+
+            </table>`;
+                        //$('.table-bordered tr').each(function () {
+                        //    $(this).children('th').eq(8).remove();
+                        //    $(this).children('td').eq(8).remove();
+                        //    $(this).children('th').eq(4).attr("colspan", "2");
+                        //    $(this).children('td').eq(4).attr("colspan", "2");
+                        //});
+
+                        var divContents = document.getElementById("SearchCourierlist").innerHTML;
+                        newWin = window.open('', '', 'height=400,width=400');
+                        newWin.document.write('<html><head><title>'+strResponse.Table2[0].PartyName+'</title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
+                        newWin.document.write('</head><body >' + header);
+                        newWin.document.write(divContents);
+                        newWin.document.write(footer + '</body></html>');
+                        newWin.document.close();
+                        newWin.print();
+                        /*printWindow.close();*/
+                        SearchComplaint();
+
+                    },
+                    error: function (err) {
+                        console.log("error=", err);
+                    }
+                });
+            }
+
+
+            @*function downloadBillDetails(billId) {
+                $.ajax({
+                    type: 'GET',
+                    datatype: 'json',
+                    url: '/BillDetails/GetInvoiceDetails',
+                    data: { BillId: billId },
+                    success: function (data) {
+                        var strResponse = JSON.parse(data);
+                        var header = `<center>
+                        <div style="margin-top:-10px;margin-bottom:-30px">
+                           <div><b> TAX INVOICE </b></div>
+                            <hr style='margin-bottom:2%'>
+                            <img src="${strResponse.Table3[0].CompanyLogo}" style="height:45px;float:left;margin-top:-1%" />
+                        </div>
+
+                        <div style='float:right'>
+                        <span style='font-size:small'>${strResponse.Table3[0].Address1}, ${strResponse.Table3[0].Address2}, ${strResponse.Table3[0].City}-${strResponse.Table3[0].Pincode}, ${strResponse.Table3[0].State}.</span>
+                        <span style='font-size:small'><br/>Tel :+91${strResponse.Table3[0].MobileNo}${strResponse.Table3[0].AlternateContact ? '/+91' + strResponse.Table3[0].AlternateContact : ''} </span>
+                        <span style='font-size:small'>, Email Address: ${strResponse.Table3[0].EmailId}</span>
+                        </div>
+
+                        <table style="width:100%;font-size:13px;margin-top:12%">
+
+                <tr>
+                    <td colspan="2" style='text-align:left'><b>Bill To</b></td>
+                    <td style='text-align:right;width:20%'><b>Invoice No.&nbsp;</b></td>
+                    <td style='width:15%;text-align:center'><b>${strResponse.Table[0].BillNo}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="2" rowspan="3" style='text-align:left'><b><u>${strResponse.Table2[0].PartyName}</u></b><br/>${strResponse.Table2[0].Address}<br/><b>G.S.T. No. :- </b>${strResponse.Table2[0].GSTNumber}</td>
+                    <td style='text-align:right;width:20%'><b>Invoice Date &nbsp;</b></td>
+                    <td style='width:15%;text-align:center'><b>${strResponse.Table[0].BillDate}</b></td>
+                </tr>
+                <tr>
+                    <td style='text-align:right;width:20%'><b>Period From &nbsp;</b></td>
+                    <td style='width:15%;text-align:center'><b>${strResponse.Table[0].PeriodFrom}</b></td>
+                </tr>
+                <tr>
+                    <td style='text-align:right;width:20%'><b>Period To &nbsp;</b></td>
+                    <td style='width:15%;text-align:center'><b>${strResponse.Table[0].PeriodTo}</b></td>
+                </tr>
+                         </table>
+                        </center>`;
+                        //Bind Transaction
+                        var recordscount = 0;
+                        if (strResponse.Table1.length > 0) {
+                            var cnt = 1;
+                            var htmltrn = '';
+                            $.each(strResponse.Table1, function (key, item) {
+                                htmltrn+= '<tr><td style="text-align:center"> '+cnt+'</td>'+
+                                    '<td style="text-align:center">'+item.BookingDate+'</td>'+
+                                    '<td style = "text-align:center"> ' + item.CNNo +'</td>'+
+                                    '<td style = "text-align:center"> ' + item.CourierMode +'</td> '+
+                                    '<td style = "text-align:center"> ' + item.Location +'</td> '+
+                                    '<td style = "text-align:center"> ' + item.Weight +'</td> '+
+                                    '<td style = "text-align:center"> ' + item.ODACharges +'</td> '+
+                                    '<td style = "text-align:center"> ' + item.Amount +'</td></tr> '
+                                cnt++;
+                                recordscount++;
+                            })
+
+
+                            if (recordscount <= 25) {
                                 htmltrn += '<tr style="height:' + switchcase(recordscount) +'px">'+
                                     '<td style="text-align:center"></td>'+
                                     '<td style="text-align:center"></td>' +
@@ -347,7 +569,7 @@
                 <tbody>
                     ${htmltrn}
                 </tbody>
-                
+
             </table>
         </div>`
                          body+=`<table class="table table-bordered" style="width: 100%;font-size: 13px;">
@@ -433,36 +655,62 @@
                         });
 
                         var divContents = document.getElementById("SearchCourierlist").innerHTML;
-                        var printWindow = window.open('', '', 'height=400,width=400');
-                        printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
-                        printWindow.document.write('</head><body >' + header);
-                        printWindow.document.write(divContents);
-                        printWindow.document.write(footer + '</body></html>');
-                        printWindow.document.close();
-                        printWindow.print();
+                        var htlm = header +' '+ divContents +' '+ footer;
+                        //var printWindow = window.open('', '', 'height=400,width=400');
+                        //printWindow.document.write('<html><head><title></title><style>table, th, td {border: 1px solid black;border-collapse: collapse;}</style>');
+                        //printWindow.document.write('</head><body >' + header);
+                        //printWindow.document.write(divContents);
+                        //printWindow.document.write(footer + '</body></html>');
+                        //printWindow.document.close();
+                        //printWindow.print();
                         /*printWindow.close();*/
-                        SearchComplaint();
+                       // SearchComplaint();
+                      /*  var doc = new jsPDF();*/
+                        ////doc.fromHTML(
+                        ////    '<html><head><title></title>' +
+                        ////    '</head><body>' + header + divContents + footer + '</body></html>');
+                        //doc.fromHTML(`<html><head><title></title></head><body>` + htlm +`</body></html>`);
 
+                        //doc.save('div.pdf');
+
+                        //var myBlob;
+
+                       var doc = new jsPDF();
+                        //var specialElementHandlers = {
+                        //    '#editor': function (element, renderer) {
+                        //        return true;
+                        //    }
+                        //};
+
+                        
+                            doc.fromHTML(htlm, 15, 15, {
+                                'width': 170,
+                                //'elementHandlers': specialElementHandlers
+                            });
+                            doc.save('sample-file.pdf');
+                      
+                       
+                      
                     },
                     error: function (err) {
                         console.log("error=", err);
                     }
                 });
-            }
+            }*@
 
             function switchcase(recordscount) {
                 var hgt = '';
                 if (recordscount == 1) {
-                    hgt = 550;
+                    hgt = 530;
                 }
                 else if (recordscount == 2)
                 {
-                    hgt = 530;
+                    hgt = 510;
                 }
                 else {
-                    hgt = 550-(((recordscount-1)*2)*10);         
+                    hgt = 550-(((recordscount-1)*2)*10);
                 }
                 return hgt;
             }
-        </script>
-    }
+    </script>
+}

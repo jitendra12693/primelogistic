@@ -2,320 +2,338 @@
 @{
     ViewBag.Title = "Statement";
 }
-<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet" />
-<link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css" rel="stylesheet" />
+@*<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet" />*@
+@*<link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css" rel="stylesheet" />*@
 
-<div class="container">
-    <h4>Statement</h4>
-    <hr />
-    <div style="background-color:#f5f5f5; padding:20px">
+<link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+
+<h4>Statement</h4>
+<hr />
+<div>
+    <form>
         <table id="tblFilter">
             <tbody>
                 <tr>
                     <td>
                         @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party,
-                       "Select Party", new { @class = "form-control" })
+                                      "Select Party", new { @class = "form-control" })
                     </td>
+
                     <td><input type="text" placeholder="From Date" class="form-control" readonly id="txtFromDate" /></td>
-                    <td><input type="text" placeholder="To Date" class="form-control" readonly id="txtToDate" /></td>
+
+                    <td> <input type="text" placeholder="To Date" class="form-control" readonly id="txtToDate" /></td>
+
                     <td>
-                        <input type="button" class="btn btn-success btn-md" value="Filter" id="btnFilter" />
+                        &nbsp;&nbsp;<input type="button" class="btn btn-success btn-md" value="Search" id="btnFilter" />
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;<input type="button" class="btn btn-danger btn-md" value="Clear" id="btnClear" onclick="clear()" />
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-    @*<div style="width:90%; margin:0 auto;">*@
-    <table id="statementTable" class="table table-responsive table-striped">
-        <thead>
-            <tr class="alert alert-warning">
-                <th style="white-space:nowrap">Bill No</th>
-                <th style="white-space:nowrap">Party Name</th>
-                <th style="white-space:nowrap">GSTIN Number</th>
-                <th style="white-space:nowrap">Bill Date</th>
-                <th style="white-space:nowrap">From</th>
-                <th style="white-space:nowrap">To</th>
-                <th style="white-space:nowrap">Amount</th>
-                <th style="white-space:nowrap">Fuel Charges</th>
-                <th style="white-space:nowrap">CGST(9%)</th>
-                <th style="white-space:nowrap">SGST(9%)</th>
-                <th style="white-space:nowrap">Grand Total</th>
-                <th style="white-space:nowrap">Paid</th>
-                <th style="white-space:nowrap">Cheque No</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <tfoot>
-            <tr class="alert alert-warning">
-                <th style="white-space:nowrap">Bill No</th>
-                <th style="white-space:nowrap">Party Name</th>
-                <th style="white-space:nowrap">GSTIN Number</th>
-                <th style="white-space:nowrap">Bill Date</th>
-                <th style="white-space:nowrap">From</th>
-                <th style="white-space:nowrap">To</th>
-                <th style="white-space:nowrap">Amount</th>
-                <th style="white-space:nowrap">Fuel Charges</th>
-                <th style="white-space:nowrap">CGST(9%)</th>
-                <th style="white-space:nowrap">SGST(9%)</th>
-                <th style="white-space:nowrap">Grand Total</th>
-                <th style="white-space:nowrap">Paid</th>
-                <th style="white-space:nowrap">Cheque No</th>
-            </tr>
-        </tfoot>
-    </table>
-    @*</div>*@
-    @section Scripts {
-        <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-        <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
-        <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
-        <script src="https://cdn.datatables.net/plug-ins/1.10.19/api/sum().js"></script>
-        <script>
-            $(document).ready(function () {
-                var globalData;
-                var buttonCommon = {
-                    exportOptions: {
-                        format: {
-                            body: function (data, row, column, node) {
-                                globalData = data;
-                                // Strip $ from salary column to make it numeric
-                                return column === 5 ?
-                                    data.replace(/[$,]/g, '') :
-                                    data;
-                            }
+    </form>
+</div>
+<hr />
+@*<div style="width:90%; margin:0 auto;">*@
+@*<table id="statementTable" class="table table-responsive table-striped table-bordered">*@
+<table id="statementTable" class="table-bordered" style="width:100%;font-size:10px;">
+    <thead>
+        <tr class="alert alert-warning">
+            <th style="white-space:nowrap">Sr No</th>
+            <th style="white-space:nowrap">Bill Date</th>
+            <th style="white-space:nowrap">Bill No</th>
+            <th style="white-space:nowrap">Party Name</th>
+            <th style="white-space:nowrap">GSTIN Number</th>
+            @*<th style="white-space:nowrap">From</th>
+        <th style="white-space:nowrap">To</th>*@
+            <th style="white-space:nowrap">Amount</th>
+            <th style="white-space:nowrap">Fuel Charges</th>
+            <th style="white-space:nowrap">Net</th>
+            <th style="white-space:nowrap">IGST(18%)</th>
+            <th style="white-space:nowrap">CGST(9%)</th>
+            <th style="white-space:nowrap">SGST(9%)</th>
+            <th style="white-space:nowrap">Grand Total</th>
+            @*<th style="white-space:nowrap">Paid</th>
+        <th style="white-space:nowrap">Cheque No</th>*@
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <!--<tfoot>
+        <tr class="alert alert-warning">
+            <th style="white-space:nowrap">Bill Date</th>
+            <th style="white-space:nowrap">Bill No</th>
+            <th style="white-space:nowrap">Party Name</th>
+            <th style="white-space:nowrap">GSTIN Number</th>-->
+    @*<th style="white-space:nowrap">From</th>
+        <th style="white-space:nowrap">To</th>*@
+    <!--<th style="white-space:nowrap">Amount</th>
+    <th style="white-space:nowrap">Fuel Charges</th>
+    <th style="white-space:nowrap">IGST(18%)</th>
+    <th style="white-space:nowrap">CGST(9%)</th>
+    <th style="white-space:nowrap">SGST(9%)</th>
+    <th style="white-space:nowrap">Grand Total</th>-->
+    @*<th style="white-space:nowrap">Paid</th>
+        <th style="white-space:nowrap">Cheque No</th>*@
+    <!--</tr>
+    </tfoot>-->
+</table>
+@*</div>*@
+@section Scripts {
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.19/api/sum().js"></script>
+    <script>
+        $(document).ready(function () {
+            var globalData;
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            globalData = data;
+                            // Strip $ from salary column to make it numeric
+                            return column === 5 ?
+                                data.replace(/[$,]/g, '') :
+                                data;
                         }
                     }
-                };
-                //jQuery DataTables initialization
-                $('#statementTable').DataTable({
-                    "footerCallback": function (row, data, start, end, display) {
-                        //Get data here
-                        globalData = data;
-                        //Do whatever you want. Example:
-                    },
-                   
-                    "language":
+                }
+            };
+           
+            //jQuery DataTables initialization
+            $('#statementTable').DataTable({
+                "autoWidth": true,
+                "language":
+                {
+                    "processing": "<div class='overlay custom-loader-background'>" +
+                        "<i class= 'fa fa-cog fa-spin custom-loader-color'></i></div>"
+                },
+                "processing": true,
+                "serverSide": true,
+                "orderMulti": false,
+                "dom": '<"top"i>rt<"bottom"lp><"clear">',
+                "ajax": {
+                    "url": "/BillStatement/SearchStatement",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                //lengthMenu: [[20, 100, -1], [20, 100, "All"]],
+                pageLength: 200,
+                "columns": [
+                    { "data": "SrNo", "name": "SrNo", "autoWidth": true },
+                    { "data": "BillDate", "name": "BillDate", "autoWidth": true },
+                    { "data": "BillNo", "name": "BillNo", "autoWidth": true },
+                    { "data": "PartyName", "name": "PartyName", "autoWidth": true },
+                    { "data": "GSTINNumber", "name": "GSTINNumber", "autoWidth": true },
+
+                    //{ "data": "PeriodFrom", "name": "PeriodFrom", "autoWidth": true },
+                    //{ "data": "PeriodTo", "name": "PeriodTo", "autoWidth": true },
+                    { "data": "TotalAmount", "name": "TotalAmount", "autoWidth": true },
+                    { "data": "FullCharges", "name": "FullCharges", "autoWidth": true },
+                    { "data": "NetTotal", "name": "NetTotal", "autoWidth": true },
+                    { "data": "IGST", "name": "IGST", "autoWidth": true },
+                    { "data": "CGST", "name": "CGST", "autoWidth": true },
+                    { "data": "SGST", "name": "SGST", "autoWidth": true },
+                    { "data": "GrandTotal", "name": "GrandTotal", "autoWidth": true },
+                    //{ "data": "PaidAmount", "name": "PaidAmount", "autoWidth": true },
+                    //{ "data": "ChequeNo", "name": "ChequeNo", "autoWidth": true }
+
+                ],
+                drawCallback: function () {
+                    //var api = this.api();
+                    ////var sum = 0;
+                    ////var formated = 0;
+                    ////to show first th
+                    //var lstrow = api.row(':last', { order: 'applied' }).data()
+                    //editor  // It work
+                    //    .bubble(':last', { order: 'applied' })
+                    //    .set('lstrow.GSTINNumber', 'Total')
+                    //    .submit()
+                    // lstrow.GSTINNumber = 'Total';
+                    //$(lstrow.column(0).footer()).html('');
+                    //$(lstrow.column(1).footer()).html('');
+                    //$(lstrow.column(2).footer()).html('');
+                    //$(lstrow.column(3).footer()).html('Total');
+                    //$(api.column(4).footer()).html('');
+                    //$(api.column(5).footer()).html('');
+                    //$(api.column(4).footer()).html('');
+                    //$(api.column(5).footer()).html('');
+                    //$(api.column(6).footer()).html('');
+                    //$(api.column(7).footer()).html('');
+                    //$(api.column(8).footer()).html('');
+                    //$(api.column(9).footer()).html('');
+                    //$(api.column(9).footer()).html('');
+                    //$(api.column(12).footer()).html('');
+                    //var balanceAmt = 0.00;
+                    //var totalAmt = 0.00;
+                    ////Changes  by sneha in foreach loop
+                    //for (var i = 4; i <= 9; i++) {
+                    //    sum = api.column(i, { page: 'current' }).data().sum();
+                    //    //if (i == 4)
+                    //    //    totalAmt = sum;
+                    //    //else if (i == 5) {
+                    //    //    balanceAmt = totalAmt - sum;
+                    //    //    formated = parseFloat(balanceAmt).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    //    //    $(api.column(5).footer()).html('<b>-<span>&#8377;</span></b>' + formated);
+                    //    //}
+                    //    //to format this sum
+                    //    formated = parseFloat(sum).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    //    $(api.column(i).footer()).html('<b> <span>&#8377;</span></b>' + formated);
+                    //}
+
+                },
+                dom: 'Bfrtip',
+                buttons: [
                     {
-                        "processing": "<div class='overlay custom-loader-background'>" +
-                            "<i class= 'fa fa-cog fa-spin custom-loader-color'></i></div>"
-                    },
-                    "processing": true,
-                    "serverSide": true,
-                    "orderMulti": false,
-                    "dom": '<"top"i>rt<"bottom"lp><"clear">',
-                    "ajax": {
-                        "url": "/BillStatement/SearchStatement",
-                        "type": "POST",
-                        "datatype": "json"
-                    },
-                    lengthMenu: [[20, 100, -1], [20, 100, "All"]],
-                    pageLength: 20,
-                    "columns": [
-                        { "data": "BillNo", "name": "BillNo", "autoWidth": true },
-                        { "data": "PartyName", "name": "PartyName", "autoWidth": true },
-                        { "data": "GSTINNumber", "name": "GSTINNumber", "autoWidth": true },
-                        { "data": "BillDate", "name": "BillDate", "autoWidth": true },
-                        { "data": "PeriodFrom", "name": "PeriodFrom", "autoWidth": true },
-                        { "data": "PeriodTo", "name": "PeriodTo", "autoWidth": true },
-                        { "data": "TotalAmount", "name": "TotalAmount", "autoWidth": true },
-                        { "data": "FullCharges", "name": "FullCharges", "autoWidth": true },
-                        { "data": "CGST", "name": "CGST", "autoWidth": true },
-                        { "data": "SGST", "name": "SGST", "autoWidth": true },
-                        { "data": "GrandTotal", "name": "GrandTotal", "autoWidth": true },
-                        { "data": "PaidAmount", "name": "PaidAmount", "autoWidth": true },
-                        { "data": "ChequeNo", "name": "ChequeNo", "autoWidth": true }
-                    ],
-                    drawCallback: function () {
-                        var api = this.api();
-                        var sum = 0;
-                        var formated = 0;
-                        //to show first th
-                        $(api.column(0).footer()).html('Total');
-                        $(api.column(1).footer()).html('');
-                        $(api.column(2).footer()).html('');
-                        $(api.column(3).footer()).html('');
-                        $(api.column(4).footer()).html('');
-                        $(api.column(5).footer()).html('');
-                        $(api.column(6).footer()).html('');
-                        $(api.column(7).footer()).html('');
-                        $(api.column(8).footer()).html('');
-                        $(api.column(9).footer()).html('');
-                        $(api.column(12).footer()).html('');
-                        var balanceAmt = 0.00;
-                        var totalAmt = 0.00;
-                        for (var i = 10; i <= 11; i++) {
-                            sum = api.column(i, { page: 'current' }).data().sum();
-                            if (i == 10)
-                                totalAmt = sum;
-                            else if (i == 11) {
-                                balanceAmt = totalAmt - sum;
-                                formated = parseFloat(balanceAmt).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                                $(api.column(12).footer()).html('<b>-<span>&#8377;</span></b>' + formated);
+                        title: '',
+                        extend: 'print',
+                        customize: function (win) {
+                            var prtnm = '';
+                            var range = '';
+                            if ($('#PartyId').val().trim() != '') {
+                                prtnm = $("#PartyId option:selected").text();
+                                range = ' for the period From - ' + $('#txtFromDate').val().trim() + ' To - ' + $('#txtToDate').val().trim();
                             }
-                            //to format this sum
-                            formated = parseFloat(sum).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                            $(api.column(i).footer()).html('<b> <span>&#8377;</span></b>' + formated);
-                        }
+                            else {
+                                prtnm = ' All'
+                                range = ' for the period From - ' + $('#txtFromDate').val().trim() + ' To -' + $('#txtToDate').val().trim();
+                            }
+                            $(win.document.body)
+                                .css('font-size', '7pt')
+                                .prepend(
+                                
+                                `<img src="http://primelogistic.co/Content/PrimeLoglogo.jpeg" style="position:absolute;height:45px;margin-left:35%;margin-top:-5%" />
+                                <hr/><p style='text-align:center'><strong>Sales Resport : -${prtnm + range}</strong></p>`
+                            );
 
-                    },
-                    dom: 'Bfrtip',
-                    buttons: [
-                        {
-                            title: ' ',
-                            extend: 'print',
-                            customize: function (win) {
-                                $.ajax({
-                                    type: 'GET',
-                                    datatype: 'json',
-                                    url: '/CourierDetails/GetLoggedInUser',
-                                    success: function (data) {
-                                        console.log("globalData=", globalData);
-                                        var grandTotal = 0.00,paidAmt=0.00, balanceAmt=0.00;
-                                        for (var i = 0; i < globalData.length; i++) {
-                                            grandTotal += globalData[i].GrandTotal;
-                                            paidAmt += globalData[i].PaidAmount;
-                                        }
-                                        balanceAmt = grandTotal - paidAmt;
-                                        $(win.document.body)
-                                            .css('font-size', '10pt')
-                                            .prepend(
-                                                `<table class="table table-bordered" style="width:100%;">
-                                                        <tr>
-                                                            <td colspan="2">
-                                                                <center>
-                                                                    <h1>${data?.loggedInUser?.Name}</h1>
-                                                                    <h4>${data?.loggedInUser?.Address1}, ${data?.loggedInUser?.Address2}, ${data?.loggedInUser?.City}-${data?.loggedInUser?.Pincode}, ${data?.loggedInUser?.State}.</h4>
-                                                                    <h4>Tel :+91${data?.loggedInUser?.MobileNo}${data?.loggedInUser?.AlternateContact ? '/+91' + data?.loggedInUser?.AlternateContact : ''} </h4>
-                                                                    <h4>Email Address: ${data?.loggedInUser?.EmailId}</h4>
-                                                                </center>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                `
-                                        );
-                                        $(win.document.body)
-                                            .css('font-size', '10pt')
-                                            .append(
-                                                `<table class="table table-responsive table-striped dataTable" role="grid" aria-describedby="statementTable_info" style="width: 100%;">
-                                                        <tr>
-                                                            <td colspan="10">
-                                                                <b>Total</b>
-                                                            </td>
-                                                            <td><span>&#8377;</span>${grandTotal}</td>
-                                                            <td><span>&#8377;</span>${paidAmt}</td>
-                                                            <td>-<span>&#8377;</span>${balanceAmt}</td>
-                                                        </tr>
-                                                    </table>
-                                                `
-                                            );
-
-                                        $(win.document.body).find('table')
-                                            .addClass('compact')
-                                            .css('font-size', 'inherit');
-                                    },
-                                    error: function (err) {
-                                        console.log("error=", err);
-                                    }
-                                })
-                            },
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
                         },
-                    ]
-                });
-                oTable = $('#statementTable').DataTable();
-                $('#btnFilter').click(function () {
+                    },
+                ]
+            });
+            oTable = $('#statementTable').DataTable();
+            $('#btnFilter').click(function () {
+                if ($('#txtFromDate').val().trim() == '' && $('#txtToDate').val().trim() == '') {
+                    alert('Please Select From Date And To Date');
+                }
+                else {
                     oTable.columns(4).search($('#PartyId').val().trim());
                     oTable.columns(5).search($('#txtFromDate').val().trim());
                     oTable.columns(6).search($('#txtToDate').val().trim());
                     oTable.draw();
-                });
+                }
+
+            });
+        });
+
+        //$(function () {
+        //    $("#txtFromDate").datepicker({
+        //        changeMonth: true,
+        //        changeYear: true
+        //    });
+
+        //    $("#txtToDate").datepicker({
+        //        changeMonth: true,
+        //        changeYear: true
+        //    });
+
+        //});
+        //$(document).ready(function () {
+        //    FillDetails();
+        //});
+        //function FillDetails() {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/BillStatement/SearchStatement",
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: OnSuccess,
+        //        failure: function (response) {
+        //            alert(response.d);
+        //        },
+        //        error: function (response) {
+        //            alert(response.d);
+        //        }
+        //    });
+        //};
+        //function OnSuccess(response) {
+        //    var strResponse = [];
+        //    if (response.length > 0) {
+        //        //$.each(response, function (key, value) {
+        //        //    strResponse.push({
+        //        //        Id: value.Id,
+        //        //        PartyName: value.PartyName,
+        //        //        CourrierModeName: value.CourrierModeName,
+        //        //        NetworkModeName: value.NetworkModeName,
+        //        //        FromWt: value.FromWt.toFixed(3) + ' (<b>gm</b>)',
+        //        //        ToWt: value.ToWt.toFixed(3) + ' (<b>gm</b>)',
+        //        //        Rate: '<b><span>&#8377;</span> </b>' + value.Rate + '<b>/-</b>'
+        //        //    });
+
+        //        //});
+        //    }
+        //    $("#statementTable").DataTable(
+        //        {
+        //            //bLengthChange: true,
+        //            //lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+        //            //bFilter: true,
+        //            //bSort: true,
+        //            //bPaginate: true,
+        //            "bDestroy": true,
+        //            data: response,
+        //            "columns": [
+        //                { "data": "BillNo"},
+        //                { "data": "PartyName"},
+        //                { "data": "GSTINNumber"},
+        //                { "data": "BillDate"},
+        //                { "data": "PeriodFrom"},
+        //                { "data": "PeriodTo"},
+        //                { "data": "TotalAmount"},
+        //                { "data": "FullCharges"},
+        //                { "data": "CGST"},
+        //                { "data": "SGST"},
+        //                { "data": "GrandTotal"},
+        //                { "data": "PaidAmount"},
+        //                { "data": "ChequeNo"}
+        //            ]
+        //        });
+        //};
+
+
+        ////$("#PartyId").change(function () {
+        ////    $('#tableRateList').DataTable().clear().draw();
+        ////    Getdetails();
+        ////});
+        ////$("#CourrierModeId").change(function () {
+        ////    $('#tableRateList').DataTable().clear().draw();
+        ////    Getdetails();
+        ////});
+
+        $(function () {
+            $("#txtFromDate").datepicker({
+                changeMonth: true,
+                changeYear: true
             });
 
-                    //$(function () {
-                    //    $("#txtFromDate").datepicker({
-                    //        changeMonth: true,
-                    //        changeYear: true
-                    //    });
+            $("#txtToDate").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
 
-                    //    $("#txtToDate").datepicker({
-                    //        changeMonth: true,
-                    //        changeYear: true
-                    //    });
+        });
+        $("#btnClear").click(function () {
+            $('form').trigger("reset");
+            window.location.reload();
+        });
+    </script>
+}
 
-                    //});
-                    //$(document).ready(function () {
-                    //    FillDetails();
-                    //});
-                    //function FillDetails() {
-                    //    $.ajax({
-                    //        type: "POST",
-                    //        url: "/BillStatement/SearchStatement",
-                    //        contentType: "application/json; charset=utf-8",
-                    //        dataType: "json",
-                    //        success: OnSuccess,
-                    //        failure: function (response) {
-                    //            alert(response.d);
-                    //        },
-                    //        error: function (response) {
-                    //            alert(response.d);
-                    //        }
-                    //    });
-                    //};
-                    //function OnSuccess(response) {
-                    //    var strResponse = [];
-                    //    if (response.length > 0) {
-                    //        //$.each(response, function (key, value) {
-                    //        //    strResponse.push({
-                    //        //        Id: value.Id,
-                    //        //        PartyName: value.PartyName,
-                    //        //        CourrierModeName: value.CourrierModeName,
-                    //        //        NetworkModeName: value.NetworkModeName,
-                    //        //        FromWt: value.FromWt.toFixed(3) + ' (<b>gm</b>)',
-                    //        //        ToWt: value.ToWt.toFixed(3) + ' (<b>gm</b>)',
-                    //        //        Rate: '<b><span>&#8377;</span> </b>' + value.Rate + '<b>/-</b>'
-                    //        //    });
-
-                    //        //});
-                    //    }
-                    //    $("#statementTable").DataTable(
-                    //        {
-                    //            //bLengthChange: true,
-                    //            //lengthMenu: [[5, 10, -1], [5, 10, "All"]],
-                    //            //bFilter: true,
-                    //            //bSort: true,
-                    //            //bPaginate: true,
-                    //            "bDestroy": true,
-                    //            data: response,
-                    //            "columns": [
-                    //                { "data": "BillNo"},
-                    //                { "data": "PartyName"},
-                    //                { "data": "GSTINNumber"},
-                    //                { "data": "BillDate"},
-                    //                { "data": "PeriodFrom"},
-                    //                { "data": "PeriodTo"},
-                    //                { "data": "TotalAmount"},
-                    //                { "data": "FullCharges"},
-                    //                { "data": "CGST"},
-                    //                { "data": "SGST"},
-                    //                { "data": "GrandTotal"},
-                    //                { "data": "PaidAmount"},
-                    //                { "data": "ChequeNo"}
-                    //            ]
-                    //        });
-                    //};
-
-
-                    ////$("#PartyId").change(function () {
-                    ////    $('#tableRateList').DataTable().clear().draw();
-                    ////    Getdetails();
-                    ////});
-                    ////$("#CourrierModeId").change(function () {
-                    ////    $('#tableRateList').DataTable().clear().draw();
-                    ////    Getdetails();
-                    ////});
-        </script>
-    }
-
-</div>

@@ -270,7 +270,7 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script src="~/Scripts/SearchCourier.js"></script>
+    <script src="~/Scripts/SearchCourier.js?v=1"></script>
     <script src="~/Scripts/autocolumn.js"></script>
     <script type="text/javascript">
         var Party = '';
@@ -422,7 +422,11 @@
                 alert('No Data Found! Please first search your transaction again');
                 return false;
             }
-            debugger;
+        if(count == '0')
+        {
+            alert('Select atleast one entry !')
+                return false;
+        }
             if (PartyId != '') {
                 $.ajax({
                     url: '/BillDetails/GetNewInvoiceNo',
@@ -512,59 +516,9 @@
            
         }
 
-        //$("#btnConfirm").click(function () {
-        //    debugger;
-        //    //---------------------------------------------------------------------------
-        //    var partyId = $("#PartyId").val();
-        //    var fromDate = $("#txtFromDate").val();
-        //    var toDate = $("#txtToDate").val();
-        //    if (partyId == '') {
-        //        alert("Please select party name");
-        //        return false;
-        //    }
-        //    if (fromDate == '' || toDate == '') {
-        //        alert("Please select From and To date");
-        //        return false;
-        //    }
-        //    var count = $('#hdnRecordCount').val();
-        //    var partyId = $('#PartyId').val();
-        //    var fromDate = $('#txtFromDate').val();
-        //    var toDate = $('#txtToDate').val();
-        //    var grandTotal = $('#lblGrandTotal').text();
-        //    var fullCharges = $('#lblFullCahrges').text();
-        //    var TotalAmount = $('#lblTotal').text();
-        //    var netAmount = $('#lblNetTotal').text();
-        //    var discount = $('#lblDiscount').text();
-        //    var billId = 0;
+        
 
-        //    if (count == '') {
-        //        alert('Please first search your transaction');
-        //        return false;
-        //    }
-        //    //showAjaxLoader();
-        //    //$.ajax({
-        //    //    type: 'POST',
-        //    //    datatype: 'json',
-        //    //    url: '/CourierDetails/SaveBillDetails',
-        //    //    data: {
-        //    //        partyId: partyId, fromDate: fromDate, toDate: toDate, grandTotal: grandTotal,
-        //    //        TotalAmount: TotalAmount, fullCharges: fullCharges,
-        //    //        CGST: CGST, SGST: SGST, BillId: billId
-        //    //    },
-        //    //    success: function (data) {
-        //    //        /*theDialog.dialog('open');*/
-
-        //    //        hideAjaxLoader();
-        //    //        secajax(data.BillId, data.CurrentDate);
-        //    //    },
-        //    //    error: function (error) {
-        //    //        alert(error.responseText);
-        //    //        hideAjaxLoader();
-        //    //    }
-        //    //});
-        //    //---------------------------------------------------------------------------
-        //});
-
+       
        
 
     </script>

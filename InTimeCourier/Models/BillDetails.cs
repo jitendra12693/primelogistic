@@ -17,16 +17,17 @@ namespace InTimeCourier.Models
         public string PartyName { get; set; }
         public string GSTINNumber { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public string BillDate { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public string PeriodFrom { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public string PeriodTo { get; set; }
         public decimal TotalAmount { get; set; }
         public decimal FullCharges { get; set; }
+        public decimal IGST { get; set; }
         public decimal CGST { get; set; }
         public decimal SGST { get; set; }
         public decimal GrandTotal { get; set; }
@@ -38,6 +39,8 @@ namespace InTimeCourier.Models
         public string SearchTerm { get; set; }
         public decimal PaidAmount { get; set; }
         public string ChequeNo { get; set; }
+        public decimal NetTotal { get; set; }
+        public int SrNo { get; set; }
     }
 
     public class BillAmountSummary

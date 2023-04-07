@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Reflection;
 using Newtonsoft.Json;
 using Microsoft.Ajax.Utilities;
+using System.Web.UI.WebControls;
 
 namespace InTimeCourier.Controllers
 {
@@ -43,22 +44,22 @@ namespace InTimeCourier.Controllers
             List<CorrierDetails> list = GetCourierList(ref dtTotal, ref dtPartyDetails, partyId, trackingNo, fromDate, toDate);
             CorrierDetails objCorrierDetails = new CorrierDetails();
             objCorrierDetails.CorrierDetails1 = new List<Models.CorrierDetails>();
-            //objCorrierDetails.CorrierDetails2 = new List<Models.CorrierDetails>();
-            //for (int i = 1; i <= list.Count; i++)
-            //{
-            //    if (i % 2 == 0)
-            //    {
-            //        objCorrierDetails.CorrierDetails2.Add(list[i - 1]);
-            //    }
-            //    else
-            //    {
-            //        objCorrierDetails.CorrierDetails1.Add(list[i - 1]);
-            //    }
-            //}
-            foreach(var item in list)
+            objCorrierDetails.CorrierDetails2 = new List<Models.CorrierDetails>();
+            for (int i = 1; i <= list.Count; i++)
             {
-                objCorrierDetails.CorrierDetails1.Add(item);
+                if (i % 2 == 0)
+                {
+                    objCorrierDetails.CorrierDetails2.Add(list[i - 1]);
+                }
+                else
+                {
+                    objCorrierDetails.CorrierDetails1.Add(list[i - 1]);
+                }
             }
+            //foreach (var item in list)
+            //{
+            //    objCorrierDetails.CorrierDetails1.Add(item);
+            //}
             var html = RenderPartialViewToString("SearchList", objCorrierDetails);
             string totalInWord = ConvertInWord.ConvertToWords(dtTotal.GrandTotal.ToString());
             var v = new { html = html, TotalRecord = dtTotal, PartyDetails = dtPartyDetails, InWord = totalInWord };
@@ -124,6 +125,20 @@ namespace InTimeCourier.Controllers
             ViewBag.DestinationList = new SelectList(db.DestinationMaster.Where(x => x.IsActive == true).Select(item => new { DestinationId = item.Id, Name = item.Name }).OrderBy(x => x.Name), "DestinationId", "Name");
             try
             {
+                if(courier.BillId==1)
+                {
+                    SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+                    if (connString.State == ConnectionState.Closed)
+                        connString.Open();
+                    SqlCommand cmd = new SqlCommand("uspDeleteCourrierDetails", connString);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CourrierId", courier.CourrierId);
+                    int a = cmd.ExecuteNonQuery();
+                    ViewBag.Message = "Your Courier Deleted Successfully";
+                    ViewBag.Status = 0;
+                }
+                else
+                {
                 if(courier != null && courier.CourrierId>0)
                 {
                     if (courier.DestinationId == 0)
@@ -206,7 +221,7 @@ namespace InTimeCourier.Controllers
                     }
 
                 }
-
+                }
                 var list = db.CourrierMasters.Where(x => x.IsActive == true).OrderByDescending(x => x.CourrierId).ToList();
                 var listnew = list.Take(12).ToList();
                 int cnt = 0;
@@ -406,14 +421,50 @@ namespace InTimeCourier.Controllers
             return RedirectToAction("CourrierList");
         }
 
+        //[HttpPost]
+        //public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal, 
+        //    decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, string InvoiceNo,int SrNo,string InvoiceDate)
+        //{
+        //    SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+        //    if (connString.State == ConnectionState.Closed)
+        //        connString.Open();
+        //    SqlCommand cmd = new SqlCommand("uspInsertBillDetails", connString);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.Parameters.AddWithValue("@InvoiceNo", InvoiceNo);
+        //    cmd.Parameters.AddWithValue("@SrNo", SrNo);
+        //    cmd.Parameters.AddWithValue("@PartyId", partyId);
+        //    cmd.Parameters.AddWithValue("@PeriodFrom", fromDate);
+        //    cmd.Parameters.AddWithValue("@PeriodTo", toDate);
+        //    cmd.Parameters.AddWithValue("@TotalAmount", TotalAmount);
+        //    cmd.Parameters.AddWithValue("@FullCharges", fullCharges);
+        //    cmd.Parameters.AddWithValue("@CGST", CGST);
+        //    cmd.Parameters.AddWithValue("@SGST", SGST);
+        //    cmd.Parameters.AddWithValue("@InvoiceDate", InvoiceDate);
+        //    cmd.Parameters.AddWithValue("@GrandTotal", grandTotal);
+        //    cmd.Parameters.AddWithValue("@UserId", int.Parse("0" + Session["UserId"]));
+        //    cmd.Parameters.Add("@GeneratedBillId", SqlDbType.VarChar, 50);
+        //    cmd.Parameters["@GeneratedBillId"].Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add("@BillDate", SqlDbType.Date);
+        //    cmd.Parameters["@BillDate"].Direction = ParameterDirection.Output;
+        //    cmd.Parameters.Add("@FuelCharges", SqlDbType.Decimal);
+        //    cmd.Parameters["@FuelCharges"].Direction = ParameterDirection.Output;
+
+        //    cmd.ExecuteNonQuery();
+        //    string billId = Convert.ToString(cmd.Parameters["@GeneratedBillId"].Value);
+        //    string fuelCharges = Convert.ToString(cmd.Parameters["@FuelCharges"].Value);
+        //    DateTime date = Convert.ToDateTime(cmd.Parameters["@BillDate"].Value);
+        //    var v = new { BillId = billId, CurrentDate = date.ToString("dd-MMM-yyyy"), FuelCharges = fuelCharges };
+        //    return Json(v, JsonRequestBehavior.AllowGet);
+        //}
         [HttpPost]
-        public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal, 
-            decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, string InvoiceNo,int SrNo,string InvoiceDate)
+        public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal,
+            decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, string InvoiceNo, int SrNo,
+            string InvoiceDate, string[] courrierIdList)
         {
             SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
             if (connString.State == ConnectionState.Closed)
                 connString.Open();
-            SqlCommand cmd = new SqlCommand("uspInsertBillDetails", connString);
+            SqlCommand cmd = new SqlCommand("uspInsertBillDetails_New", connString);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@InvoiceNo", InvoiceNo);
             cmd.Parameters.AddWithValue("@SrNo", SrNo);
@@ -433,9 +484,15 @@ namespace InTimeCourier.Controllers
             cmd.Parameters["@BillDate"].Direction = ParameterDirection.Output;
             cmd.Parameters.Add("@FuelCharges", SqlDbType.Decimal);
             cmd.Parameters["@FuelCharges"].Direction = ParameterDirection.Output;
-
+            cmd.Parameters.Add("@BillId", SqlDbType.BigInt);
+            cmd.Parameters["@BillId"].Direction = ParameterDirection.Output;
             cmd.ExecuteNonQuery();
             string billId = Convert.ToString(cmd.Parameters["@GeneratedBillId"].Value);
+            int Id = Convert.ToInt32(cmd.Parameters["@BillId"].Value);
+            if (billId!=null && Id>0)
+            {
+                UpdateCourrierListById(courrierIdList, Id);
+            }
             string fuelCharges = Convert.ToString(cmd.Parameters["@FuelCharges"].Value);
             DateTime date = Convert.ToDateTime(cmd.Parameters["@BillDate"].Value);
             var v = new { BillId = billId, CurrentDate = date.ToString("dd-MMM-yyyy"), FuelCharges = fuelCharges };
@@ -691,10 +748,92 @@ namespace InTimeCourier.Controllers
         //                           select new { c.PartyName, c.PartyId });
         //    return Json(PartyList, JsonRequestBehavior.AllowGet);
         //}
+        public void UpdateCourrierListById(string[] courrierIdList, int billid)
+        {
+            string sql = "Update CourrierMaster SET isInvoiceDone=1,BillId="+billid+",ModifyDate=GETDATE() Where CourrierId in ("+ string.Join(",", courrierIdList)+")";
+            DataSet ds = new DataSet();
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            SqlCommand cmd = new SqlCommand(sql, connString);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter ad = new SqlDataAdapter();
+            ad.SelectCommand = cmd;
+            ad.Fill(ds);
+        }
 
 
+        [HttpPost]
+        public JsonResult CalculateInvoiceData(string [] cridlist,string fuelpercntg)
+        {
 
+            string sql = "SELECT SUM(Amount)+SUM(ISNULL(Discount,0)) As NetAmount,COUNT(1) AS RecordCount,round(((SUM(Amount)+(SUM(FuelCharges)))*9)/100,2) CGST," +
+                "round(((SUM(Amount)+(SUM(FuelCharges)))*9)/100,2) SGST,(SUM(FuelCharges)) 'FuelCharges',SUM(ISNULL(Discount,0)) AS Discount," +
+                "SUM(Amount) AS TotalAmount FROM CourrierMaster" +
+                " Where CourrierId in (" + string.Join(",", cridlist) + ")";
+            DataTable dt = new DataTable();
+            SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
+            SqlCommand cmd = new SqlCommand(sql, connString);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter ad = new SqlDataAdapter();
+            ad.SelectCommand = cmd;
+            ad.Fill(dt);
+            DataColumn newCol1 = new DataColumn("GrandTotal", typeof(decimal));
+            dt.Columns.Add(newCol1);
+            DataColumn newCol2 = new DataColumn("InWord", typeof(string));
+            dt.Columns.Add(newCol2);
+            if (dt.Columns.Count > 1 && dt.Rows.Count > 0)
+            {
+                if (fuelpercntg == "0.00 %")
+                {
+                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) + 
+                                     Convert.ToDecimal(dt.Rows[0]["CGST"]) +
+                                     Convert.ToDecimal(dt.Rows[0]["SGST"]);
+                    var grndttl = GrandTotal.ToString("0.00");
+                    var spltgrndttl = grndttl.Split('.');
+                    int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                    int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                    if (pr2 > 0)
+                    {
+                        GrandTotal = pr1 + 1;
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
+                    else
+                    {
+                        //GrandTotal = pr1 + 1;
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
+                    dt.Rows[0]["FuelCharges"] = "0.00";
 
+                }
+                else
+                {
+                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) +
+                                    Convert.ToDecimal(dt.Rows[0]["CGST"]) +
+                                    Convert.ToDecimal(dt.Rows[0]["SGST"])+
+                                    Convert.ToDecimal(dt.Rows[0]["FuelCharges"]);
+                    var grndttl = GrandTotal.ToString("0.00");
+                    var spltgrndttl = grndttl.Split('.');
+                    int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                    int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                    if (pr2 > 0)
+                    {
+                        GrandTotal = pr1 + 1;
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
+                    else
+                    {
+                        //GrandTotal = pr1 + 1;
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
+                }
+                
+            }
+
+            return Json(JsonConvert.SerializeObject(dt), JsonRequestBehavior.AllowGet);
+        }
     }
 
     public class UpdateCourrier

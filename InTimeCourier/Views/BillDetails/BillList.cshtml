@@ -1,22 +1,26 @@
 ﻿@model IEnumerable<InTimeCourier.Models.BillDetails>
 @{
     Layout = null;
+    var cntn = 1;
 }
 <div id="divBillDetailsList" class="" >
     <table class="table table-bordered table-hover">
         <tr>
-            <th>Bill No</th>
-            <th>Party Name</th>
-            <th>GSTIN/UIN</th>
-            <th>Total</th>
-            <th>Fuel Charges</th>
-            <th>C.G.S.T. (9%)</th>
-            <th>S.G.S.T  (9%)</th>
-            <th>Amount</th>
-            <th>Paid Amt</th>
-            @*<th>Cheque No</th>*@
-            <th>Bill Date</th>
-            <th>Action</th>
+            <th style="text-align:center">Sr No.</th>
+            <th style="text-align:center">Bill No</th>
+            <th style="text-align:center">Party Name</th>
+            <th style="text-align:center">GSTIN/UIN</th>
+            <th style="text-align:center">Total</th>
+            <th style="text-align:center">Fuel Charges</th>
+            <th style="text-align:center">C.G.S.T. (9%)</th>
+            <th style="text-align:center">S.G.S.T  (9%)</th>
+            <th style="text-align:center">Amount</th>
+            @*
+            <th style="text-align:center">Paid Amt</th>*@
+            @*
+            <th>Cheque No</th>*@
+            <th style="text-align:center">Bill Date</th>
+            <th style="text-align:center">Action</th>
         </tr>
         @if (Model != null && Model.ToList().Count()>0)
         {
@@ -26,6 +30,7 @@
                     @*<td>
                         @Html.ActionLink("" + item.BillNo, "SelectedPartyCourrierList", new { PartyId = item.PartyId, PeriodFrom = item.PeriodFrom, PeriodTo = item.PeriodTo })
                     </td>*@
+                      <td>@cntn</td>
                     <td>@item.BillNo</td>
                     <td>@item.PartyName</td>
                     <td>@item.GSTINNumber</td>
@@ -34,23 +39,27 @@
                     <td>@item.CGST</td>
                     <td>@item.SGST</td>
                     <td>@item.GrandTotal</td>
-                    <td>@item.PaidAmount</td>
+                    @*<td>@item.PaidAmount</td>*@
                     @*<td>@item.ChequeNo</td>*@
                     <td>@Convert.ToDateTime(item.BillDate).ToShortDateString()</td>
-                    <td style="width:7%;">
+                    <td>
 
                         <a href="#" onclick="printBillDetails(@item.BillId)" title="Print Invoice">
                             <i class="glyphicon glyphicon-print"></i>
-                        </a>&nbsp; &nbsp; | &nbsp; &nbsp;
+                        </a>&nbsp; |  &nbsp;
+                        @*<a href="#" onclick="downloadBillDetails(@item.BillId)" title="Download Invoice">
+                            <i class="glyphicon glyphicon-download-alt"></i>
+                        </a>&nbsp; | &nbsp;*@
                         <a href="#" onclick="deleteBillDetails(@item.BillId)" title="Delete Invoice">
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                         @*<a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
-                <i class="glyphicon glyphicon-edit"></i>
-            </a>
-            <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
+            <i class="glyphicon glyphicon-edit"></i>
+        </a>
+        <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
                     </td>
                 </tr>
+                cntn++;
             }
         }
     </table>
