@@ -1,0 +1,307 @@
+﻿@model IEnumerable<InTimeCourier.Models.CorrierDetails>
+
+@{
+    ViewBag.Title = "CourrierList";
+}
+<style>
+    .ajaxLoader {
+        outline-style: none;
+        outline-color: invert;
+        outline-width: 0px;
+        width: 104px;
+        height: 104px;
+        position: absolute;
+        z-index: 10000;
+        background-image: url("../../Content/ajax-loader.gif");
+    }
+</style>
+<h2>Courrier List</h2>
+
+<p>
+    @Html.ActionLink("Create New Courrier", "AddCourrier")
+</p>
+<div class="col col-lg-12">
+    @{Html.RenderAction("SearchCorier", "CourierDetails");}
+</div>
+<hr />
+@{Html.RenderAction("SearchList", "CourierDetails");}
+<div id="grid">
+    
+</div>
+<div>
+
+</div>
+<div id="recieptModal" style="display: none" align="center">
+    <div class="modal-body">
+        <div class="modal-body" id="divReciept">
+            <table class="table table-bordered" style="width:100%;">
+                <tr>
+                    <td colspan="2">
+                        <center>
+                            <h1>In Time  Logistics</h1>
+                            <h4>Kaman Road, Chinchoti Road, Vasai(East), Palghar-401208.</h4>
+                            <h4>Tel :+919320030626/+919028826303 </h4>
+                            <h4>Email Id: intimelogistic119@gmail.com</h4>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="70%;">
+                        <b>M/s: </b><label id="lblPartyName"></label><br />
+                        <label id="lblAddress"></label>
+                        <label id="lblContact"></label><br />
+                        <b>Party G.S.T. No. :</b><label id="partyGSTNumber"></label>
+                    </td>
+                    <td width="30%;">
+                        <b>Bill No: </b><label id="lblBillNo"></label><br />
+                        <b>Bill Date: </b>
+                        <label id="lblBillDate"></label>
+                    </td>
+                </tr>
+                <tr style="height:250px;">
+                    <td>
+                        Charges for courier service rendered during the period <br />from
+                        <label id="lblFromDate"></label> To <label id="lblToDate"></label>
+                        <p style="bottom: 0;left: 0;"><b>GSTIN/UIN :-</b> 27CCXPM4197H1ZQ</p>
+                    </td>
+                    <td style="text-align:right">
+                        <label id="lblBillAmount"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Total</b></td>
+                    <td style="text-align:right"><label id="lblBillTotal"></label></td>
+                </tr>
+                <tr>
+                    <td>Fuel Charges (<label id="lblPartyFuelCharges"></label>)</td>
+                    <td style="text-align:right"><label id="lblBillFullCahrges"></label></td>
+                </tr>
+                @*<tr>
+            <td>C.G.S.T. (9%)</td>
+            <td style="text-align:right"><label id="lblBillCGST"></label></td>
+        </tr>
+        <tr>
+            <td>S.G.S.T. (9%)</td>
+            <td style="text-align:right"><label id="lblBillSGST"></label></td>
+        </tr>*@
+                <tr id="trBillCGST_N">
+                    <td>C.G.S.T. (9%)</td>
+                    <td style="text-align:right"><label id="lblBillCGST_N"></label></td>
+                </tr>
+                <tr id="trBillSGST_N">
+                    <td>S.G.S.T. (9%)</td>
+                    <td style="text-align:right"><label id="lblBillSGST_N"></label></td>
+                </tr>
+                <tr id="trBillIGST_N">
+                    <td>I.G.S.T. (18%)</td>
+                    <td style="text-align:right"><label id="lblBillIGST_N"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Grand Total</b></td>
+                    <td style="text-align:right"><label id="lblBillGrandTotal"></label></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>In Word:- </b>   <label id="divDisplayWords"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <u><b>Bank Details</b></u><br />
+                        <b>Company Name</b> :- IN TIME LOGISTICS<br />
+                        <b>Bank Name</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    :- Bharat Bank<br />
+                        <b>Account No</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :- 006212100002228<br />
+                        <b>IFS Code</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;   :-BCBM0000063<br />
+                        <b>Branch</b>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;     :-Nallasopara(W)
+                    </td>
+                    <td>
+                        <br /><br /><br /><br />
+                        <h4>For In Time Logistics</h4>
+                    </td>
+                </tr>
+            </table><br />
+            <h5><b>Note :-</b>Please pay your will within 10 days from your Bill date, Otherwise we charges 24% on grand total </h5>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btnPrintReciept" class="btn btn-primary">Print Reciept</button>
+        </div>
+    </div>
+</div>
+<div id="divUpdateCourrier" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" id="btnCross">&times;</button>
+                <h4 class="modal-title">Update Courrier Details</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formUpdate">
+                    <div class="form-group">
+                        <div class="col-lg-4">Party</div>
+                        <div class="col-lg-8">
+                            <select id="ddlParty" class="form-control">
+                                <option value="">Select Party</option>
+                            </select>
+                        </div>
+                    </div><div></div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Booking Date</div>
+                        <div class="col-lg-8"><input type="text" id="txtBookingDate" placeholder="MM/DD/YYYY" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">CN Number</div>
+                        <div class="col-lg-8"><input type="text" id="txtCNNumber" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Distance</div>
+                        <div class="col-lg-8"><input type="text" id="txtDistance" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Weight</div>
+                        <div class="col-lg-8"><input type="text" id="txtWeight" class="form-control" placeholder="Weight in KG Format(Ex :- 0.256 Kg)" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Rate</div>
+                        <div class="col-lg-8"><input type="text" id="txtRate" class="form-control" /> </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4">Amount</div>
+                        <div class="col-lg-8"><input type="text" id="txtAmount" readonly="readonly" class="form-control" placeholder="Please enter your rate(Per / Kg)" /> </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="btnSaveCourrier">Save</button>
+                <input type="hidden" id="hdnCourrierId" />
+                <input type="hidden" id="hdnCreatedBy" />
+                <input type="hidden" id="hdnCreatedDate" />
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/SearchCourier.js?v=2"></script>
+    <script src="~/Scripts/autocolumn.js"></script>
+    <script type="text/javascript">
+        get_Url='1'
+        $(function () {
+            debugger;
+            var partyId =  @Convert.ToString(Session["PartyId"]);
+            var trackingNo = '';
+            var fromDate = new Date("@Convert.ToString(Session["PeriodFrom"])"); //Year, Month, Date
+            var toDate = new Date("@Convert.ToString(Session["PeriodTo"])"); //Year, Month, Date
+            $('#PartyId').val(partyId);
+            $('#txtFromDate').val("@Convert.ToString(Session["PeriodFrom"])");
+            $('#txtToDate').val("@Convert.ToString(Session["PeriodTo"])");
+            if (trackingNo == '' && (fromDate == '' || toDate == '')) {
+                alert("Please select From and To date");
+                return false;
+            }
+
+            if (fromDate == toDate || fromDate < toDate) {
+                showAjaxLoader();
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: '/CourierDetails/Search',
+                    data: { partyId: partyId, trackingNo: trackingNo, fromDate: $("#txtFromDate").val(), toDate: $("#txtToDate").val() },
+                    success: function (data) {
+
+                        if (data.TotalRecord.RecordCount == 0) {
+                            $("#SearchCourierlist").html('<table class="table"><tr><th>Tracking No</th><th> Party Name</th><th>Source Name</th><th>Destination Name</th>'
+                             + '<th>CNNo</th><th>Weight</th><th>Departure Date</th><th> Amount</th><th>Action</th></tr><tr><td colspan="9">No Record found</td></tr>');
+                            $("#lblTotal").text();
+                            hideAjaxLoader();
+                        } else {
+                            $("#SearchCourierlist").html(data.html);
+                            $("#lblTotal").html(data.TotalRecord.TotalAmount);
+                            $("#lblFullCahrges").html(data.TotalRecord.FullCharges);
+                            if ($('#PartyId').val() == '12' || $('#PartyId').val() == '64') {
+                                $("#lblBillIGST").html(parseFloat(data.TotalRecord.SGST) + parseFloat(data.TotalRecord.CGST));
+                                $('#trCGST').hide();
+                                $('#trSGST').hide();
+                                $('#trIGST').show();
+                            }
+                            else {
+                                $("#lblBillCGST").html(data.TotalRecord.CGST);
+                                $("#lblBillSGST").html(data.TotalRecord.SGST);
+                                $('#trIGST').hide();
+                                $('#trCGST').show();
+                                $('#trSGST').show();
+                            }
+                           
+                            $("#lblGrandTotal").html(data.TotalRecord.GrandTotal);
+                            $("#hdnPartyName").val(data.PartyDetails.PartyName);
+                            $("#hdnAddress").val(data.PartyDetails.Address);
+                            $("#hdnRecordCount").val(data.TotalRecord.RecordCount);
+                            $('#partyGSTNumber').text(data.PartyDetails.GSTNumber);
+                            $('#hdnPartyGSTNo').val(data.PartyDetails.GSTNumber);
+                            $('#lblGrandTotalInWord').text(data.InWord);
+                            $('#partyFuelCharge').text(data.TotalRecord.FuelChargesLabel);
+                            hideAjaxLoader();
+
+                        }
+                    },
+                    error: function (error) {
+                        alert('Some error occured ');
+                        hideAjaxLoader();
+                    }
+                })
+            }
+            else {
+
+                alert("Selected from date is greater than to date")
+            }
+        });
+
+
+        $('#PrintReport').columnize({ columns: 2 })
+
+        $(function () {
+            $("#txtBookingDate").datepicker();
+        });
+
+        $('#btnCross').click(function () {
+            $('#formUpdate')[0].reset();
+        });
+
+        $('#btnClose').click(function () {
+            $('#formUpdate')[0].reset();
+        });
+
+        $('#btnSaveCourrier').click(function () {
+            var courrierDetail = {
+                CourrierId:$('#hdnCourrierId').val(),
+                PartyId: $("#ddlParty").val(),
+                Amount: $("#txtAmount").val(),
+                Rate: $("#txtRate").val(),
+                Weight: $("#txtWeight").val(),
+                CNNo: $("#txtCNNumber").val(),
+                Distance: $("#txtDistance").val(),
+                DepartureDt: $('#txtBookingDate').val(),
+                CreatedBy:$('#hdnCreatedBy').val(),
+                CreatedDt: $('#hdnCreatedDate').val()
+            }
+
+            $.ajax({
+                url: '/CourierDetails/UpdateEdit',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(courrierDetail),
+                success: function (data) {
+                    alert(data);
+                    $("#btnSearch").click();
+                }
+            });
+        });
+    </script>
+}
+
+
+
+

@@ -143,16 +143,25 @@ namespace InTimeCourier.Controllers
                 {
                     if (courier.DestinationId == 0)
                     {
-                        //Add Destination if not available
-                        DestinationMaster destinationMaster = new DestinationMaster();
-                        destinationMaster.Name = courier.Location;
-                        destinationMaster.Description = "Added via AWB Entry";
-                        destinationMaster.IsActive = true;
-                        destinationMaster.CreatedDate = DateTime.Now;
-                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
-                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
-                        db.SaveChanges();
-                        courier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                        int DstnId = db.DestinationMaster.Where(x => x.Name== courier.Location.Trim()).Select(x => x.Id).FirstOrDefault();
+                        if(DstnId==0)
+                        {
+                            //Add Destination if not available
+                            DestinationMaster destinationMaster = new DestinationMaster();
+                            destinationMaster.Name = courier.Location.Trim();
+                            destinationMaster.Description = "Added via AWB Entry";
+                            destinationMaster.IsActive = true;
+                            destinationMaster.CreatedDate = DateTime.Now;
+                            destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                            db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                            db.SaveChanges();
+                            courier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                        }
+                        else
+                        {
+                            courier.DestinationId = DstnId;
+                        }
+                         
 
                     }
                     decimal? fuelcharges = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.FuelCharges).FirstOrDefault();
@@ -181,16 +190,23 @@ namespace InTimeCourier.Controllers
                     //Add Destination if not available
                     if(courier.DestinationId==0)
                     {
-                        DestinationMaster destinationMaster = new DestinationMaster();
-                        destinationMaster.Name = courier.Location;
-                        destinationMaster.Description = "Added via AWB Entry";
-                        destinationMaster.IsActive = true;
-                        destinationMaster.CreatedDate = DateTime.Now;
-                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
-                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
-                        db.SaveChanges();
-                        courier.DestinationId=db.DestinationMaster.OrderByDescending(x => x.Id).Select(x=>x.Id).FirstOrDefault();
-
+                       int DstnId = db.DestinationMaster.Where(x => x.Name == courier.Location.Trim()).Select(x => x.Id).FirstOrDefault();
+                       if (DstnId == 0)
+                       {
+                           DestinationMaster destinationMaster = new DestinationMaster();
+                           destinationMaster.Name = courier.Location.Trim();
+                           destinationMaster.Description = "Added via AWB Entry";
+                           destinationMaster.IsActive = true;
+                           destinationMaster.CreatedDate = DateTime.Now;
+                           destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                           db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                           db.SaveChanges();
+                           courier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                       }
+                       else
+                       {
+                           courier.DestinationId = DstnId;
+                       }
                     }
 
                     courier.Distance = db.PartyMasters.Where(sa => sa.PartyId == courier.PartyId).Select(sa => sa.PartyName).FirstOrDefault();
@@ -299,16 +315,25 @@ namespace InTimeCourier.Controllers
             {
                 if (courrier.DestinationId == 0)
                 {
-                    //Add Destination if not available
-                    DestinationMaster destinationMaster = new DestinationMaster();
-                    destinationMaster.Name = courrier.Location;
-                    destinationMaster.Description = "Added via AWB Entry";
-                    destinationMaster.IsActive = true;
-                    destinationMaster.CreatedDate = DateTime.Now;
-                    destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
-                    db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
-                    db.SaveChanges();
-                    courrier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                    int DstnId = db.DestinationMaster.Where(x => x.Name == courrier.Location.Trim()).Select(x => x.Id).FirstOrDefault();
+                    if (DstnId == 0)
+                    {
+                        //Add Destination if not available
+                        DestinationMaster destinationMaster = new DestinationMaster();
+                        destinationMaster.Name = courrier.Location;
+                        destinationMaster.Description = "Added via AWB Entry";
+                        destinationMaster.IsActive = true;
+                        destinationMaster.CreatedDate = DateTime.Now;
+                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                        db.SaveChanges();
+                        courrier.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                    }
+                    else
+                    {
+                        courrier.DestinationId = DstnId;
+                    }
+
 
                 }
                 courrier.ModifyBy = int.Parse("0" + Session["UserId"]);
@@ -329,16 +354,25 @@ namespace InTimeCourier.Controllers
             {
                 if (courrierMaster.DestinationId == 0)
                 {
-                    //Add Destination if not available
-                    DestinationMaster destinationMaster = new DestinationMaster();
-                    destinationMaster.Name = courrierMaster.Location;
-                    destinationMaster.Description = "Added via AWB Entry";
-                    destinationMaster.IsActive = true;
-                    destinationMaster.CreatedDate = DateTime.Now;
-                    destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
-                    db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
-                    db.SaveChanges();
-                    courrierMaster.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                    int DstnId = db.DestinationMaster.Where(x => x.Name == courrierMaster.Location.Trim()).Select(x => x.Id).FirstOrDefault();
+                    if (DstnId == 0)
+                    {
+                        //Add Destination if not available
+                        DestinationMaster destinationMaster = new DestinationMaster();
+                        destinationMaster.Name = courrierMaster.Location;
+                        destinationMaster.Description = "Added via AWB Entry";
+                        destinationMaster.IsActive = true;
+                        destinationMaster.CreatedDate = DateTime.Now;
+                        destinationMaster.CreatedBy = int.Parse("0" + Session["UserId"]);
+                        db.Entry(destinationMaster).State = System.Data.Entity.EntityState.Added;
+                        db.SaveChanges();
+                        courrierMaster.DestinationId = db.DestinationMaster.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
+                    }
+                    else
+                    {
+                        courrierMaster.DestinationId = DstnId;
+                    }
+                   
                 }
                 decimal? fuelcharges= db.PartyMasters.Where(sa => sa.PartyId == courrierMaster.PartyId).Select(sa => sa.FuelCharges).FirstOrDefault();
                 decimal? finalfuelcharges = 0;
@@ -459,7 +493,7 @@ namespace InTimeCourier.Controllers
         [HttpPost]
         public JsonResult SaveBillDetails(long partyId, string fromDate, string toDate, decimal grandTotal,
             decimal TotalAmount, decimal fullCharges, decimal CGST, decimal SGST, string InvoiceNo, int SrNo,
-            string InvoiceDate, string[] courrierIdList)
+            string InvoiceDate, string[] courrierIdList,string gstType,string addressType)
         {
             SqlConnection connString = new SqlConnection(db.Database.Connection.ConnectionString);
             if (connString.State == ConnectionState.Closed)
@@ -473,11 +507,22 @@ namespace InTimeCourier.Controllers
             cmd.Parameters.AddWithValue("@PeriodTo", toDate);
             cmd.Parameters.AddWithValue("@TotalAmount", TotalAmount);
             cmd.Parameters.AddWithValue("@FullCharges", fullCharges);
-            cmd.Parameters.AddWithValue("@CGST", CGST);
-            cmd.Parameters.AddWithValue("@SGST", SGST);
+            if(gstType=="3")
+            {
+                cmd.Parameters.AddWithValue("@CGST", 0.00);
+                cmd.Parameters.AddWithValue("@SGST", 0.00);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@CGST", CGST);
+                cmd.Parameters.AddWithValue("@SGST", SGST);
+            }
+           
             cmd.Parameters.AddWithValue("@InvoiceDate", InvoiceDate);
             cmd.Parameters.AddWithValue("@GrandTotal", grandTotal);
             cmd.Parameters.AddWithValue("@UserId", int.Parse("0" + Session["UserId"]));
+            cmd.Parameters.AddWithValue("@gstType", gstType);
+            cmd.Parameters.AddWithValue("@addressType",addressType);
             cmd.Parameters.Add("@GeneratedBillId", SqlDbType.VarChar, 50);
             cmd.Parameters["@GeneratedBillId"].Direction = ParameterDirection.Output;
             cmd.Parameters.Add("@BillDate", SqlDbType.Date);
@@ -762,7 +807,7 @@ namespace InTimeCourier.Controllers
 
 
         [HttpPost]
-        public JsonResult CalculateInvoiceData(string [] cridlist,string fuelpercntg)
+        public JsonResult CalculateInvoiceData(string [] cridlist,string fuelpercntg,bool NONGSTParty)
         {
 
             string sql = "SELECT SUM(Amount)+SUM(ISNULL(Discount,0)) As NetAmount,COUNT(1) AS RecordCount,round(((SUM(Amount)+(SUM(FuelCharges)))*9)/100,2) CGST," +
@@ -782,53 +827,63 @@ namespace InTimeCourier.Controllers
             dt.Columns.Add(newCol2);
             if (dt.Columns.Count > 1 && dt.Rows.Count > 0)
             {
-                if (fuelpercntg == "0.00 %")
+                if(NONGSTParty==true)
                 {
-                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) + 
-                                     Convert.ToDecimal(dt.Rows[0]["CGST"]) +
-                                     Convert.ToDecimal(dt.Rows[0]["SGST"]);
-                    var grndttl = GrandTotal.ToString("0.00");
-                    var spltgrndttl = grndttl.Split('.');
-                    int pr1 = Convert.ToInt32(spltgrndttl[0]);
-                    int pr2 = Convert.ToInt32(spltgrndttl[1]);
-                    if (pr2 > 0)
-                    {
-                        GrandTotal = pr1 + 1;
-                        dt.Rows[0]["GrandTotal"] = GrandTotal;
-                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
-                    }
-                    else
-                    {
-                        //GrandTotal = pr1 + 1;
-                        dt.Rows[0]["GrandTotal"] = GrandTotal;
-                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
-                    }
-                    dt.Rows[0]["FuelCharges"] = "0.00";
-
+                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]);
+                    dt.Rows[0]["GrandTotal"] = GrandTotal;
+                    dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
                 }
                 else
                 {
-                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) +
-                                    Convert.ToDecimal(dt.Rows[0]["CGST"]) +
-                                    Convert.ToDecimal(dt.Rows[0]["SGST"])+
-                                    Convert.ToDecimal(dt.Rows[0]["FuelCharges"]);
-                    var grndttl = GrandTotal.ToString("0.00");
-                    var spltgrndttl = grndttl.Split('.');
-                    int pr1 = Convert.ToInt32(spltgrndttl[0]);
-                    int pr2 = Convert.ToInt32(spltgrndttl[1]);
-                    if (pr2 > 0)
+                    if (fuelpercntg == "0.00 %")
                     {
-                        GrandTotal = pr1 + 1;
-                        dt.Rows[0]["GrandTotal"] = GrandTotal;
-                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) +
+                                         Convert.ToDecimal(dt.Rows[0]["CGST"]) +
+                                         Convert.ToDecimal(dt.Rows[0]["SGST"]);
+                        var grndttl = GrandTotal.ToString("0.00");
+                        var spltgrndttl = grndttl.Split('.');
+                        int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                        int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                        if (pr2 > 0)
+                        {
+                            GrandTotal = pr1 + 1;
+                            dt.Rows[0]["GrandTotal"] = GrandTotal;
+                            dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        }
+                        else
+                        {
+                            //GrandTotal = pr1 + 1;
+                            dt.Rows[0]["GrandTotal"] = GrandTotal;
+                            dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        }
+                        dt.Rows[0]["FuelCharges"] = "0.00";
+
                     }
                     else
                     {
-                        //GrandTotal = pr1 + 1;
-                        dt.Rows[0]["GrandTotal"] = GrandTotal;
-                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]) +
+                                        Convert.ToDecimal(dt.Rows[0]["CGST"]) +
+                                        Convert.ToDecimal(dt.Rows[0]["SGST"]) +
+                                        Convert.ToDecimal(dt.Rows[0]["FuelCharges"]);
+                        var grndttl = GrandTotal.ToString("0.00");
+                        var spltgrndttl = grndttl.Split('.');
+                        int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                        int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                        if (pr2 > 0)
+                        {
+                            GrandTotal = pr1 + 1;
+                            dt.Rows[0]["GrandTotal"] = GrandTotal;
+                            dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        }
+                        else
+                        {
+                            //GrandTotal = pr1 + 1;
+                            dt.Rows[0]["GrandTotal"] = GrandTotal;
+                            dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                        }
                     }
                 }
+               
                 
             }
 

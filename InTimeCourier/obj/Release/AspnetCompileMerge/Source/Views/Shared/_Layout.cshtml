@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Prime Logistics</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        .navbar-default {
+            background-color: #555555;
+            /* border-color: #fd8102; */
+        }
+            .navbar-default .navbar-nav > li > a {
+                color: #e5e5e5;
+            }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" style="height: 50px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <div class="" style="margin-left: -75%;margin-top:-3%">
+                            <a href="@Url.Action("Index", "Home")" title="Prime Logistic" , rel="nofollow">
+                                <img src="@Url.Content("~/Content/Prime_Logistic-Logo-01_Header-removebg-preview.png")" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav" style="margin-left: 10%;">
+                            @if (Session["Name"] != null && Session["UserId"] != null)
+                            {
+
+
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Master
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Party Master", "PartyList", "Courier")</li>
+                                        <li>@Html.ActionLink("Mode Master", "CourierModeList", "Courier")</li>
+                                        <li>@Html.ActionLink("Network Master", "Index", "Network")</li>
+                                        <li>@Html.ActionLink("Destination Master", "Index", "Destination")</li>
+                                        <li>@Html.ActionLink("Rate Master", "GetRateMappingList", "Source")</li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        AWB Entry
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Daily Entry", "AddCourrier", "CourierDetails")</li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Sale Report
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Bill Details", "Index", "BillDetails")</li>
+                                        <li>@Html.ActionLink("Reports", "CourrierList", "CourierDetails")</li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        Ledger
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            @Html.ActionLink("Bill Statement", "Index", "BillStatement")
+                                        </li>
+                                        <li>@Html.ActionLink("Rate List", "GetRateMappingList", "Source")</li>
+                                        @*<li><a href="#">Page 1-3</a></li>*@
+                                    </ul>
+                                </li>
+                            }
+                            <li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+                        </ul>
+                        @if (Session["Name"] != null && Session["UserId"] != null)
+                        {
+                            @Html.Partial("_LoginPartial")
+                        }
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <div class="body-content">
+        @RenderBody()
+        <hr />
+    </div>
+    <footer class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container body-content">
+            <a class="navbar-brand">&copy; @DateTime.Now.Year - Designed & Developed By- : JD Softech (+919029451159)</a>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @RenderSection("scripts", required: false)
+
+    <div class="modal fade" id="modalBillDetailsForm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title"><label id="lblHeader"> Bill Details</label></h4>
+                </div>
+                <div class="panel-body" id="divBillDetails">
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-deep-orange" data-dismiss="modal" aria-label="Close">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*<div class="modal fade bd-example-modal-lg" id="modalBillDetailsForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title"><label id="lblHeader"> Bill Details</label></h4>
+                    </div>
+                    <div class="panel-body" id="divBillDetails">
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-deep-orange" data-dismiss="modal" aria-label="Close">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    <script>
+        $(function () {
+            $("#addtxtPeriodFrom").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+
+            $("#addtxtPeriodFrom").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+    </script>
+</body>
+</html>

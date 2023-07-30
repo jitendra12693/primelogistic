@@ -1,0 +1,132 @@
+﻿@model IEnumerable<InTimeCourier.Models.PartyMaster>
+
+@{
+    ViewBag.Title = "PartyList";
+}
+
+<link href="~/Scripts/dataTables.min.css" rel="stylesheet" />
+<h2>Party List</h2>
+
+<p>
+    @Html.ActionLink("Add New Party", "AddParty")
+</p>
+<table class="table" id="tblList">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PartyName)
+            </th>
+            <th>@Html.DisplayNameFor(model => model.MobileNo)</th>
+            <th>@Html.DisplayNameFor(model => model.EmailId)</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address1)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.Address2)
+                </th>*@
+            @*<th>
+                    @Html.DisplayNameFor(model => model.Landmark)
+                </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.StateId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CountryId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>*@
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.IsActive == true)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartyName)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.MobileNo)</td>
+                    <td>@Html.DisplayFor(modelItem => item.EmailId)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address1)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Address2)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Landmark)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.StateId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActive)
+                        </td>*@
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PartyId }) |
+                        @Html.ActionLink("Details", "PartyDetails", new { id = item.PartyId }) |
+                        @Html.ActionLink("DeActive", "AcivateDeativate", new { id = item.PartyId })
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr class="alert alert-danger">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PartyName)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.MobileNo)</td>
+                    <td>@Html.DisplayFor(modelItem => item.EmailId)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address1)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Address2)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.Landmark)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.StateId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActive)
+                        </td>*@
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PartyId }) |
+                        @Html.ActionLink("Details", "PartyDetails", new { id = item.PartyId }) |
+                        @Html.ActionLink("Active", "AcivateDeativate", new { id = item.PartyId })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#tblList').dataTable();
+        });
+    </script>
+}

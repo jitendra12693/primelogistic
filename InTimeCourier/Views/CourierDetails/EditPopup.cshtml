@@ -26,13 +26,13 @@
         @Html.HiddenFor(model => model.DestinationId)
         @Html.HiddenFor(model => model.PartyId)
         <div class="row">
-            <div class="col-md-6 form-group" style="display:none;">
+            @*<div class="col-md-6 form-group" style="display:none;">
                 @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-9">
                     @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
                 </div>
-            </div>
+            </div>*@
             <div class="col-md-6 form-group">
                 @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5", maxlength = "15" })
                 <div class="col-md-7">
@@ -245,6 +245,8 @@ $('#Location').val(Location[0].Name);
     $("#btnUpdate").click(function (e) {
     e.preventDefault();
     //Show loading display here
+        //alert('2');
+        debugger;
         var valdata = $('form').serialize();   
     $.ajax({
         url: '@Url.Action("EditPopup")',
@@ -255,9 +257,10 @@ $('#Location').val(Location[0].Name);
         success: function (data) {
             //Show popup
             if (data == 'Success') {
+                $('#btnSearch').click();
                 $('#divUpdateCourrier').modal('hide');
                 alert('Your Courier Updated Successfully');
-                $('#btnSearch').click();
+               
             }
         }
     });
