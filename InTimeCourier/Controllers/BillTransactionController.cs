@@ -67,5 +67,17 @@ namespace InTimeCourier.Controllers
             }
         }
 
+        public JsonResult SaveTransaction(int partyId,string financialYear,string transactionDate,decimal creditAmount,string narration)
+        {
+            var response = db.Database.SqlQuery<Responsedetails>("exec uspInsertBillTransaction @PartyId, @FYear, @TransactionDate, @Narration, @CreditAmount, @UserId",
+                new SqlParameter("@PartyId", partyId),
+                new SqlParameter("@FYear", financialYear),
+                new SqlParameter("@TransactionDate", transactionDate),
+                new SqlParameter("@Narration", narration),
+                new SqlParameter("@CreditAmount", creditAmount),
+                new SqlParameter("@UserId", int.Parse("0" + Session["UserId"]))).FirstOrDefault();
+            TempData["PaymentMessage"] = response.Message;
+            return Json(new {message= response.Message },JsonRequestBehavior.AllowGet);
+        }
     }
 }

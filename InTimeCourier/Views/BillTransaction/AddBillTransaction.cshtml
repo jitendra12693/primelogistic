@@ -1,50 +1,56 @@
-﻿@model InTimeCourier.Models.BillDetails
-    @{ 
-        Layout = null;
-    }
-@using (Html.BeginForm()) { 
-<div class="form-group col-lg-6">
-    @Html.HiddenFor(model=>model.PartyId)
-    @Html.HiddenFor(model => model.BillId)
-    @Html.HiddenFor(model => model.CreatedDt)
-    @Html.HiddenFor(model => model.CreatedBy)
-    @Html.EditorFor(model => model.BillDate, "{0:MM/dd/yyyy}", new { htmlAttributes = new { @class = "form-control", @placeholder = "Bill Date (MM/DD/YYYY)" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.BillNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bill Number", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.PeriodFrom, "{0:MM/dd/yyyy}", new { htmlAttributes = new { @class = "form-control", @placeholder = "From Date (MM/DD/YYYY)"} })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.PeriodTo, new { htmlAttributes = new { @class = "form-control", @placeholder = "To Date (MM/DD/YYYY)"} })
-</div>
-<div class="col-lg-6">
-    @Html.EditorFor(model => model.PartyName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Party Name", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.GSTINNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "GSTIN Number", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.TotalAmount, new { htmlAttributes = new { @class = "form-control", @placeholder = "Total Amount", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.FullCharges, new { htmlAttributes = new { @class = "form-control", @placeholder = "Fuel Charges", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.SGST, new { htmlAttributes = new { @class = "form-control", @placeholder = "SGST Charges", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.CGST, new { htmlAttributes = new { @class = "form-control", @placeholder = "CGST Charges", @readonly = "true" } })
-</div>
-<div class="form-group col-lg-6">
-    @Html.EditorFor(model => model.GrandTotal, new { htmlAttributes = new { @class = "form-control", @placeholder = "Grand Total", @readonly = "true",@style="width:100%;" } })
-</div>
+﻿@model InTimeCourier.Models.BillTransaction
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
     <div class="form-group col-lg-6">
-        <input type="submit" class="btn btn-success" value="Update Bill"> 
+        @Html.HiddenFor(model => model.TransactionId)
+        <select id="ddlPartyName" class="form-control"></select>
+    </div>
+    <div class="form-group col-lg-6">
+        <select id="ddlFinancialYear" class="form-control"></select>
+    </div>
+    <div class="form-group col-lg-6">
+        <input type="text" class="form-control" id="txtTransactionDate" placeholder="Transaction Date" />
+    </div>
+    <div class="col-lg-6">
+        <input type="text" class="form-control" id="txtCreditAmount" placeholder="Credit Amount" />
+    </div>
+    <div class="form-group col-lg-12">
+        <textarea id="txtNarration" class="form-control" placeholder="Transaction Narration"></textarea>
+    </div>
+
+    <div class="form-group col-lg-6">
+        <input type="submit" class="btn btn-success" value="Save Transaction">
     </div>
 }
 @section Scripts {
 
-    
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/BillTransaction/GetAllPartyAndFinancialYear",
+
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $('#ddlPartyName').find('option').remove();
+                    $('#ddlFinancialYear').find('option').remove();
+                    $('#ddlPartyName').append($('<option></option>').val('').html('--Select Party--'));
+                    $('#ddlFinancialYear').append($('<option></option>').val('').html('--Select Financial Year--'));
+
+                    $(data?.parties).each(function (index, item) { // GETTING ERROR HERE
+                        $('#ddlPartyName').append($('<option></option>').val(item.PartyId).html(item.PartyName));
+                    });
+                    $(data?.financialYears).each(function (index, item) { // GETTING ERROR HERE
+                        $('#ddlFinancialYear').append($('<option></option>').val(item.FYearId).html(item.FYear));
+                    });
+                },
+                error: function ajaxError(response) {
+                    console.log(response.status + ' ' + response.statusText);
+                }
+            });
+        })
+    </script>
 }
