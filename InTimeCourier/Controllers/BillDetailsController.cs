@@ -191,6 +191,11 @@ namespace InTimeCourier.Controllers
             sda.Fill(ds);
             return Json(JsonConvert.SerializeObject(ds), JsonRequestBehavior.AllowGet);
         }
+    
+        public ActionResult ReceiptTransaction()
+        {
+            return View();
+        }
     }
     public class Responsedetails
     {

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<InTimeCourier.Models.BillTransaction>
+@{
+    Layout = null;
+    var cntn = 1;
+}
+<style>
+    .badge1 {
+        /* display: inline-block; */
+        min-width: 10px;
+        padding: 3px 7px;
+        font-size: 10px;
+        /* font-weight: bold; */
+        line-height: 1;
+        color: #ffffff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        background-color: #9E9E9E;
+        border-radius: 10px;
+    }
+</style>
+<div id="divBillTransactionList" class="" >
+    <table class="table table-bordered table-hover table-striped">
+        <tr>
+            <th style="text-align:center;font-size:12px;">Sr No.</th>
+            <th style="text-align: center; font-size: 12px;">Voucher No</th>
+            <th style="text-align: center; font-size: 12px;">Voucher Type</th>
+            <th style="text-align: center; font-size: 12px;">Transaction Date</th>
+            <th style="text-align:center;font-size:12px;">Narration</th>
+            <th style="text-align:center;font-size:12px;">Dabit Amount</th>
+            <th style="text-align:center;font-size:12px;">Credit Amount</th>
+            <th style="text-align:center;font-size:12px;">Current Running Amount</th>
+        </tr>
+        @if (Model != null && Model.ToList().Count()>0)
+        {
+            foreach (var item in Model.ToList())
+            {
+                <tr>
+                    
+                    <td style="text-align:center;font-size:12px;">@cntn</td>
+                    <td style="text-align: center; font-size: 14px;">@item.InvoiceNo</td>
+                    <td style="text-align:center;font-size:14px;">@item.VoucherType</td>
+                    <td style="text-align:center;font-size:12px;">@item.TransactionDate</td>
+                    <td style="text-align:center;font-size:12px;">@item.Narration</td>
+                    <td style="text-align:center;font-size:12px;">@item.DebitAmount</td>
+                    <td style="text-align:center;font-size:12px;">@item.CreditAmount</td>
+                    <td style="text-align:center;font-size:12px;">@item.BalanceAmount</td>
+                </tr>
+                cntn++;
+            }
+        }
+    </table>
+</div>
+
+

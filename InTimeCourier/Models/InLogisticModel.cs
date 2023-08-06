@@ -28,6 +28,8 @@ namespace InTimeCourier.Models
         public virtual DbSet<ApiMailClient> ApiMailClients { get; set; }
         public virtual DbSet<NetworkMaster> NetworkMaster { get; set; }
         public virtual DbSet<DestinationMaster> DestinationMaster { get; set; }
+        public virtual DbSet<FinancialYear> FinancialYears { get; set; }
+        public virtual DbSet<BillTransaction> BillTransactions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

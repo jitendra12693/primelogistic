@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Prime Logistics</title>
+    <title>@ViewBag.Title - In Time Logistics</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <style>
@@ -81,6 +81,9 @@
                                     <ul class="dropdown-menu">
                                         <li>
                                             @Html.ActionLink("Bill Statement", "Index", "BillStatement")
+                                        </li>
+                                        <li>
+                                            @Html.ActionLink("Bill Ledger", "Index", "BillTransaction")
                                         </li>
                                         <li>@Html.ActionLink("Rate List", "GetRateMappingList", "Source")</li>
                                         @*<li><a href="#">Page 1-3</a></li>*@
