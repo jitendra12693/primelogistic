@@ -215,13 +215,13 @@
                         <div style="margin-top:-10px;margin-bottom:-30px">
                            <div><b> TAX INVOICE </b></div>
                             <hr style='margin-bottom:2%'>
-                            <img src="${strResponse.Table3[0].CompanyLogo}" style="height:45px;float:left;margin-top:-1%" />
+                            <img src="${strResponse.Table3[0].CompanyLogo}" style="height:30px;float:left;margin-top:-1%" />
                         </div>
 
                         <div style='float:right'>
-                        <span style='font-size:small'>${strResponse.Table3[0].Address1}, ${strResponse.Table3[0].Address2}, ${strResponse.Table3[0].City}-${strResponse.Table3[0].Pincode}, ${strResponse.Table3[0].State}.</span>
-                        <span style='font-size:small'><br/>Tel :+91${strResponse.Table3[0].MobileNo}${strResponse.Table3[0].AlternateContact ? '/+91' + strResponse.Table3[0].AlternateContact : ''} </span>
-                        <span style='font-size:small'>, Email Address: ${strResponse.Table3[0].EmailId}</span>
+                        <span style='font-size:xx-small'>${strResponse.Table3[0].Address1}, ${strResponse.Table3[0].Address2}, ${strResponse.Table3[0].City}-${strResponse.Table3[0].Pincode}, ${strResponse.Table3[0].State}.</span>
+                        <span style='font-size:xx-small'><br/>Tel :+91${strResponse.Table3[0].MobileNo}${strResponse.Table3[0].AlternateContact ? '/+91' + strResponse.Table3[0].AlternateContact : ''} </span>
+                        <span style='font-size:xx-small'>, Email Address: ${strResponse.Table3[0].EmailId}</span>
                         </div>
 
                         <table style="width:100%;font-size:13px;margin-top:12%">
@@ -392,7 +392,7 @@
                         Weight
                     </th>
                     <th style="text-align:center">
-                        ODA
+                        FOV/ODA
                     </th>
                     <th style="text-align:center">
                         Amount
@@ -454,12 +454,12 @@
                         var footer = `<table style='width:100%;font-size:13px;'>
                  <tr>
                      <td style='width:65%;text-align:center'><strong>Terms & Conditions</strong></td>
-                    <td style='text-align:center'><strong>For Prime Logistic</strong></td>
+                    <td style='text-align:center'><strong>For Intime Logistic</strong></td>
                 </tr>
                 <tr>
                     <td><p style='font-size:x-small'>
                             1. Kindly notify us in writing regarding any discrepancy in this invoice within 7 days. Otherwise, <br />This invoice shall be deemed to be correct & payable by you.
-                            <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of PRIME LOGISTICS .
+                            <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of INTIME LOGISTICS .
                             <br />
                             3. Interest @@2% per month will be charged on delayed payments.
                             <br />

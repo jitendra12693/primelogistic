@@ -1,0 +1,86 @@
+﻿@model IEnumerable<InTimeCourier.Models.BillDetails>
+@{
+    Layout = null;
+    var cntn = 1;
+}
+<style>
+    .badge1 {
+        /* display: inline-block; */
+        min-width: 10px;
+        padding: 3px 7px;
+        font-size: 10px;
+        /* font-weight: bold; */
+        line-height: 1;
+        color: #ffffff;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        background-color: #9E9E9E;
+        border-radius: 10px;
+    }
+</style>
+<div id="divBillDetailsList" class="" >
+    <table class="table table-bordered table-hover table-striped">
+        <tr>
+            <th style="text-align:center;font-size:12px;">Sr No.</th>
+            <th style="text-align: center; font-size: 12px;">Bill Date</th>
+            <th style="text-align: center; font-size: 12px;">Bill No</th>
+            <th style="text-align: center; font-size: 12px;">Party Name</th>
+            <th style="text-align:center;font-size:12px;">GSTIN/UIN</th>
+            <th style="text-align:center;font-size:12px;">Total</th>
+            <th style="text-align:center;font-size:12px;">Fuel Charges</th>
+            <th style="text-align:center;font-size:12px;">C.G.S.T. (9%)</th>
+            <th style="text-align:center;font-size:12px;">S.G.S.T  (9%)</th>
+            <th style="text-align:center;font-size:12px;">Amount</th>
+            @*
+        <th style="text-align:center">Paid Amt</th>*@
+            @*
+        <th>Cheque No</th>*@
+
+            <th style="text-align:center">Action</th>
+        </tr>
+        @if (Model != null && Model.ToList().Count()>0)
+        {
+            foreach (var item in Model.ToList())
+            {
+                <tr>
+                    @*<td>
+            @Html.ActionLink("" + item.BillNo, "SelectedPartyCourrierList", new { PartyId = item.PartyId, PeriodFrom = item.PeriodFrom, PeriodTo = item.PeriodTo })
+        </td>*@
+                    <td style="text-align:center;font-size:12px;">@cntn</td>
+                    <td style="text-align: center; font-size: 12px;">@item.BillDate<br /><span class="badge1">@item.PeriodFrom | @item.PeriodTo</span></td>
+                    <td style="text-align: center; font-size: 14px;">@item.BillNo</td>
+                    <td style="text-align:center;font-size:14px;">@item.PartyName</td>
+                    <td style="text-align:center;font-size:12px;">@item.GSTINNumber</td>
+                    <td style="text-align:center;font-size:12px;">@item.TotalAmount</td>
+                    <td style="text-align:center;font-size:12px;">@item.FullCharges</td>
+                    <td style="text-align:center;font-size:12px;">@item.CGST</td>
+                    <td style="text-align:center;font-size:12px;">@item.SGST</td>
+                    <td style="text-align: center; font-size: 15px; font-weight: bold">₹@item.GrandTotal/-</td>
+                    @*<td>@item.PaidAmount</td>*@
+                    @*<td>@item.ChequeNo</td>*@
+
+                    <td style="text-align:center">
+
+                        <a href="#" onclick="printBillDetails(@item.BillId)" title="Print Invoice">
+                            <i class="glyphicon glyphicon-print"></i>
+                        </a>&nbsp; |  &nbsp;
+                        @*<a href="#" onclick="downloadBillDetails(@item.BillId)" title="Download Invoice">
+                <i class="glyphicon glyphicon-download-alt"></i>
+            </a>&nbsp; | &nbsp;*@
+                        <a href="#" onclick="deleteBillDetails(@item.BillId)" title="Delete Invoice">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                        @*<a href="#" onclick="OpenBillDetails(@item.BillId)" title="Edit" data-toggle="modal" data-target="#modalBillDetailsForm">
+                <i class="glyphicon glyphicon-edit"></i>
+            </a>
+            <a href="#" title="Payment" onclick="OpenPaymentDetails(@item.BillId)" data-toggle="modal" data-target="#modalBillDetailsForm" ><i class="glyphicon glyphicon-credit-card"></i><i class="glyphicon glyphicon-usd"></i></a>*@
+                    </td>
+                </tr>
+                cntn++;
+            }
+        }
+    </table>
+</div>
+
+

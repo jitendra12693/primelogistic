@@ -1,0 +1,27 @@
+﻿@model IEnumerable<InTimeCourier.Models.CorrierDetails>
+
+@{
+    ViewBag.Title = "CourrierList";
+}
+<style>
+    .ajaxLoader {
+        outline-style: none;
+        outline-color: invert;
+        outline-width: 0px;
+        width: 104px;
+        height: 104px;
+        position: absolute;
+        z-index: 10000;
+        background-image: url("../../Content/ajax-loader.gif");
+    }
+</style>
+
+
+@section Scripts {
+
+    <script src="~/Scripts/SearchCourier.js?v=2"></script>
+    <script src="~/Scripts/autocolumn.js"></script>
+    <script type="text/javascript">
+    $('#PrintReport').columnize({ columns: 2 })
+    </script>
+}

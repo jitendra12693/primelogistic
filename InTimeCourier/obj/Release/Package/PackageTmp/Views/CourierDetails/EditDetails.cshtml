@@ -1,0 +1,469 @@
+﻿@model InTimeCourier.Models.CourrierMaster
+
+@{
+    Layout = null;
+}
+
+<h2>Edit Courier Details</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CourrierId)
+    <div class="row">
+        <div class="col-md-6 form-group" style="display:none;">
+            @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TrackingNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("AWB No", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.CNNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CNNo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Destination", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @*@Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.DropDownListFor(model => model.DestinationId, (IEnumerable<SelectListItem>)ViewBag.DestinationList, "--Please Select--", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Party Name", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @onchange = "fetchRateDetails()", @class = "form-control", @autofocus = "true",@id="PartyIdNew" })
+                @Html.ValidationMessageFor(model => model.PartyId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="control-label col-md-5">Mode</label>
+            <div class="col-md-7">
+                @Html.DropDownListFor(model => model.CourrierModeId, (IEnumerable<SelectListItem>)ViewBag.CourrierMode, "Select Mode", new { @onchange = "fetchRateDetails()", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CourrierModeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            <label class="control-label col-md-5">Network</label>
+            <div class="col-md-7">
+                @Html.DropDownListFor(m => m.NetworkModeId, (IEnumerable<SelectListItem>)ViewBag.Networks, "--Please Select--", new { @class = "form-control", @onchange = "fetchRateDetails()" })
+                @Html.ValidationMessageFor(model => model.NetworkModeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Docket Date", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.DepartureDt, new { htmlAttributes = new { @class = "form-control", @placeholder = "YYYY/MM/DD" } })
+                @Html.ValidationMessageFor(model => model.DepartureDt, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Weight, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.Weight, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "0.000 Kg" } })
+                @Html.ValidationMessageFor(model => model.Weight, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Quantity", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.Qty, new { htmlAttributes = new { @class = "form-control", @type = "number", @onkeyup = "calculateAmount()", @placeholder = "Please enter your Qty" } })
+                @Html.ValidationMessageFor(model => model.Qty, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your rate(Per / Kg)" } })
+                @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.Label("Extra Charges", htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.ODACharges, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Extra Charges" } })
+                @Html.ValidationMessageFor(model => model.ODACharges, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control", @type = "number", @onblur = "ratechangedcalculateAmount()", @placeholder = "Please enter your Discount" } })
+                @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-5" })
+            <div class="col-md-7">
+                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                @Html.HiddenFor(model => model.CreatedDt, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.StatusId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-md-6 form-group">
+            <div class="col-md-offset-10 col-md-12">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "CourrierList")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*<script type="text/javascript">
+            $(document).ready(function () {
+                $("#TrackingNo").attr("readonly", "true");
+                var d = $('#DepartureDt').val().split(' ')[0];
+                $('#DepartureDt').val(d.split("-").reverse().join("/"));
+            })
+            $(function () {
+                $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
+            });
+            var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
+            // Setter
+            $("#DepartureDt").datepicker("option", "changeYear", true);
+            function CheckSource() {
+
+            }
+            function StringToInt(number) {
+                if (number == null || number == undefined || number == NaN || number == '') {
+                    return 0;
+                } else {
+                    return parseFloat(number);
+                }
+            }
+            $("#Amount").attr("readonly", "readonly");
+            $("#Weight").change(function () {
+                debugger;
+                var arr = $("#Weight").val().split('.');
+                var txtWeigth = 0;
+                if (arr.length > 1) {
+                    var element1 = arr[0];
+                    var element2 = arr[1];
+                    if (parseInt(element2) > 0) {
+                        element1 = parseInt(element1) + 1;
+                        txtWeigth = element1;
+                    } else {
+                        txtWeigth = arr[0];
+                    }
+                } else {
+                    txtWeigth = arr[0];
+                }
+                var txtRate = $("#Rate").val();
+                var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+                $("#Amount").val(parseFloat(amount));
+            });
+
+            $("#Rate").change(function () {
+                var arr = $("#Weight").val().split('.');
+                var txtWeigth = 0;
+                if (arr.length > 1) {
+                    var element1 = arr[0];
+                    var element2 = arr[1];
+                    if (parseInt(element2) > 0) {
+                        element1 = parseInt(element1) + 1;
+                        txtWeigth = element1;
+                    }
+                    else {
+                        txtWeigth = arr[0];
+                    }
+                } else {
+                    txtWeigth = arr[0];
+                }
+
+                var txtRate = $("#Rate").val();
+                var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+                $("#Amount").val(amount);
+            });
+
+
+            $("#ddlDestination").change(function () {
+                if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+                    alert("Source and destination can not be same.");
+                    $("#ddlDestination").val('');
+                }
+            });
+            $("#ddlSource").change(function () {
+                if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+                    alert("Source and destination can not be same.");
+                    $("#ddlSource").val('');
+                }
+            });
+        </script>*@
+    <script type="text/javascript">
+        function StringToInt(number) {
+            if (number == null || number == undefined || number == NaN || number == '') {
+                return 0;
+            } else {
+                return parseFloat(number);
+            }
+        }
+        $(document).ready(function () {
+            $("#TrackingNo").attr("readonly", "readonly");
+            var d = $('#DepartureDt').val().split(' ')[0];
+            $('#DepartureDt').val(d.split("-").reverse().join("/"));
+            fetchRateDetails();
+        })
+        $(function () {
+            $("#DepartureDt").datepicker({ dateFormat: 'yy/mm/dd' });
+        });
+        var changeYear = $("#DepartureDt").datepicker("option", "changeYear");
+        // Setter
+        $("#txtDate").datepicker({
+            showOn: 'button',
+            buttonImageOnly: true,
+            buttonImage: 'images/calendar.gif',
+            dateFormat: 'dd/mm/yy'
+        });
+        $("#DepartureDt").datepicker("option", "changeYear", true);
+        //$("#Amount").attr("readonly", "readonly");
+        $("#DepartureDt").attr("readonly", "readonly");
+        //$("#Weight").change(function () {
+        //    debugger;
+        //    var arr = $("#Weight").val().split('.');
+        //    var txtWeigth = 0;
+        //    if (arr.length > 1) {
+        //        var element1 = arr[0];
+        //        var element2 = arr[1];
+        //        if (parseInt(element2) > 0) {
+        //            element1 = parseInt(element1) + 1;
+        //            txtWeigth = element1;
+        //        } else {
+        //            txtWeigth = arr[0];
+        //        }
+        //    } else {
+        //        txtWeigth = arr[0];
+        //    }
+        //    var txtRate = $("#Rate").val();
+        //    var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+        //    $("#Amount").val(parseFloat(amount));
+        //});
+        //$("#Rate").change(function () {
+        //    var arr = $("#Weight").val().split('.');
+        //    var txtWeigth = 0;
+        //    if (arr.length > 1) {
+        //        var element1 = arr[0];
+        //        var element2 = arr[1];
+        //        if (parseInt(element2) > 0) {
+        //            element1 = parseInt(element1) + 1;
+        //            txtWeigth = element1;
+        //        }
+        //        else {
+        //            txtWeigth = arr[0];
+        //        }
+        //    } else {
+        //        txtWeigth = arr[0];
+        //    }
+
+        //    var txtRate = $("#Rate").val();
+        //    var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+        //    $("#Amount").val(amount);
+        //});
+
+        //$("#ddlDestination").change(function () {
+        //    if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+        //        alert("Source and destination can not be same.");
+        //        $("#ddlDestination").val('');
+        //    }
+        //});
+        //$("#ddlSource").onchange(function () {
+        //    if ($("#ddlSource").val() == $("#ddlDestination").val()) {
+        //        alert("Source and destination can not be same.");
+        //        $("#ddlSource").val('');
+        //        console.log("ddlSource=>", $("#ddlSource").val());
+        //        $("#txtDistance").val($("#ddlSource").val())
+        //    }
+        //});
+
+        //function onChangeDestination() {
+        //    fetchRateDetails()
+        //    console.log("ddlSource=>", $("#ddlSource option:selected").text());
+        //    $("#txtDistance").val($("#ddlSource option:selected").text())
+        //}
+
+        //var ratedetails = {
+        //    FromWt: [],
+        //    ToWt: [],
+        //    rate:[]
+        //};
+        var resp = [];
+        //resp.filter(n => n.FromWt <= 0.2 && n.ToWt >= 0.2)
+        function fetchRateDetails() {
+            debugger;
+            $.ajax({
+                url: '/Source/FetchRateMapping?modeId=' + $('#CourrierModeId').val() + '&networkModeId=' + $('#NetworkModeId').val() + '&partyId=' + $('#PartyIdNew').val(),
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify(courrierDetail),
+                success: function (data) {
+                    var strResponse = JSON.parse(data);
+                    resp = [];
+                    if (strResponse.Table.length > 0) {
+                        for (var i = 0; i < strResponse.Table.length; i++) {
+                            resp.push(strResponse.Table[i]);
+                        }
+                        //if (strResponse.Table[0].PartyType = 'Logistic') {
+                        //    $("#Qty").attr("readonly", false);
+                        //}
+                        //else {
+                        //    $("#Qty").attr("readonly", true);
+                        //}
+                    }
+                    else {
+                        //$("#Qty").attr("readonly", true);
+                        resp = [];
+                        alert("rate not available");
+                    }
+
+                }
+            })
+        }
+
+        function calculateAmount() {
+            var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+            var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+            var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+            var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+            var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+            if (weight > 0) {
+                if (resp.length > 0) {
+                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                    if (rateresp.length > 0) {
+                        $("#Rate").val(rateresp[0].Rate);
+                       // if (resp[0].PartyType == 'Logistic') {
+                            if ($("#Qty").val() != "") {
+                                var amt = rateresp[0].Rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                            }
+                            else {
+                                $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                            }
+
+                        //}
+                        //else {
+                        //    $("#Amount").val(rateresp[0].Rate + ODACharges - discount);
+                        //}
+
+                    }
+                    else {
+                        if (rate > 0) {
+                            $("#Amount").val((rate * qty) + ODACharges - discount);
+                        }
+                        else {
+                            $("#Amount").val('');
+                        }
+
+                    }
+                } else {
+                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                }
+            }
+            else {
+                //$("#Qty").val('');
+                $("#Rate").val('');
+                $("#Amount").val('');
+            }
+
+        }
+
+
+        function ratechangedcalculateAmount() {
+            var weight = parseFloat($("#Weight").val() == '' ? 0 : $("#Weight").val());
+            var ODACharges = parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val());
+            var discount = parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val());
+            var qty = parseInt($("#Qty").val() == '' ? 0 : $("#Qty").val());
+            var rate = parseInt($("#Rate").val() == '' ? 0 : $("#Rate").val());
+            if (weight > 0) {
+                if (resp.length > 0) {
+                    var rateresp = resp.filter(n => n.FromWt <= weight && n.ToWt >= weight);
+                    if (rateresp.length > 0) {
+                        if (resp[0].PartyType == 'Logistic') {
+                            if ($("#Qty").val() != "") {
+                                var amt = rate * parseInt(qty)
+                                $("#Amount").val(amt + ODACharges - discount);
+                                if (parseFloat($("#Amount").val()) <= 0) {
+                                    alert('please enter valid data(Extra Charges or Discount)')
+                                    $("#Amount").val('');
+                                    $("#ODACharges").val('');
+                                    $("#Discount").val('');
+                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                }
+                            }
+                            else {
+                                $("#Amount").val(rate + ODACharges - discount);
+                                if (parseFloat($("#Amount").val()) <= 0) {
+                                    alert('please enter valid data(Extra Charges or Discount)')
+                                    $("#Amount").val('');
+                                    $("#ODACharges").val('');
+                                    $("#Discount").val('');
+                                    $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                                }
+                            }
+
+                        }
+                        else {
+                            $("#Amount").val(rate + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(Extra Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+
+                    }
+                    else {
+                        if (rate > 0) {
+                            $("#Amount").val((rate * qty) + ODACharges - discount);
+                            if (parseFloat($("#Amount").val()) <= 0) {
+                                alert('please enter valid data(Extra Charges or Discount)')
+                                $("#Amount").val('');
+                                $("#ODACharges").val('');
+                                $("#Discount").val('');
+                                $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                            }
+                        }
+                        else {
+                            $("#Amount").val('');
+                        }
+
+                    }
+                } else {
+                    $("#Amount").val((rate * qty) + ODACharges - discount);
+                    if (parseFloat($("#Amount").val()) <= 0) {
+                        alert('please enter valid data(Extra Charges or Discount)')
+                        $("#Amount").val('');
+                        $("#ODACharges").val('');
+                        $("#Discount").val('');
+                        $("#Amount").val(amt + parseInt($("#ODACharges").val() == '' ? 0 : $("#ODACharges").val()) - parseInt($("#Discount").val() == '' ? 0 : $("#Discount").val()));
+                    }
+                }
+            }
+            else {
+                $("#Qty").val('');
+                $("#Rate").val('');
+                $("#Amount").val('');
+            }
+
+        }
+    </script>
+}

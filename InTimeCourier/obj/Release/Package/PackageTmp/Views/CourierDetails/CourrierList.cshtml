@@ -1,0 +1,528 @@
+﻿@model IEnumerable<InTimeCourier.Models.CorrierDetails>
+
+@{
+    ViewBag.Title = "Courrier List";
+    var loggedInUser = (InTimeCourier.Models.AdminUser)Session["LoggedInUser"];
+}
+<style>
+    .ajaxLoader {
+        outline-style: none;
+        outline-color: invert;
+        outline-width: 0px;
+        width: 104px;
+        height: 104px;
+        position: absolute;
+        z-index: 10000;
+        background-image: url("../../Content/ajax-loader.gif");
+    }
+
+    @@media screen and (min-width: 768px) {
+        .modal-dialog1 {
+            right: auto;
+            left: auto;
+            width: 60%;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+   /* .modal {
+        display: block !important;
+    }
+
+    .modal-dialog {
+        overflow-y: initial !important
+    }*/
+
+    .testmodel {
+        height: 200px;
+        overflow-y: auto;
+    }
+   /* tbody {
+        display: block;
+        height: 50px;
+        overflow: auto;
+    }*/
+
+       /* thead, tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+    thead {
+        width: calc( 100% - 1em )
+    }*/
+</style>
+<h2>Sale Report List</h2>
+
+<p>
+    @Html.ActionLink("Create New AWB Entry", "AddCourrier")
+</p>
+<div class="col col-lg-12">
+    @{Html.RenderAction("SearchCorier", "CourierDetails");}
+</div>
+<hr />
+@{Html.RenderAction("SearchList", "CourierDetails");}
+
+
+<div id="grid">
+    @*<div id="divAjaxLoader" class="ajaxLoader"></div>*@
+</div>
+<div>
+
+</div>
+<div id="recieptModal" style="display: none" align="center">
+    <div class="modal-body">
+        <div class="modal-body" id="divReciept">
+            <table class="table table-bordered" style="width:100%;">
+                <tr>
+                    <td colspan="2">
+                        <center>
+                            <div style="margin-top:-3%;margin-bottom:-3%">
+                                <img src="@loggedInUser.SignPic" style="height:105px;" />
+                                @*<h1>Prime Logistic</h1>*@
+                            </div>
+                            <hr />
+                            <span>@loggedInUser.Address1, @loggedInUser.Address2, @loggedInUser.City, @loggedInUser.State-@loggedInUser.Pincode.</span>
+                            <span>
+                                Tel :+91 @loggedInUser.MobileNo  @if (loggedInUser.AlternateContact != null)
+                                {<span>/ +91 @loggedInUser.AlternateContact</span>}
+                            </span>
+                            <span>Email Id: @loggedInUser.EmailId</span>
+                        </center>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="70%;">
+                        <b>M/s: </b><label id="lblPartyName"></label><br />
+                        <label id="lblAddress"></label>
+                        <label id="lblContact"></label><br />
+                        <b>Party G.S.T. No. :</b><label id="partyGSTNumber"></label>
+                    </td>
+                    <td width="30%">
+                        <b>Bill No: </b><label id="lblBillNo"></label><br />
+                        <b>Bill Date: </b>
+                        <label id="lblBillDate"></label>
+                    </td>
+                </tr>
+                <tr style="height:250px;">
+                    <td>
+                        Charges for courier service rendered during the period <br />from
+                        <label id="lblFromDate"></label> To <label id="lblToDate"></label>
+                        <p style="bottom: 0;left: 0;"><b>GSTIN/UIN :-</b> @loggedInUser.GSTNumber</p>
+                    </td>
+                    <td style="text-align:right">
+                        <label id="lblBillAmount"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Net Total</b></td>
+                    <td style="text-align:right"><label id="lblBillNetTotal"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Discount</b></td>
+                    <td style="text-align:right"><label id="lblBillDiscount"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Total</b></td>
+                    <td style="text-align:right"><label id="lblBillTotal"></label></td>
+                </tr>
+                <tr>
+                    <td>Fuel Charges (<label id="lblPartyFuelCharges"></label>)</td>
+                    <td style="text-align:right"><label id="lblBillFullCahrges"></label></td>
+                </tr>
+                <tr id="trBillCGST">
+                    <td>C.G.S.T. (9%)</td>
+                    <td style="text-align:right">
+                        <label id="lblCGST"></label>
+                        <input type="hidden" id="hiddenCGST" />
+                    </td>
+                </tr>
+                <tr id="trBillSGST">
+                    <td>S.G.S.T. (9%)</td>
+                    <td style="text-align:right">
+                        <label id="lblSGST"></label>
+                        <input type="hidden" id="hiddenSGST" />
+                    </td>
+                </tr>
+                <tr id="trBillIGST">
+                    <td>I.G.S.T. (18%)</td>
+                    <td style="text-align:right"><label id="lblIGST"></label></td>
+                </tr>
+                <tr>
+                    <td><b>Grand Total</b></td>
+                    <td style="text-align:right"><label id="lblBillGrandTotal"></label></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <b>In Word:- </b>   <label id="divDisplayWords"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <th colspan="2">Bank Details</th>
+                            </tr>
+                            <tr>
+                                <th>Company Name</th>
+                                <td>:- @loggedInUser.Name</td>
+                            </tr>
+                            <tr>
+                                <th>Bank Name</th>
+                                <td>:- @loggedInUser.BankName</td>
+                            </tr>
+                            <tr>
+                                <th>Account No</th>
+                                <td>:- @loggedInUser.AccountNumber</td>
+                            </tr>
+                            <tr>
+                                <th>IFSC Code</th>
+                                <td>:- @loggedInUser.IFSCCode</td>
+                            </tr>
+                            <tr>
+                                <th>Branch</th>
+                                <td>:- @loggedInUser.BranchName</td>
+                            </tr>
+                            <tr>
+                                <th>PAN</th>
+                                <td>:- @loggedInUser.PANNumber</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <br /><br /><br /><br />
+                        <h4>For @loggedInUser.Name</h4>
+                    </td>
+                </tr>
+            </table><br />
+            <h5><b>Note :-</b>Please pay your will within 10 days from your Bill date, Otherwise we charges 24% on grand total </h5>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btnPrintReciept" class="btn btn-primary">Print Reciept</button>
+        </div>
+    </div>
+</div>
+<div id="divUpdateCourrier" class="modal fade" role="dialog">
+    <div class="modal-dialog1 modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" id="btnCross">&times;</button>
+                <h4 class="modal-title">Update Courrier Details</h4>
+            </div>
+            <div class="modal-body" id="modalBody">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="divGenerateInvoiceDetails" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel" style="text-align:center">Generate Invoice Details</h4>
+            </div>
+            <div class="modal-body testmodel" style="display:block;height:200px;overflow:auto">
+                <form id="invdtls">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Invoice No.</label>
+                                <input type="text" class="form-control" id="txtInvNo" maxlength="12">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Invoice Date</label>
+                                <input type="text" class="form-control" id="txtInvoiceDt" placeholder="MM/DD/YYYY" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label" style="font-size:x-small">Available Existing Deleted Invoice Details</label>
+                                <hr  style="margin-top:0px"/>
+                               <table class="table table-bordered" id="tblList" style="font-size:xx-small">
+                                   <thead>
+                                       <tr>
+                                           <th>Invoice No</th>
+                                           <th>Assined Party Name</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody id="tbltbdy">
+                                   </tbody>
+                               </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btnCancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnConfirm" onclick="checkInvoice()">Confirm Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/SearchCourier.js?v=2"></script>
+    <script src="~/Scripts/autocolumn.js"></script>
+    <script type="text/javascript">
+        var Party = '';
+        var Destination = ''
+        var PartyList = [];
+        var DestinationList = [];
+        $('#PrintReport').columnize({ columns: 2 })
+
+        $(function () {
+            $("#txtBookingDate").datepicker();
+            $("#txtInvoiceDt").datepicker();
+            $("#txtInvoiceDt").datepicker('setDate', new Date());
+        });
+
+        //$('#btnCross').click(function () {
+        //    $('#formUpdate')[0].reset();
+        //});
+
+        $('#btnCancel').click(function () {
+            $('#invdtls')[0].reset();
+            $("#txtInvoiceDt").datepicker('setDate', new Date());
+        });
+
+        $('#btnSaveCourrier').click(function () {
+            var courrierDetail = {
+                CourrierId: $('#hdnCourrierId').val(),
+                PartyId: $("#ddlParty").val(),
+                Amount: $("#txtAmount").val(),
+                Rate: $("#txtRate").val(),
+                Weight: $("#txtWeight").val(),
+                CNNo: $("#txtCNNumber").val(),
+                Distance: $("#txtDistance").val(),
+                DepartureDt: $('#txtBookingDate').val(),
+                CreatedBy: $('#hdnCreatedBy').val(),
+                CreatedDt: $('#hdnCreatedDate').val()
+            }
+
+            $.ajax({
+                url: '/CourierDetails/UpdateEdit',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(courrierDetail),
+                success: function (data) {
+                    alert(data);
+                    $("#btnSearch").click();
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function ConvertJsonDateString(jsonDate) {
+            var shortDate = null;
+            if (jsonDate) {
+                var regex = /-?\d+/;
+                var matches = regex.exec(jsonDate);
+                var dt = new Date(parseInt(matches[0]));
+                var month = dt.getMonth() + 1;
+                var monthString = month > 9 ? month : '0' + month;
+                var day = dt.getDate();
+                var dayString = day > 9 ? day : '0' + day;
+                var year = dt.getFullYear();
+                shortDate = monthString + '/' + dayString + '/' + year;
+            }
+            return shortDate;
+        }
+
+        function SelectedCourrier(courrierId) {
+            showAjaxLoader();
+            $.ajax({
+                url: `/CourierDetails/EditPopup?id=${courrierId}`,
+                type: 'GET',
+                contentType: 'html',
+                success: function (data) {
+                    $('#modalBody').html(data);
+                    hideAjaxLoader();
+                    //$.each(data.PartyList, function (data, value) {
+                    //    $("#ddlParty").append($("<option></option>").val(value.PartyId).html(value.PartyName));
+                    //})
+                    //$('#hdnCreatedBy').val(data.Courrier.CreatedBy);
+                    //$('#hdnCreatedDate').val(ConvertJsonDateString(data.Courrier.CreatedDt));
+                    //$('#hdnCourrierId').val(courrierId);
+                    //$("#ddlParty").val(data.Courrier.PartyId);
+                    //$("#txtAmount").val(data.Courrier.Amount);
+                    //$("#txtRate").val(data.Courrier.Rate);
+                    //$("#txtWeight").val(data.Courrier.Weight);
+                    //$("#txtCNNumber").val(data.Courrier.CNNo);
+                    //$("#txtDistance").val(data.Courrier.Location);
+                    //$('#txtBookingDate').val(ConvertJsonDateString(data.Courrier.DepartureDt));
+
+                },
+                error: function (error) {
+                    alert(error);
+                    hideAjaxLoader();
+                }
+            })
+        }
+
+        $("#txtWeight").change(function () {
+            debugger;
+            var arr = $("#txtWeight").val().split('.');
+            var txtWeigth = 0;
+            if (arr.length > 1) {
+                var element1 = arr[0];
+                var element2 = arr[1];
+                if (parseInt(element2) > 0) {
+                    element1 = parseInt(element1) + 1;
+                    txtWeigth = element1;
+                } else {
+                    txtWeigth = arr[0];
+                }
+            } else {
+                txtWeigth = arr[0];
+            }
+            var txtRate = $("#txtRate").val();
+            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+            $("#txtAmount").val(parseFloat(amount));
+        });
+
+        $("#txtRate").change(function () {
+            var arr = $("#txtWeight").val().split('.');
+            var txtWeigth = 0;
+            if (arr.length > 1) {
+                var element1 = arr[0];
+                var element2 = arr[1];
+                if (parseInt(element2) > 0) {
+                    element1 = parseInt(element1) + 1;
+                    txtWeigth = element1;
+                }
+                else {
+                    txtWeigth = arr[0];
+                }
+            } else {
+                txtWeigth = arr[0];
+            }
+
+            var txtRate = $("#txtRate").val();
+            var amount = StringToInt(txtWeigth) * StringToInt(txtRate);
+            $("#txtAmount").val(amount);
+        });
+
+        var SrNo = '';
+        var InvoiceNo = '';
+
+        function GetInvoiceDetails() {
+            var PartyId = $('#PartyId').val();
+            var count = $('#hdnRecordCount').val();
+            if (count == '' || count == undefined) {
+                alert('No Data Found! Please first search your transaction again');
+                return false;
+            }
+        if(count == '0')
+        {
+            alert('Select atleast one entry !')
+                return false;
+        }
+            if (PartyId != '') {
+                $.ajax({
+                    url: '/BillDetails/GetNewInvoiceNo',
+                    type: 'GET',
+                    dataType: "json",
+                    success: function (data) {
+                        var strResponse = JSON.parse(data);
+                        if (strResponse.Table.length == 1) {
+                            SrNo = strResponse.Table[0].SrNo;
+                            InvoiceNo = strResponse.Table[0].InvoiceNo;
+                            $('#txtInvNo').val(InvoiceNo);
+                        }
+                        if (strResponse.Table1.length > 0) {
+                            var tblhtml = '';
+                            $.each(strResponse.Table1, function (key, item) {
+                                tblhtml += ' <tr><td>' + item.InvoiceFormat +'</td>'+
+                                    '<td>' + item.PartyName+'</td></tr>' 
+
+                            });
+                            $('#tbltbdy').html(tblhtml);
+                        }
+                        $('#divGenerateInvoiceDetails').modal({
+                            backdrop: 'static',
+                            keyboard: true,
+                            show: true
+                        }); 
+                    },
+                    error: function (error) {
+                        alert(error.responseText);
+                    }
+                });
+            }
+            else {
+                alert('Please Search Details First');
+            }
+           
+        }
+
+        function checkInvoice() {
+            var invoiceNo = $('#txtInvNo').val();
+            if (invoiceNo != '') {
+                $.ajax({
+                    url: '/BillDetails/CheckInvoiceNo',
+                    data: { InvoiceNo: invoiceNo },
+                    type: 'GET',
+                    dataType: "json",
+                    success: function (data) {
+                        debugger;
+                        var strResponse = JSON.parse(data);
+                        if (strResponse.Table.length == 1) {
+                            if (strResponse.Table[0].Result == 0) {
+                                if (strResponse.Table[0].IsActive == 0) {
+                                    SrNo = strResponse.Table[0].InvoiceSrNo
+                                    InvoiceNo = invoiceNo
+                                    $('#hdnInvoiceNumber').val(InvoiceNo);
+                                    $('#hdnSrNo').val(SrNo);
+                                    $('#hdnInvoiceDt').val($('#txtInvoiceDt').val());
+                                    $('#btnGenerateInvoice').hide();
+                                    //$('#btnInvoice').show();
+                                    $('#btnCancel').click()
+                                    GenerateInvoice();
+                                }
+                                else {
+                                    $('#txtInvNo').focus();
+                                    alert('Invoice Number Already Used Please try another')
+                                }
+                            }
+                            else {
+                                SrNo = invoiceNo.substr(invoiceNo.substring(0, 7).length, invoiceNo.length - invoiceNo.substring(0, 7).length)
+                                $('#hdnSrNo').val(SrNo);
+                                $('#hdnInvoiceDt').val($('#txtInvoiceDt').val());
+                                InvoiceNo = invoiceNo;
+                                $('#hdnInvoiceNumber').val(InvoiceNo);
+                                $('#btnGenerateInvoice').hide();
+                                //$('#btnInvoice').show();
+                                $('#btnCancel').click()
+                                GenerateInvoice();
+                            }
+
+                        }
+                    },
+                    error: function (error) {
+                        alert(error.responseText);
+                    }
+                });
+            }
+           
+        }
+
+        
+
+       
+       
+
+    </script>
+
+}
+
+

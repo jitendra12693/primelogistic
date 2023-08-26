@@ -1,0 +1,56 @@
+﻿@model IEnumerable<InTimeCourier.Models.CourrierMode>
+
+@{
+    ViewBag.Title = "Courier Mode List";
+}
+
+<h2>Courier Mode List</h2>
+
+<p>
+    @Html.ActionLink("Add New Courier Mode", "AddCourierMode")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Name")
+        </th>
+        <th>@Html.DisplayNameFor(model=>model.Description)</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.IsActive == true)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CourrierModeName)
+                </td>
+                <td>@Html.DisplayFor(modelItem=>item.Description)</td>
+               
+                   
+                <td>
+                    @Html.ActionLink("Edit", "EditCourierMode", new { id = item.CourrierModeId }) |
+                    @Html.ActionLink("Details", "CourierModeDetails", new { id = item.CourrierModeId }) |
+                    @Html.ActionLink("DeActive", "AcivateDeativateMode", new { id = item.CourrierModeId })
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="alert alert-danger">
+                <td>
+                    @Html.Display("Name")
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+               
+               
+                <td>
+                    @Html.ActionLink("Edit", "EditCourierMode", new { id = item.CourrierModeId }) |
+                    @Html.ActionLink("Details", "CourierModeDetails", new { id = item.CourrierModeId }) |
+                    @Html.ActionLink("Active", "AcivateDeativateMode", new { id = item.CourrierModeId })
+                </td>
+            </tr>
+        }
+    }
+</table>

@@ -1,0 +1,123 @@
+﻿@model InTimeCourier.Models.CorrierDetails
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @if (ViewBag.Success != null)
+        {
+            <div class="alert alert-success">@ViewBag.Success</div>
+        }
+    <div class="form-group">
+        @*<div class="col-lg-2">
+            @Html.LabelFor(model => model.TrackingNo, htmlAttributes: new { @class = "control-label" })
+        </div>*@
+        @*<div class="col-md-4">
+            @Html.EditorFor(model => model.TrackingNo, new { htmlAttributes = new { @class = "form-control" } })
+        </div>*@
+
+        <div class="col-md-2">
+            @Html.Label("Party Name", htmlAttributes: new { @class = "control-label" })
+            @*</div>
+            <div class="col-md-2">*@
+            @Html.DropDownListFor(model => model.PartyId, (IEnumerable<SelectListItem>)ViewBag.Party, "Select Party", new { @class = "form-control",@style="font-size:small" })
+        </div>
+        <div class="col-md-2">
+            @Html.Label("From Date", htmlAttributes: new { @class = "control-label" })
+            @*</div>
+            <div class="col-md-2">*@
+            @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @id = "txtFromDate", @class = "form-control", @placeholder = "MM/DD/YYYY" } })
+        </div>
+
+        <div class="col-md-2">
+            @Html.Label("To Date", htmlAttributes: new { @class = "control-label" })
+            @*</div>
+            <div class="col-md-2">*@
+            @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @id = "txtToDate", @class = "form-control", @placeholder = "MM/DD/YYYY" } })
+        </div>
+        <div class="col-md-1">
+            <label class="control-label"></label>
+            <button type="button" id="btnSearch" class="form-control btn btn-primary">Search</button>
+        </div>
+        <div class="col-md-2">
+            <label class="control-label"></label>
+            <button type="reset" id="btnClear" class="form-control btn btn-danger">Clear Search</button>
+        </div>
+        <div class="col-md-2">
+            <label class="control-label"></label>
+            <a href="@Url.Action("ResultExportToExcel")" class="form-control btn btn-info">Export Today's Manifesto</a>
+        </div>
+
+
+    </div>
+
+        <div class="form-group">
+            
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-md-1">
+                    <button type="button" id="btnGenerateInvoice" style="display:none"   onclick="GetInvoiceDetails()" class="btn btn-warning">Generate Invoice</button>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnInvoice" style="display:none" class="btn btn-danger" onclick="GenerateInvoice()">Download Invoice</button>
+                </div>
+                <div class="col-md-2">
+                    <div class='checkbox1' style="display:none"  id="chkall">
+                        <input type='checkbox' id="allcb" checked />
+                        <label for="allcb">
+                            <span id="spnchk" style="margin-left:20%"><strong>Select All</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class='checkbox2' id="chkGST">
+                        <input type='radio' id="allcbGST" name="GSTselector" checked value="1"/>
+                        <label for="allcbGST">
+                            <span id="spnchkGST" style="margin-left:40%"><strong>GST</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class='checkbox2' id="chkall">
+                        <input type='radio' id="allcbIGST" name="GSTselector" value="2"/>
+                        <label for="allcbIGST">
+                            <span id="spnchkIGST" style="margin-left:40%"><strong>IGST</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class='checkbox2' id="chkNONGST">
+                        <input type='radio' id="allcbNONGST" name="GSTselector" value="3"/>
+                        <label for="allcbNONGST">
+                            <span id="spnchkNONGST" style="margin-left:20%"><strong>NON GST</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class='checkbox2' id="chkAdd1">
+                        <input type='radio' id="allcbAdd1" name="Addselector" checked value="1"/>
+                        <label for="allcbAdd1">
+                            <span id="spnchkADD1" style="margin-left:20%"><strong>Address 1</strong></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class='checkbox2' id="chkAdd2">
+                        <input type='radio' id="allcbADD2" name="Addselector" value="2"/>
+                        <label for="allcbADD2">
+                            <span id="spnchkADD2" style="margin-left:20%" onclick="changeAddress()"><strong>Address 2</strong></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+}

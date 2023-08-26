@@ -41,7 +41,7 @@ namespace InTimeCourier.Controllers
                 PartyId = partyId,
                 FYear = fYear
             };
-            var response = objDb.Exec_SPrc<BillTransaction>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true);
+            var response = objDb.Exec_SPrc<BillTransaction>(sprcname, Paramenters, "InLogisticModel", "intimelogisticdb", true);
 
             var v = RenderPartialViewToString("BillTransactionList", response);
             return Json(v,JsonRequestBehavior.AllowGet);

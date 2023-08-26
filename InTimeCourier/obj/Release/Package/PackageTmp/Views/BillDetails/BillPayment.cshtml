@@ -1,0 +1,55 @@
+﻿@model InTimeCourier.Models.BillPayment
+@{
+    Layout = null;
+}
+@using (Html.BeginForm())
+{
+    <div class="form-group col-lg-6">
+        @Html.HiddenFor(model => model.PartyId)
+        @Html.HiddenFor(model => model.BillId)
+        @Html.HiddenFor(model => model.CreatedDate)
+        @Html.HiddenFor(model => model.CreatedBy)
+        <label for="recipient-name" class="col-form-label">Bill Date</label>
+        @Html.EditorFor(model => model.BillDate, "{0:MM/dd/yyyy}", new { htmlAttributes = new { @class = "form-control", @placeholder = "Bill Date (MM/DD/YYYY)", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Bill Number</label>
+        @Html.EditorFor(model => model.BillNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bill Number", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Party Name</label>
+        @Html.EditorFor(model => model.PartyName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Party Name", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Bill Amount</label>
+        @Html.EditorFor(model => model.BillAmount, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bill Amount", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Balance Amount</label>
+        @Html.EditorFor(model => model.BalanceAmount, new { htmlAttributes = new { @class = "form-control", @placeholder = "Balance Amount", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Paid Amount</label>
+        @Html.EditorFor(model => model.PaidAmount, new { htmlAttributes = new { @class = "form-control", @placeholder = "Paid Amount", @readonly = "true" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Payment Amount</label>
+        @Html.EditorFor(model => model.PaymentAmount, new { htmlAttributes = new { @class = "form-control", @placeholder = "Amount" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Cheque Number</label>
+        @Html.EditorFor(model => model.ChequeNo, new { htmlAttributes = new { @class = "form-control", @placeholder = "Cheque Number" } })
+
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Cheque Date</label>
+        @Html.EditorFor(model => model.ChequeDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Cheque Date" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <label for="recipient-name" class="col-form-label">Bank Name</label>
+        @Html.EditorFor(model => model.BankName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Bank Name" } })
+    </div>
+    <div class="form-group col-lg-6">
+        <input type="submit" value="Make Payment" id="btnSubmit" class="btn btn-success" />
+    </div>
+}

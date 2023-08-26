@@ -23,6 +23,7 @@ $("#ToDate").datepicker("option", "changeToYear", true);
 //$("#txtInvDate").datepicker("option", "changeToYear", true);
 
 $("#btnSearch").click(function () {
+    debugger;
     //$('#btnInvoice').hide();
     courrierIdList = [];
     IGSTParty = false;
@@ -133,7 +134,7 @@ $("#btnSearch").click(function () {
     }
     else {
 
-        alert("Selected from date is greater than to date")
+        alert("Selected from date is greater than to date2")
     }
 });
 
@@ -298,12 +299,12 @@ function secajax(billid, billdate) {
        
          <tr>
 			 <td style='width:65%;text-align:center'><strong>Terms & Conditions</strong></td>
-			<td style='text-align:center'><strong>For Prime Logistic</strong></td>
+			<td style='text-align:center'><strong>For Intime Logistic</strong></td>
 		</tr>
 		<tr>
 			<td><p style='font-size:x-small'>
                     1. Kindly notify us in writing regarding any discrepancy in this invoice within 7 days. Otherwise, <br />This invoice shall be deemed to be correct & payable by you.
-                    <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of PRIME LOGISTICS .
+                    <br />2. All cheques should be drawn Cross 'A/c Payee' in favour of INTIME LOGISTICS .
                     <br />
                     3. Interest @2% per month will be charged on delayed payments.
                     <br />
@@ -1132,20 +1133,21 @@ var DestinationList = [];
 
 
 
-$("#btnUpdate").click(function (e) {
-    e.preventDefault();
-    //Show loading display here
-    var form = $("#signupform");
-    $.ajax({
-        url: '@Url.Action("EditPopup")',
-        data: form.serialize(),
-        type: 'POST',
-        success: function (data) {
-            //Show popup
-            $("#popup").html(data);
-        }
-    });
-});
+//$("#btnUpdate").click(function (e) {
+//    e.preventDefault();
+//    alert('1')
+//    //Show loading display here
+//    var form = $("#signupform");
+//    $.ajax({
+//        url: '@Url.Action("EditPopup")',
+//        data: form.serialize(),
+//        type: 'POST',
+//        success: function (data) {
+//            //Show popup
+//            $("#popup").html(data);
+//        }
+//    });
+//});
 
 
 $('#allcb').change(function () {

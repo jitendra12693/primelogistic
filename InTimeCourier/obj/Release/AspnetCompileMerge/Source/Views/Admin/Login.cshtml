@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Prime Logistics | Login</title>
+    <title>Intime Logistics | Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -66,60 +66,61 @@
         <div class="container-login100">
             <div class="wrap-login100">
                 @*<span class="login100-form-title">
-            Member Login
-        </span>*@
+                        Member Login
+                    </span>*@
                 <div class="login100-pic js-tilt" data-tilt>
-                    <img src="~/Content/PrimeLoglogo.jpeg" />
-                    <img src="~/vendor/images/img-01.png" alt="IMG">
+                    @*<img src="~/Content/PrimeLoglogo.jpeg" />*@
+                    @*<img src="~/vendor/images/img-01.png" alt="IMG">*@
+                    <img src="~/Content/In-Time Logistic.jpeg" />
                 </div>
                 @using (Html.BeginForm(new { @class = "login100-form validate-form" }))
                 {
                     @*<form class="login100-form validate-form">*@
-                        if (ViewBag.Error != null)
-                        {
-                            <div class="alert alert-danger">@ViewBag.Error</div>
-                        }
-                        <span class="login100-form-title">
-                            Member Login
-                        </span>
-                        <div class="wrap-input100 validate-input" data-validate="User Name is required: ex@abc.xyz">
-                            @*<input class="input100" type="text" name="email" placeholder="Email">*@
-                            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "input100" } })
-                            @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
-                            <span class="focus-input100"></span>
-                            <span class="symbol-input100">
-                                <i class="fa fa-user" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <div class="wrap-input100 validate-input" data-validate="Password is required">
-                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "input100" } })
-                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-                            <span class="focus-input100"></span>
-                            <span class="symbol-input100">
-                                <i class="fa fa-lock" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <div class="container-login100-form-btn">
-                            <button class="login100-form-btn">
-                                Login
-                            </button>
-                        </div>
-                        @*<div class="text-center p-t-12">
-                    <span class="txt1">
-                        Forgot
+                    if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    <span class="login100-form-title">
+                        Member Login
                     </span>
-                    <a class="txt2" href="#">
-                        Username / Password?
-                    </a>
-                </div>*@
-                        @*<div class="text-center p-t-136">
-                    <a class="txt2" href="#">
-                        Prime Logistics
-                    </a>
-                </div>*@
+                    <div class="wrap-input100 validate-input" data-validate="User Name is required: ex@abc.xyz">
+                        @*<input class="input100" type="text" name="email" placeholder="Email">*@
+                        @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "input100" } })
+                        @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="wrap-input100 validate-input" data-validate="Password is required">
+                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "input100" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <button class="login100-form-btn">
+                            Login
+                        </button>
+                    </div>
+                    @*<div class="text-center p-t-12">
+                            <span class="txt1">
+                                Forgot
+                            </span>
+                            <a class="txt2" href="#">
+                                Username / Password?
+                            </a>
+                        </div>*@
+                    @*<div class="text-center p-t-136">
+                            <a class="txt2" href="#">
+                                Prime Logistics
+                            </a>
+                        </div>*@
                     @*</form>*@
                 }
-                </div>
+            </div>
         </div>
     </div>
 

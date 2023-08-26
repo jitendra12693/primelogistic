@@ -1,0 +1,62 @@
+﻿@model IEnumerable<InTimeCourier.Models.SourceMaster>
+
+@{
+    ViewBag.Title = "Source";
+}
+
+<h2>Source List</h2>
+
+<p>
+    @Html.ActionLink("Add New Source", "AddSource")
+</p>
+<table class="table">
+
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SourceName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.IsActive == true)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SourceName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.SourceId }) |
+                    @Html.ActionLink("DeActivate", "AcivateDeativate", new { id = item.SourceId })
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr class="alert alert-danger">
+                <td>
+                    @Html.DisplayFor(modelItem => item.SourceName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.SourceId }) |
+                    @Html.ActionLink("Active", "AcivateDeativate", new { id = item.SourceId })
+                </td>
+            </tr>
+        }
+    }
+
+</table>

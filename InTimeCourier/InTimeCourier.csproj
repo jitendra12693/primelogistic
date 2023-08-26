@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>InTimeCourier</RootNamespace>
     <AssemblyName>InTimeCourier</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -102,9 +102,9 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -225,20 +225,28 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BillDetailsController.cs" />
     <Compile Include="Controllers\BillStatementController.cs" />
+    <Compile Include="Controllers\BillTransactionController.cs" />
     <Compile Include="Controllers\CourierController.cs" />
     <Compile Include="Controllers\CourierDetailsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\DestinationController.cs" />
+    <Compile Include="Controllers\NetworkController.cs" />
     <Compile Include="Controllers\SourceController.cs" />
+    <Compile Include="Models\BillTransaction.cs" />
+    <Compile Include="Models\DestinationMaster.cs" />
     <Compile Include="Models\ApiMailClient.cs" />
     <Compile Include="Models\BillDetails.cs" />
     <Compile Include="Models\BillPayment.cs" />
     <Compile Include="Models\ConvertInWord.cs" />
     <Compile Include="Models\CorrierDetails.cs" />
     <Compile Include="Models\CourrierMode.cs" />
+    <Compile Include="Models\DailyCourierManifesto.cs" />
     <Compile Include="Models\DapperClass.cs" />
     <Compile Include="Models\ExcelExportHelper.cs" />
+    <Compile Include="Models\FinancialYear.cs" />
     <Compile Include="Models\InLogisticModel.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\NetworkMaster.cs" />
     <Compile Include="Models\PaymentMaster.cs" />
     <Compile Include="Models\RateMappingDetails.cs" />
     <Compile Include="Models\SourceMaster.cs" />
@@ -260,14 +268,40 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\DefaultConnection.mdf" />
+    <Content Include="App_Data\DefaultConnection_log.ldf">
+      <DependentUpon>DefaultConnection.mdf</DependentUpon>
+    </Content>
+    <Content Include="App_Data\Intimelogistic.sql" />
+    <Content Include="App_Data\primelogistic.sql" />
     <Content Include="Content\ajax-loader.gif" />
     <Content Include="Content\all.min.css" />
+    <Content Include="Content\bg-main.jpg" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\In-Time Logistic.jpeg" />
+    <Content Include="Content\In-Time Logistic.png" />
+    <Content Include="Content\In-Time Logistic_Name.jpg" />
     <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\man.png" />
     <Content Include="Content\ON-DOT-COURIER-CARGO-LIMITED.jpg" />
     <Content Include="Content\Pratham-Air-Express-Courier-Services-in-Shaniwar-Peth-Pune_4.jpg" />
+    <Content Include="Content\PrimeLoglogo.jpeg" />
+    <Content Include="Content\Prime Logistic compressed logo1.png" />
+    <Content Include="Content\Prime Logistic-Logo-01-min.png" />
+    <Content Include="Content\Prime Logistic-Logo-01.png" />
+    <Content Include="Content\Prime-Logistic-Logo-01.png" />
+    <Content Include="Content\Prime_Logistic-Logo-01-min2.png" />
+    <Content Include="Content\Prime_Logistic-Logo-01_Header-removebg-preview.png" />
+    <Content Include="Content\Prime_Logistic-Logo-01_Header.png" />
+    <Content Include="Content\SignatrLog.png" />
+    <Content Include="Content\SignatrLog1.jpeg" />
+    <Content Include="Content\SignatrLog2.jpeg" />
+    <Content Include="Content\SignatrLog3.jpeg" />
+    <Content Include="Content\signstamp.jpg" />
+    <Content Include="Content\signstamp34.jpg" />
     <Content Include="Content\slider_img1.jpg" />
+    <Content Include="Content\StampSample.jpeg" />
     <Content Include="Content\style.css" />
     <Content Include="Content\ui-icons_444444_256x240.png" />
     <Content Include="Content\ui-icons_555555_256x240.png" />
@@ -275,6 +309,12 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="images\sort_asc.png" />
+    <Content Include="images\sort_asc_disabled.png" />
+    <Content Include="images\sort_both.png" />
+    <Content Include="images\sort_desc.png" />
+    <Content Include="images\sort_desc_disabled.png" />
+    <Content Include="script-DELL.sql" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\autocolumn.js" />
@@ -285,11 +325,13 @@
     </Content>
     <None Include="Properties\PublishProfiles\InTimeLogistics.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\dataTables.min.css" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -301,6 +343,22 @@
     <Content Include="Scripts\SearchCourier.js" />
     <Content Include="Scripts\shieldui-all.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="vendor\animate\animate.css" />
+    <Content Include="vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="vendor\bootstrap\js\popper.js" />
+    <Content Include="vendor\css-hamburgers\hamburgers.min.css" />
+    <Content Include="vendor\css\main.css" />
+    <Content Include="vendor\css\util.css" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\css\font-awesome.min.css" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont3e6e.svg" />
+    <Content Include="vendor\images\icons\favicon.ico" />
+    <Content Include="vendor\images\img-01.png" />
+    <Content Include="vendor\jquery\jquery-3.2.1.min.js" />
+    <Content Include="vendor\js\main.js" />
+    <Content Include="vendor\select2\select2.min.css" />
+    <Content Include="vendor\select2\select2.min.js" />
+    <Content Include="vendor\tilt\tilt.jquery.min.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -366,10 +424,28 @@
     <Content Include="Views\Courier\CourierModeList.cshtml" />
     <Content Include="Views\Courier\EditCourierMode.cshtml" />
     <Content Include="Views\Courier\CourierModeDetails.cshtml" />
+    <Content Include="Views\Network\AddNetwork.cshtml" />
+    <Content Include="Views\Network\Index.cshtml" />
+    <Content Include="Views\Shared\_BlankLayout.cshtml" />
+    <Content Include="Views\CourierDetails\EditDetails.cshtml" />
+    <Content Include="Views\CourierDetails\EditPopup.cshtml" />
+    <Content Include="Views\Destination\AddDestination.cshtml" />
+    <Content Include="Views\Destination\Index.cshtml" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont3e6e.eot" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont3e6e.ttf" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont3e6e.woff" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont3e6e.woff2" />
+    <Content Include="vendor\fonts\font-awesome-4.7.0\fonts\fontawesome-webfontd41d.eot" />
+    <Content Include="vendor\fonts\montserrat\Montserrat-Bold.ttf" />
+    <Content Include="vendor\fonts\poppins\Poppins-Bold.ttf" />
+    <Content Include="vendor\fonts\poppins\Poppins-Medium.ttf" />
+    <Content Include="vendor\fonts\poppins\Poppins-Regular.ttf" />
+    <Content Include="Views\BillTransaction\AddBillTransaction.cshtml" />
+    <Content Include="Views\BillTransaction\BillTransactionList.cshtml" />
+    <Content Include="Views\BillTransaction\Index.cshtml" />
+    <Content Include="Views\BillTransaction\SearchBillTransaction.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
