@@ -6,10 +6,11 @@
     <select id="ddlPartyName" class="form-control"></select>
 </div>
 <div class="col-lg-3">
-    <select id="ddlFinancialYear" class="form-control" ></select>
+    <select id="ddlFinancialYear" class="form-control"></select>
 </div>
 
-<div class="col-lg-3">
+<div class="col-lg-6">
     <input type="button" onclick="SearchBillTransaction();" value="Search" class="btn btn-primary" />
-    <input type="button" onclick="AddCreditAmount();" data-toggle="modal" data-target="#modalBillDetailsForm" value="Add Bill" class="btn btn-primary" />
+    <input type="button" data-toggle="modal" data-target="#modalBillDetailsForm" value="Add Bill" class="btn btn-primary" />
+    <button type="button" onclick="ExportToExcel()" class="btn btn-info">Export Ledger</button>
 </div>

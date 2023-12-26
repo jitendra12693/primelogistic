@@ -7,7 +7,7 @@
 <h4>Bill Details</h4>
 <hr />
 <style>
-    .ajaxLoader {
+   /* .ajaxLoader {
         outline-style: none;
         outline-color: invert;
         outline-width: 0px;
@@ -16,6 +16,13 @@
         position: absolute;
         z-index: 10000;
         background-image: url("../../Content/ajax-loader.gif");
+    }*/
+    .col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        padding: 1%;
     }
 </style>
 
@@ -40,31 +47,32 @@
 
 </div>
 
-<div class="modal fade" id="modalBillDetailsForm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalBillDetailsForm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h4 class="modal-title"><label id="lblHeader"> Bill Details</label></h4>
             </div>
             <div class="panel-body" id="divBillDetails">
-                <div class="form-group col-lg-6">
-                    <select id="ddlPartyNameTransaction" class="form-control"></select>
-                </div>
-                <div class="form-group col-lg-6">
-                    <select id="ddlFinancialYearTransaction" class="form-control"></select>
-                </div>
-                <div class="form-group col-lg-6">
-                    <input type="text" class="form-control" id="txtTransactionDate" placeholder="Transaction Date" />
-                </div>
-                <div class="col-lg-6">
-                    <input type="text" class="form-control" id="txtCreditAmount" placeholder="Credit Amount" />
-                </div>
-                <div class="form-group col-lg-12">
-                    <textarea id="txtNarration" class="form-control" placeholder="Transaction Narration"></textarea>
-                </div>
-
-                <div class="form-group col-lg-6">
-                    <input type="button" onclick="saveTransaction()" class="btn btn-success" value="Save Transaction">
+                <div class="col-lg-12">
+                    <div class="col-lg-6">
+                        <select id="ddlPartyNameTransaction" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-6">
+                        <select id="ddlFinancialYearTransaction" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-6">
+                        <input type="text" class="form-control" id="txtTransactionDate" placeholder="Transaction Date" />
+                    </div>
+                    <div class="col-lg-6">
+                        <input type="text" class="form-control" id="txtCreditAmount" placeholder="Credit Amount" />
+                    </div>
+                    <div class="col-lg-6">
+                        <textarea id="txtNarration" class="form-control" placeholder="Transaction Narration"></textarea>
+                    </div>
+                    <div class="col-lg-6">
+                        <input type="button" onclick="saveTransaction()" class="btn btn-success" value="Save Transaction">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -143,6 +151,27 @@
             }
         }
 
+        function ResultExportToExcel() {
+            var partyId = $('#ddlPartyName').val();
+            var fYearVal = $('#ddlFinancialYear').val();
+            var fYear = $("#ddlFinancialYear option:selected").text(); //$('#ddlFinancialYear').text();
+            if (partyId && fYearVal) {
+                $.ajax({
+                    url: "/BillTransaction/ResultExportToExcel",
+                    data: { partyId: partyId, fYear: fYear },
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+
+                        //$("#divBillTransactionList").html(data);
+                    }
+                });
+            } else {
+                alert('Please select party name and financial year.');
+                return;
+            }
+        }
+
         function saveTransaction() {
             var partyId = $('#ddlPartyName').val();
             var fYearVal = $('#ddlFinancialYear').val();
@@ -175,6 +204,12 @@
                 hgt = 550 - (((recordscount - 1) * 2) * 10);
             }
             return hgt;
+        }
+
+        function ExportToExcel() {
+            var htmltable = document.getElementById('billTransactionTbl');
+            var html = htmltable.outerHTML;
+            window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
         }
     </script>
 }

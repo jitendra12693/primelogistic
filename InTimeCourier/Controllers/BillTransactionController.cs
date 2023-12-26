@@ -79,5 +79,29 @@ namespace InTimeCourier.Controllers
             TempData["PaymentMessage"] = response.Message;
             return Json(new {message= response.Message },JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult ResultExportToExcel(int partyId, string fYear)
+        {
+            var grdReport = new System.Web.UI.WebControls.GridView();
+
+            DapperClass objDb = new DapperClass();
+            string sprcname = "uspSelectBillTransactionList";
+            object Paramenters = new
+            {
+                PartyId = partyId,
+                FYear = fYear
+            };
+            var response = objDb.Exec_SPrc<BillTransaction>(sprcname, Paramenters, "InLogisticModel", "primelogisticdb", true);
+
+
+            grdReport.DataSource = response;// db.Database.SqlQuery<DailyCourierManifesto>("exec uspDailyCourierManiFesto").ToList();
+            grdReport.DataBind();
+
+            System.IO.StringWriter sw = new System.IO.StringWriter();
+            System.Web.UI.HtmlTextWriter htw = new System.Web.UI.HtmlTextWriter(sw);
+            grdReport.RenderControl(htw);
+            byte[] bindData = System.Text.Encoding.ASCII.GetBytes(sw.ToString());
+            return File(bindData, "application/ms-excel", "DailyManifesto" + DateTime.Now + ".xls");
+        }
     }
 }

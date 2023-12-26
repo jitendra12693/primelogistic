@@ -829,9 +829,22 @@ namespace InTimeCourier.Controllers
             {
                 if(NONGSTParty==true)
                 {
-                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"]);
-                    dt.Rows[0]["GrandTotal"] = GrandTotal;
-                    dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    var GrandTotal = Convert.ToDecimal(dt.Rows[0]["TotalAmount"])+ Convert.ToDecimal(dt.Rows[0]["FuelCharges"]);
+                    var grndttl = GrandTotal.ToString("0.00");
+                    var spltgrndttl = grndttl.Split('.');
+                    int pr1 = Convert.ToInt32(spltgrndttl[0]);
+                    int pr2 = Convert.ToInt32(spltgrndttl[1]);
+                    if (pr2 > 0)
+                    {
+                        GrandTotal = pr1 + 1;
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
+                    else
+                    {
+                        dt.Rows[0]["GrandTotal"] = GrandTotal;
+                        dt.Rows[0]["InWord"] = ConvertInWord.ConvertToWords(GrandTotal.ToString());
+                    }
                 }
                 else
                 {
